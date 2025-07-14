@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -22,10 +23,28 @@ func init() {
 
 func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^a file named {string} with:$`, func() {})
-	scenario.Step("^I (successfully |)run `(.*)`$", func(context context.Context, successfully, command string) error {
-		components := strings.Split(command, " ")
 
-		return exec.Command(components[0], components[1:]...).Run()
+	scenario.Step("^I (successfully |)run `(.*)`$", func(ctx context.Context, successfully, command string) (context.Context, error) {
+		ss := strings.Split(command, " ")
+		c := exec.Command(ss[0], ss[1:]...)
+		err := c.Run()
+		ctx = context.WithValue(ctx, "exitCode", c.ProcessState.ExitCode())
+
+		if successfully == "" {
+			return ctx, nil
+		}
+
+		return ctx, err
+	})
+
+	scenario.Step(`^the exit status should (not |) be (\d+)$`, func(ctx context.Context, not string, code int) error {
+		c := ctx.Value("exitCode").(int)
+
+		if not == "" && c == code {
+			return nil
+		}
+
+		return fmt.Errorf("expected exit code %d but got %d", code, c)
 	})
 }
 
