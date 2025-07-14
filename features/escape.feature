@@ -58,3 +58,32 @@ Feature: Character escape
       """
     When I successfully run `python3 foo.py`
     Then the stdout should contain "\\\\"
+
+  Scenario Outline: Compare special characters in examples
+    Given a file named "foo.py" with:
+      """python
+      print("<value>", end="")
+      """
+    When I successfully run `python3 foo.py`
+    Then the stdout should contain exactly "<value>"
+
+    Examples:
+      | value |
+      | \\n   |
+      | \\t   |
+      | \\"   |
+
+  Scenario Outline: Escape special characters in examples
+    Given a file named "foo.py" with:
+      """python
+      print("{!r}".format("<value>"))
+      """
+    When I successfully run `python3 foo.py`
+    Then the stdout should contain exactly "'<value>'"
+
+    Examples:
+      | value     |
+      | \\n       |
+      | \\t       |
+      | \\r       |
+      | \\n\\t\\r |

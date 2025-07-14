@@ -29,6 +29,18 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
+var doubleQuotePattern = regexp.MustCompile(`"([^\\])"`)
+var headDoubleQuotePattern = regexp.MustCompile(`^"`)
+
+func quote(s string) string {
+	s = strings.ReplaceAll(s, "\n", "\\n")
+	s = strings.ReplaceAll(s, "\t", "\\t")
+	s = doubleQuotePattern.ReplaceAllString(s, `$1\"`)
+	s = headDoubleQuotePattern.ReplaceAllString(s, `\"`)
+
+	return s
+}
+
 var normalUnquotePattern = regexp.MustCompile(`\\(\\|"|n)`)
 
 func unquote(s string) string {
@@ -42,10 +54,10 @@ func unquote(s string) string {
 	})
 }
 
-var docStringPattern = regexp.MustCompile(`\\(\\|")`)
+var simpleUnquotePattern = regexp.MustCompile(`\\(\\)`)
 
-func unquoteDocString(s string) string {
-	return docStringPattern.ReplaceAllString(s, `$1`)
+func unquoteSimple(s string) string {
+	return simpleUnquotePattern.ReplaceAllString(s, `$1`)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -57,7 +69,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(unquoteDocString(docString.Content)),
+		[]byte(unquoteSimple(docString.Content)),
 		0o644,
 	)
 }
@@ -104,12 +116,15 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	}
 
 	s := string(ctx.Value(key).([]byte))
-	expected = unquote(strings.TrimSpace(expected))
+	expected = unquoteSimple(strings.TrimSpace(expected))
 
-	if exactly == "" && !strings.Contains(s, expected) {
+	if exactly == "" && !strings.Contains(quote(s), expected) {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
 	} else if exactly != "" {
-		s := strings.TrimSpace(s)
+		if t := strings.TrimSpace(s); t != "" {
+			s = t
+		}
+		s := quote(s)
 
 		if s != expected {
 			return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
