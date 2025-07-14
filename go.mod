@@ -1,4 +1,4 @@
-module github.com/raviqqe/boca
+module github.com/raviqqe/aruba-go
 
 go 1.24.5
 
