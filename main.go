@@ -55,7 +55,7 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 			return nil
 		}
 
-		return fmt.Errorf("expected exit code %d but got %d", code, c)
+		return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 	})
 }
 
