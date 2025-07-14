@@ -22,6 +22,11 @@ func init() {
 }
 
 func InitializeScenario(scenario *godog.ScenarioContext) {
+	scenario.Before(func(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
+		d, err := os.MkdirTemp("", "godog-*")
+
+		return context.WithValue(ctx, "directory", d), err
+	})
 	scenario.Step(`^a file named {string} with:$`, func() {})
 
 	scenario.Step("^I (successfully |)run `(.*)`$", func(ctx context.Context, successfully, command string) (context.Context, error) {
