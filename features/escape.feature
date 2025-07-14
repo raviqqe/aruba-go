@@ -15,7 +15,7 @@ Feature: Character escape
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\"b"
 
-  Scenario Outline: Create a file with an escaped double quote
+  Scenario Outline: Escape a normal character
     Given a file named "foo.txt" with:
       """
       <value>
