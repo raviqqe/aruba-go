@@ -34,7 +34,7 @@ jobs:
       matrix:
         dependent:
           - directory: stak
-            build: cargo install --bin stak
+            build: cargo install --path root
           - directory: schemat
             build: cargo install --path .
     runs-on: ubuntu-latest
