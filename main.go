@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,12 @@ func unquote(s string) (string, error) {
 	return strconv.Unquote(`"` + s + `"`)
 }
 
+var docStringPattern = regexp.MustCompile(`\\(\\|")`)
+
+func unquoteDocString(s string) string {
+	return docStringPattern.ReplaceAllString(s, `$1`)
+}
+
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "godog-*")
 
@@ -35,7 +42,11 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 }
 
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
-	return os.WriteFile(path.Join(ctx.Value("directory").(string), p), []byte(docString.Content), 0o644)
+	return os.WriteFile(
+		path.Join(ctx.Value("directory").(string), p),
+		[]byte(unquoteDocString(docString.Content)),
+		0o644,
+	)
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
