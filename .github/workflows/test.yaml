@@ -28,12 +28,40 @@ jobs:
         with:
           bundler-cache: true
       - run: bundler exec cucumber --publish-quiet --strict
+  dependent_test:
+    strategy:
+      fail-fast: false
+      matrix:
+        dependent:
+          - directory: schemat
+            build: cargo install --path .
+          - directory: stak
+            build: cargo install stak && cargo install --path root
+            environment: STAK_ROOT=$PWD
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-go@v5
+      - uses: ruby/setup-ruby@v1
+      - run: go install .
+      - run: echo PATH=$(go env $GOPATH/bin):$PATH >> ${{ github.env }}
+      - run: ${{ matrix.dependent.build }}
+        working-directory: dependents/${{ matrix.dependent.directory }}
+      - run: bundler
+        working-directory: dependents/${{ matrix.dependent.directory }}
+      - run: ${{ matrix.dependent.environment }} bundler exec cucumber
+        working-directory: dependents/${{ matrix.dependent.directory }}
+      - run: ${{ matrix.dependent.environment }} aruba-go
+        working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
       - build
       - unit_test
       - integration_test
       - integration_test_test
+      - dependent_test
     if: always()
     runs-on: ubuntu-latest
     steps:

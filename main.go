@@ -119,7 +119,7 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	s := string(ctx.Value(key).([]byte))
 	expected = unquoteSimple(strings.TrimSpace(expected))
 
-	if exactly == "" && !strings.Contains(quote(s), expected) {
+	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
 	} else if exactly != "" {
 		if t := strings.TrimSpace(s); t != "" {
@@ -127,7 +127,7 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 		}
 		s := quote(s)
 
-		if s != expected {
+		if (s == expected) != (not == "") {
 			return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
 		}
 	}
