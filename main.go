@@ -54,6 +54,11 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	if err != nil {
 		return ctx, err
 	}
+	// TODO Unquote only once?
+	command, err = unquote(command)
+	if err != nil {
+		return ctx, err
+	}
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
