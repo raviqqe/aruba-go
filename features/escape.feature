@@ -97,5 +97,5 @@ Feature: Character escape
     Then the stdout should contain exactly "<output>"
 
     Examples:
-      | value | output    |
+      | input | output    |
       | "foo" | \\"foo\\" |
