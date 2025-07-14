@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -28,7 +29,9 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 		return context.WithValue(ctx, "directory", d), err
 	})
 
-	scenario.Step(`^a file named "(\\\\|\\"|[^"\\])+" with:$`, func() {})
+	scenario.Step(`^a file named "((\\\\|\\"|[^"\\])+)" with:$`, func(ctx context.Context, p string) error {
+		return os.WriteFile(path.Join(ctx.Value("directory").(string), p), nil, 0o644)
+	})
 
 	scenario.Step("^I (successfully |)run `(.*)`$", func(ctx context.Context, successfully, command string) (context.Context, error) {
 		ss := strings.Split(command, " ")
