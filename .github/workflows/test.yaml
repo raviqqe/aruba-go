@@ -45,6 +45,7 @@ jobs:
       - uses: actions/setup-go@v5
       - uses: ruby/setup-ruby@v1
       - run: go install .
+      - run: echo PATH=$(go env $GOPATH/bin):$PATH
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler

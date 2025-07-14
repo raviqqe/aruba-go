@@ -1,8 +1,10 @@
 {
   "words": [
+    "gobin",
     "godog",
     "golangci",
     "gomod",
+    "gopath",
     "goreleaser",
     "lycheeverse",
     "pflag",
