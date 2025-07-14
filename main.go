@@ -31,6 +31,9 @@ func init() {
 
 func quote(s string) string {
 	s = strings.ReplaceAll(s, "\n", "\\n")
+	s = strings.ReplaceAll(s, "\t", "\\t")
+	s = strings.ReplaceAll(s, "\"", "\\\"")
+
 	return s
 }
 
@@ -114,7 +117,10 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	if exactly == "" && !strings.Contains(quote(s), expected) {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
 	} else if exactly != "" {
-		s := quote(strings.TrimSpace(s))
+		if t := strings.TrimSpace(s); t != "" {
+			s = t
+		}
+		s := quote(s)
 
 		if s != expected {
 			return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
