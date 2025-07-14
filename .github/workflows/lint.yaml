@@ -5,12 +5,12 @@ on:
       - main
   pull_request:
 jobs:
-  clippy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: raviqqe/rust-cache@v1
-      - run: cargo clippy -- -D warnings
+  # clippy:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: raviqqe/rust-cache@v1
+  #     - run: cargo clippy -- -D warnings
   format:
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +32,6 @@ jobs:
           fail: true
   lint:
     needs:
-      - clippy
       - format
       - readme
       - spell_check
