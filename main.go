@@ -15,7 +15,7 @@ import (
 
 var options = godog.Options{
 	Output: colors.Colored(os.Stdout),
-	Format: "progress",
+	Format: "pretty",
 }
 
 func init() {
