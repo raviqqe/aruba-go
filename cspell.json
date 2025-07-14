@@ -1,14 +1,16 @@
 {
   "words": [
+    "gobin",
     "godog",
     "golangci",
     "gomod",
+    "gopath",
     "goreleaser",
     "lycheeverse",
-    "memchr",
-    "memmem",
     "pflag",
     "raviqqe",
+    "schemat",
+    "stak",
     "yota"
   ]
 }
