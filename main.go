@@ -111,7 +111,7 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	return nil
 }
 
-func InitializeScenario(scenario *godog.ScenarioContext) {
+func initializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Before(before)
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I (successfully |)run `(.*)`$", runCommand)
@@ -124,10 +124,9 @@ func main() {
 	options.Paths = pflag.Args()
 
 	status := godog.TestSuite{
-		Name:                 "godog",
-		TestSuiteInitializer: func(*godog.TestSuiteContext) {},
-		ScenarioInitializer:  InitializeScenario,
-		Options:              &options,
+		Name:                "godog",
+		ScenarioInitializer: initializeScenario,
+		Options:             &options,
 	}.Run()
 
 	os.Exit(status)
