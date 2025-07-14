@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -23,6 +24,10 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
+func unquote(s string) (string, error) {
+	return strconv.Unquote(`"` + s + `"`)
+}
+
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "godog-*")
 
@@ -34,6 +39,11 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
+	command, err := unquote(command)
+	if err != nil {
+		return ctx, err
+	}
+
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
 	c.Dir = ctx.Value("directory").(string)
@@ -42,7 +52,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
 
-	err := c.Run()
+	err = c.Run()
 	ctx = context.WithValue(ctx, "exitCode", c.ProcessState.ExitCode())
 	ctx = context.WithValue(ctx, "stdout", stdout.Bytes())
 	ctx = context.WithValue(ctx, "stderr", stderr.Bytes())
