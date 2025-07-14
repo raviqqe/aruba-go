@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -21,8 +22,9 @@ type stdoutKey struct{}
 type stderrKey struct{}
 
 var options = godog.Options{
-	Output: colors.Colored(os.Stdout),
-	Format: "pretty",
+	Concurrency: runtime.NumCPU(),
+	Output:      colors.Colored(os.Stdout),
+	Format:      "pretty",
 }
 
 func init() {
