@@ -47,10 +47,10 @@ func unquote(s string) string {
 	})
 }
 
-var docStringPattern = regexp.MustCompile(`\\(\\|")`)
+var simpleUnquotePattern = regexp.MustCompile(`\\(\\)`)
 
 func unquoteSimple(s string) string {
-	return docStringPattern.ReplaceAllString(s, `$1`)
+	return simpleUnquotePattern.ReplaceAllString(s, `$1`)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
