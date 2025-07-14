@@ -34,7 +34,7 @@ jobs:
       matrix:
         dependent:
           - directory: stak
-            build: cargo install --path root
+            build: cargo install stak && cargo install --path root
           - directory: schemat
             build: cargo install --path .
     runs-on: ubuntu-latest
@@ -45,6 +45,8 @@ jobs:
       - uses: ruby/setup-ruby@v1
       - run: go install .
       - run: ${{ matrix.dependent.build }}
+        working-directory: dependents/${{ matrix.dependent.directory }}
+      - run: bundler
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
