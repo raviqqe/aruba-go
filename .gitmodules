@@ -1,3 +1,6 @@
 [submodule "dependents/stak"]
 	path = dependents/stak
 	url = https://github.com/raviqqe/stak
+[submodule "dependents/schemat"]
+	path = dependents/schemat
+	url = https://github.com/raviqqe/schemat
