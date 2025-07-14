@@ -34,6 +34,9 @@ jobs:
       matrix:
         dependent:
           - directory: stak
+            build: cargo install --bin stak
+          - directory: schemat
+            build: cargo install --path .
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

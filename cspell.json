@@ -5,11 +5,10 @@
     "gomod",
     "goreleaser",
     "lycheeverse",
-    "memchr",
-    "memmem",
     "pflag",
-    "stak",
     "raviqqe",
+    "schemat",
+    "stak",
     "yota"
   ]
 }
