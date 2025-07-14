@@ -32,16 +32,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        directory:
-          - stak
+        dependent:
+          - directory: stak
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: go install .
       - run: bundler exec cucumber
-        working-directory: dependents/${{ matrix.directory }}
+        working-directory: dependents/${{ matrix.dependent.directory }}
       - run: aruba-go
-        working-directory: dependents/${{ matrix.directory }}
+        working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
       - build
