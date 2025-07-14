@@ -16,6 +16,11 @@ import (
 	"github.com/spf13/pflag"
 )
 
+type directoryKey struct{}
+type exitCodeKey struct{}
+type stdoutKey struct{}
+type stderrKey struct{}
+
 var options = godog.Options{
 	Output: colors.Colored(os.Stdout),
 	Format: "pretty",
@@ -38,12 +43,12 @@ func unquoteDocString(s string) string {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "godog-*")
 
-	return context.WithValue(ctx, "directory", d), err
+	return context.WithValue(ctx, directoryKey{}, d), err
 }
 
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
-		path.Join(ctx.Value("directory").(string), p),
+		path.Join(ctx.Value(directoryKey{}).(string), p),
 		[]byte(unquoteDocString(docString.Content)),
 		0o644,
 	)
@@ -62,16 +67,16 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
-	c.Dir = ctx.Value("directory").(string)
+	c.Dir = ctx.Value(directoryKey{}).(string)
 	stdout := bytes.NewBuffer(nil)
 	c.Stdout = stdout
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
 
 	err = c.Run()
-	ctx = context.WithValue(ctx, "exitCode", c.ProcessState.ExitCode())
-	ctx = context.WithValue(ctx, "stdout", stdout.Bytes())
-	ctx = context.WithValue(ctx, "stderr", stderr.Bytes())
+	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
+	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
+	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
 
 	if successfully == "" {
 		return ctx, nil
@@ -81,7 +86,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := ctx.Value("exitCode").(int)
+	c := ctx.Value(exitCodeKey{}).(int)
 
 	if (not == "") == (c == code) {
 		return nil
@@ -91,7 +96,13 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
-	s := string(ctx.Value(stdout).([]byte))
+	key := any(stdoutKey{})
+
+	if stdout == "stderr" {
+		key = stderrKey{}
+	}
+
+	s := string(ctx.Value(key).([]byte))
 	expected = strings.TrimSpace(expected)
 	expected, err := unquote(expected)
 	if err != nil {
