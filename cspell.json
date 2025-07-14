@@ -1,6 +1,7 @@
 {
   "words": [
     "godog",
+    "golangci",
     "gomod",
     "goreleaser",
     "memchr",
