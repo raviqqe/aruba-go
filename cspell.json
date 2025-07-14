@@ -4,6 +4,7 @@
     "golangci",
     "gomod",
     "goreleaser",
+    "lycheeverse",
     "memchr",
     "memmem",
     "pflag",
