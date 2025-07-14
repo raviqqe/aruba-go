@@ -1,8 +1,8 @@
 # aruba-go
 
-[![GitHub Action](https://img.shields.io/github/actions/workflow/status/raviqqe/boca/test.yaml?branch=main&style=flat-square)](https://github.com/raviqqe/boca/actions)
-[![crates.io](https://img.shields.io/crates/v/boca?style=flat-square)](https://crates.io/crates/boca)
-[![License](https://img.shields.io/crates/l/boca?style=flat-square)](#license)
+[![GitHub Action](https://img.shields.io/github/actions/workflow/status/raviqqe/aruba-go/test.yaml?branch=main&style=flat-square)](https://github.com/raviqqe/aruba-go/actions)
+[![Go Report Card](https://goreportcard.com/badge/github.com/raviqqe/aruba-go?style=flat-square)](https://goreportcard.com/report/github.com/raviqqe/aruba-go)
+[![License](https://img.shields.io/github/license/raviqqe/aruba-go.svg?style=flat-square)](https://github.com/raviqqe/aruba-go/blob/main/LICENSE)
 
 The Go implementation of [Aruba](https://github.com/cucumber/aruba), the command-line application testing framework.
 
