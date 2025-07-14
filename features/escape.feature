@@ -73,3 +73,17 @@ Feature: Character escape
       | \\t       |
       | \\r       |
       | \\n\\t\\r |
+
+  Scenario Outline: Escape special characters copied from examples
+    Given a file named "foo.py" with:
+      """python
+      print("<value>", end="")
+      """
+    When I successfully run `python3 foo.py`
+    Then the stdout should contain exactly "<value>"
+
+    Examples:
+      | value |
+      | \\n   |
+      | \\t   |
+      | \\"   |
