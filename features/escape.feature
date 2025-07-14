@@ -87,3 +87,15 @@ Feature: Character escape
       | \\t       |
       | \\r       |
       | \\n\\t\\r |
+
+  Scenario Outline: Compar asymmetric escapes in examples
+    Given a file named "foo.py" with:
+      """python
+      print(<input>)
+      """
+    When I successfully run `python3 foo.py`
+    Then the stdout should contain exactly "<output>"
+
+    Examples:
+      | value | output    |
+      | "foo" | \\"foo\\" |
