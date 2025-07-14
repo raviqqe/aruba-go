@@ -5,17 +5,11 @@ on:
       - main
   pull_request:
 jobs:
-  clippy:
+  golangci_lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: raviqqe/rust-cache@v1
-      - run: cargo clippy -- -D warnings
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: cargo fmt -- --check
+      - uses: golangci/golangci-lint-action@v8
   spell_check:
     runs-on: ubuntu-latest
     steps:
@@ -32,8 +26,7 @@ jobs:
           fail: true
   lint:
     needs:
-      - clippy
-      - format
+      - golangci_lint
       - readme
       - spell_check
     if: always()
