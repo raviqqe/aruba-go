@@ -60,12 +60,12 @@ Feature: Character escape
     Then the stdout should contain "\\\\"
 
   Scenario Outline: Escape special characters copied from examples
-    Given a file named "foo.txt" with:
+    Given a file named "foo.py" with:
+      """python
+      print("{!r}".format("<value>"))
       """
-      <value>
-      """
-    When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "<value>"
+    When I successfully run `python3 foo.py`
+    Then the stdout should contain exactly "'<value>'"
 
     Examples:
       | value     |
