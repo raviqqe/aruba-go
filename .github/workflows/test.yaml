@@ -9,20 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: raviqqe/cargo-cache@v1
-      - run: cargo build
+      - run: go build
   unit_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: raviqqe/cargo-cache@v1
-      - run: cargo test
+      - run: go test
   integration_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: raviqqe/cargo-cache@v1
-      - run: cargo run
+      - run: go run .
   integration_test_test:
     runs-on: ubuntu-latest
     steps:
