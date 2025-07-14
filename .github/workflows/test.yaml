@@ -37,6 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
       - run: go install .
       - run: bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
