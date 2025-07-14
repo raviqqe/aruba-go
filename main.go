@@ -29,7 +29,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return context.WithValue(ctx, "directory", d), err
 }
 
-func createFile(ctx context.Context, p, _ string, docString *godog.DocString) error {
+func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(path.Join(ctx.Value("directory").(string), p), []byte(docString.Content), 0o644)
 }
 
@@ -64,7 +64,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 }
 
-func stdout(ctx context.Context, stdout, _, not, exactly, expected string) error {
+func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	s := strings.TrimSpace(string(ctx.Value(stdout).([]byte)))
 	expected = strings.TrimSpace(expected)
 
@@ -79,10 +79,10 @@ func stdout(ctx context.Context, stdout, _, not, exactly, expected string) error
 
 func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Before(before)
-	scenario.Step(`^a file named "((\\\\|\\"|[^"\\])+)" with:$`, createFile)
+	scenario.Step(`^a file named "((?:\\\\|\\"|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I (successfully |)run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should (not |)be (\d+)$`, exitStatus)
-	scenario.Step(`^the (std(out|err)) should (not |)contain (exactly |)"((\\\\|\\"|[^"\\])+)"$`, stdout)
+	scenario.Step(`^the (std(?:out|err)) should (not |)contain (exactly |)"((\\\\|\\"|[^"\\])+)"$`, stdout)
 }
 
 func main() {
