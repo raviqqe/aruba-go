@@ -32,6 +32,8 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step("^I (successfully |)run `(.*)`$", func(ctx context.Context, successfully, command string) (context.Context, error) {
 		ss := strings.Split(command, " ")
 		c := exec.Command(ss[0], ss[1:]...)
+		c.Dir = ctx.Value("directory").(string)
+
 		err := c.Run()
 		ctx = context.WithValue(ctx, "exitCode", c.ProcessState.ExitCode())
 
