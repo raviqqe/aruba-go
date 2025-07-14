@@ -28,7 +28,7 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 		return context.WithValue(ctx, "directory", d), err
 	})
 
-	scenario.Step(`^a file named "()" with:$`, func() {})
+	scenario.Step(`^a file named "(\\\\|\\"|[^"\\])" with:$`, func() {})
 
 	scenario.Step("^I (successfully |)run `(.*)`$", func(ctx context.Context, successfully, command string) (context.Context, error) {
 		ss := strings.Split(command, " ")
