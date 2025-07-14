@@ -8,24 +8,24 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var opts = godog.Options{
+var options = godog.Options{
 	Output: colors.Colored(os.Stdout),
 	Format: "progress",
 }
 
 func init() {
-	godog.BindCommandLineFlags("godog.", &opts)
+	godog.BindCommandLineFlags("", &options)
 }
 
 func main() {
 	pflag.Parse()
-	opts.Paths = pflag.Args()
+	options.Paths = pflag.Args()
 
 	status := godog.TestSuite{
 		Name:                 "godog",
 		TestSuiteInitializer: func(*godog.TestSuiteContext) {},
 		ScenarioInitializer:  func(*godog.ScenarioContext) {},
-		Options:              &opts,
+		Options:              &options,
 	}.Run()
 
 	os.Exit(status)
