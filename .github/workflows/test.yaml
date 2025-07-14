@@ -33,11 +33,11 @@ jobs:
       fail-fast: false
       matrix:
         dependent:
+          - directory: schemat
+            build: cargo install --path .
           - directory: stak
             build: cargo install stak && cargo install --path root
             environment: STAK_ROOT=$PWD
-          - directory: schemat
-            build: cargo install --path .
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
