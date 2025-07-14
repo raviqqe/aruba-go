@@ -75,13 +75,21 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
-	s := strings.TrimSpace(string(ctx.Value(stdout).([]byte)))
+	s := string(ctx.Value(stdout).([]byte))
 	expected = strings.TrimSpace(expected)
+	expected, err := unquote(expected)
+	if err != nil {
+		return err
+	}
 
 	if exactly == "" && !strings.Contains(s, expected) {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
-	} else if exactly != "" && s != expected {
-		return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
+	} else if exactly != "" {
+		s := strings.TrimSpace(s)
+
+		if s != expected {
+			return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
+		}
 	}
 
 	return nil
