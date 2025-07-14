@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -30,8 +29,17 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
-func unquote(s string) (string, error) {
-	return strconv.Unquote(`"` + s + `"`)
+var normalUnquotePattern = regexp.MustCompile(`\\(\\|"|n)`)
+
+func unquote(s string) string {
+	return normalUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
+		switch s {
+		case "\\n":
+			return "\n"
+		default:
+			return s[1:]
+		}
+	})
 }
 
 var docStringPattern = regexp.MustCompile(`\\(\\|")`)
@@ -55,15 +63,8 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
-	command, err := unquote(command)
-	if err != nil {
-		return ctx, err
-	}
 	// TODO Unquote only once?
-	command, err = unquote(command)
-	if err != nil {
-		return ctx, err
-	}
+	command = unquote(unquote(command))
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -73,7 +74,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
 
-	err = c.Run()
+	err := c.Run()
 	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
 	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
 	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
@@ -103,11 +104,7 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	}
 
 	s := string(ctx.Value(key).([]byte))
-	expected = strings.TrimSpace(expected)
-	expected, err := unquote(expected)
-	if err != nil {
-		return err
-	}
+	expected = unquote(strings.TrimSpace(expected))
 
 	if exactly == "" && !strings.Contains(s, expected) {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
