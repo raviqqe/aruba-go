@@ -44,6 +44,8 @@ jobs:
           submodules: true
       - uses: ruby/setup-ruby@v1
       - run: go install .
+      - run: ${{ matrix.dependent.build }}
+        working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: aruba-go
