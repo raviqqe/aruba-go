@@ -59,7 +59,7 @@ Feature: Character escape
     When I successfully run `python3 foo.py`
     Then the stdout should contain "\\\\"
 
-  Scenario Outline: Escape special characters copied from examples
+  Scenario Outline: Escape special characters in examples
     Given a file named "foo.py" with:
       """python
       print("{!r}".format("<value>"))
@@ -74,7 +74,7 @@ Feature: Character escape
       | \\r       |
       | \\n\\t\\r |
 
-  Scenario Outline: Escape special characters copied from examples
+  Scenario Outline: Compare special characters in examples
     Given a file named "foo.py" with:
       """python
       print("<value>", end="")
