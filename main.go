@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
+	"runtime"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -145,6 +146,7 @@ func initializeScenario(scenario *godog.ScenarioContext) {
 func main() {
 	pflag.Parse()
 	options.Paths = pflag.Args()
+	options.Concurrency = runtime.NumCPU()
 
 	status := godog.TestSuite{
 		Name:                "aruba",
