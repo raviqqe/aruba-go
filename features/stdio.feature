@@ -14,3 +14,11 @@ Feature: Standard I/O
   Scenario: Check stdout with a blank character
     When I successfully run `echo foo`
     Then the stdout should contain "\n"
+
+  Scenario: Check stdout to contain nothing
+    When I successfully run `echo foo`
+    Then the stdout should contain ""
+
+  Scenario: Check stdout to contain exactly nothing
+    When I successfully run `echo`
+    Then the stdout should contain exactly ""
