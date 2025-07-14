@@ -64,7 +64,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 }
 
-func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
+func stdout(ctx context.Context, stdout, _, not, exactly, expected string) error {
 	s := strings.TrimSpace(string(ctx.Value(stdout).([]byte)))
 	expected = strings.TrimSpace(expected)
 
