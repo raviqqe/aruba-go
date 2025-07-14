@@ -91,7 +91,7 @@ Feature: Character escape
   Scenario Outline: Compar asymmetric escapes in examples
     Given a file named "foo.py" with:
       """python
-      print(<input>)
+      print("{!r}".format(<input>).replace("'", '"'))
       """
     When I successfully run `python3 foo.py`
     Then the stdout should contain exactly "<output>"
