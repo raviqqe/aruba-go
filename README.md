@@ -18,7 +18,7 @@ go install github.com/raviqqe/aruba-go@latest
 aruba
 ```
 
-For more information, see `boca --help`.
+For more information, see `aruba --help`.
 
 ## License
 
