@@ -28,6 +28,20 @@ jobs:
         with:
           bundler-cache: true
       - run: bundler exec cucumber --publish-quiet --strict
+  dependent_test:
+    strategy:
+      fail-fast: false
+      matrix:
+        directory:
+          - stak
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: go install .
+      - run: bundler exec cucumber
+        working-directory: dependents/${{ matrix.directory }}
+      - run: aruba-go
+        working-directory: dependents/${{ matrix.directory }}
   test:
     needs:
       - build
