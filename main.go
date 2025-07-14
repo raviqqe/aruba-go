@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"os"
@@ -36,9 +37,15 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
 	c.Dir = ctx.Value("directory").(string)
+	stdout := bytes.NewBuffer(nil)
+	c.Stdout = stdout
+	stderr := bytes.NewBuffer(nil)
+	c.Stderr = stderr
 
 	err := c.Run()
 	ctx = context.WithValue(ctx, "exitCode", c.ProcessState.ExitCode())
+	ctx = context.WithValue(ctx, "stdout", stdout.Bytes())
+	ctx = context.WithValue(ctx, "stderr", stderr.Bytes())
 
 	if successfully == "" {
 		return ctx, nil
@@ -57,11 +64,25 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 }
 
+func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
+	s := strings.TrimSpace(string(ctx.Value(stdout).([]byte)))
+	expected = strings.TrimSpace(expected)
+
+	if exactly == "" && !strings.Contains(s, expected) {
+		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
+	} else if exactly != "" && s != expected {
+		return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
+	}
+
+	return nil
+}
+
 func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Before(before)
 	scenario.Step(`^a file named "((\\\\|\\"|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I (successfully |)run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should (not |)be (\d+)$`, exitStatus)
+	scenario.Step(`^the (std(out|err)) should (not |)contain (exactly |)"((\\\\|\\"|[^"\\])+)"$`, stdout)
 }
 
 func main() {
