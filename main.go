@@ -141,7 +141,7 @@ func initializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I (successfully |)run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should (not |)be (\d+)$`, exitStatus)
-	scenario.Step(`^the (std(?:out|err)) should (not |)contain (exactly |)"((?:\\.|[^"\\])+)"$`, stdout)
+	scenario.Step(`^the (std(?:out|err)) should (not |)contain (exactly |)"((?:\\.|[^"\\])*)"$`, stdout)
 }
 
 func main() {
