@@ -1,3 +1,14 @@
 {
-  "words": ["goreleaser", "memchr", "memmem", "raviqqe", "yota"]
+  "words": [
+    "godog",
+    "golangci",
+    "gomod",
+    "goreleaser",
+    "lycheeverse",
+    "memchr",
+    "memmem",
+    "pflag",
+    "raviqqe",
+    "yota"
+  ]
 }
