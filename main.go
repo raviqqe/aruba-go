@@ -37,7 +37,7 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 		return ctx, err
 	})
 
-	scenario.Step(`^the exit status should (not |) be (\d+)$`, func(ctx context.Context, not string, code int) error {
+	scenario.Step(`^the exit status should (not |)be (\d+)$`, func(ctx context.Context, not string, code int) error {
 		c := ctx.Value("exitCode").(int)
 
 		if not == "" && c == code {
