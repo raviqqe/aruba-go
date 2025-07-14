@@ -29,6 +29,11 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
+func quote(s string) string {
+	s = strings.ReplaceAll(s, "\n", "\\n")
+	return s
+}
+
 var normalUnquotePattern = regexp.MustCompile(`\\(\\|"|n)`)
 
 func unquote(s string) string {
@@ -44,7 +49,7 @@ func unquote(s string) string {
 
 var docStringPattern = regexp.MustCompile(`\\(\\|")`)
 
-func unquoteDocString(s string) string {
+func unquoteSimple(s string) string {
 	return docStringPattern.ReplaceAllString(s, `$1`)
 }
 
@@ -57,7 +62,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(unquoteDocString(docString.Content)),
+		[]byte(unquoteSimple(docString.Content)),
 		0o644,
 	)
 }
@@ -104,12 +109,12 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	}
 
 	s := string(ctx.Value(key).([]byte))
-	expected = unquote(strings.TrimSpace(expected))
+	expected = unquoteSimple(strings.TrimSpace(expected))
 
-	if exactly == "" && !strings.Contains(s, expected) {
+	if exactly == "" && !strings.Contains(quote(s), expected) {
 		return fmt.Errorf("expected %s to contain %q but got %q", stdout, expected, s)
 	} else if exactly != "" {
-		s := strings.TrimSpace(s)
+		s := quote(strings.TrimSpace(s))
 
 		if s != expected {
 			return fmt.Errorf("expected %s to be %q but got %q", stdout, expected, s)
