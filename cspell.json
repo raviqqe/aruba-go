@@ -5,6 +5,7 @@
     "goreleaser",
     "memchr",
     "memmem",
+    "pflag",
     "raviqqe",
     "yota"
   ]
