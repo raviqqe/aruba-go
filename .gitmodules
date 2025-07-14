@@ -1,0 +1,3 @@
+[submodule "dependents/stak"]
+	path = dependents/stak
+	url = https://github.com/raviqqe/stak
