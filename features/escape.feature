@@ -33,7 +33,7 @@ Feature: Character escape
       print("<value>")
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain "<value>"
+    Then the stdout should contain exactly "<value>"
 
     Examples:
       | value     |
