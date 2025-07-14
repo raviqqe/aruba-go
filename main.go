@@ -29,10 +29,14 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
+var doubleQuotePattern = regexp.MustCompile(`"([^\\])"`)
+var headDoubleQuotePattern = regexp.MustCompile(`^"`)
+
 func quote(s string) string {
 	s = strings.ReplaceAll(s, "\n", "\\n")
 	s = strings.ReplaceAll(s, "\t", "\\t")
-	s = strings.ReplaceAll(s, "\"", "\\\"")
+	s = doubleQuotePattern.ReplaceAllString(s, `$1\"`)
+	s = headDoubleQuotePattern.ReplaceAllString(s, `\"`)
 
 	return s
 }
