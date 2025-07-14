@@ -22,8 +22,9 @@ type stdoutKey struct{}
 type stderrKey struct{}
 
 var options = godog.Options{
-	Output: colors.Colored(os.Stdout),
-	Format: "pretty",
+	Concurrency: runtime.NumCPU(),
+	Output:      colors.Colored(os.Stdout),
+	Format:      "pretty",
 }
 
 func init() {
@@ -146,7 +147,6 @@ func initializeScenario(scenario *godog.ScenarioContext) {
 func main() {
 	pflag.Parse()
 	options.Paths = pflag.Args()
-	options.Concurrency = runtime.NumCPU()
 
 	status := godog.TestSuite{
 		Name:                "aruba",
