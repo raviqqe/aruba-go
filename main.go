@@ -122,15 +122,8 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
 		return fmt.Errorf("expected %s %sto contain %q but got %q", stdout, not, expected, s)
-	} else if exactly != "" {
-		if t := strings.TrimSpace(s); t != "" {
-			s = t
-		}
-		s := quote(s)
-
-		if (s == expected) != (not == "") {
-			return fmt.Errorf("expected %s %sto be %q but got %q", stdout, not, expected, s)
-		}
+	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
+		return fmt.Errorf("expected %s %sto be %q but got %q", stdout, not, expected, s)
 	}
 
 	return nil
