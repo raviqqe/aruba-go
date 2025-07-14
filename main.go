@@ -147,7 +147,7 @@ func main() {
 	options.Paths = pflag.Args()
 
 	status := godog.TestSuite{
-		Name:                "godog",
+		Name:                "aruba",
 		ScenarioInitializer: initializeScenario,
 		Options:             &options,
 	}.Run()
