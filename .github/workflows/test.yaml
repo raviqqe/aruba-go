@@ -35,6 +35,7 @@ jobs:
         dependent:
           - directory: stak
             build: cargo install stak && cargo install --path root
+            environment: STAK_ROOT=$PWD
           - directory: schemat
             build: cargo install --path .
     runs-on: ubuntu-latest
@@ -50,9 +51,9 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: bundler exec cucumber
+      - run: ${{ matrix.dependent.environment }} bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: aruba-go
+      - run: ${{ matrix.dependent.environment }} aruba-go
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
