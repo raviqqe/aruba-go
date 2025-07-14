@@ -58,3 +58,18 @@ Feature: Character escape
       """
     When I successfully run `python3 foo.py`
     Then the stdout should contain "\\\\"
+
+  Scenario Outline: Escape a normal character
+    Given a file named "foo.txt" with:
+      """
+      <value>
+      """
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly "<value>"
+
+    Examples:
+      | value     |
+      | \\n       |
+      | \\t       |
+      | \\r       |
+      | \\n\\t\\r |
