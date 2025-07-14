@@ -29,7 +29,7 @@ func init() {
 	godog.BindCommandLineFlags("", &options)
 }
 
-var doubleQuotePattern = regexp.MustCompile(`"([^\\])"`)
+var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
 
 func quote(s string) string {
