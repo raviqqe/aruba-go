@@ -29,8 +29,8 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return context.WithValue(ctx, "directory", d), err
 }
 
-func createFile(ctx context.Context, p string) error {
-	return os.WriteFile(path.Join(ctx.Value("directory").(string), p), nil, 0o644)
+func createFile(ctx context.Context, p, _ string, docString *godog.DocString) error {
+	return os.WriteFile(path.Join(ctx.Value("directory").(string), p), []byte(docString.Content), 0o644)
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
