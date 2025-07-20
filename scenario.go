@@ -30,23 +30,10 @@ func quote(s string) string {
 	return s
 }
 
-var normalUnquotePattern = regexp.MustCompile(`\\(\\|"|n)`)
+var unquotePattern = regexp.MustCompile(`\\(\\)`)
 
 func unquote(s string) string {
-	return normalUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
-		switch s {
-		case "\\n":
-			return "\n"
-		default:
-			return s[1:]
-		}
-	})
-}
-
-var simpleUnquotePattern = regexp.MustCompile(`\\(\\)`)
-
-func unquoteSimple(s string) string {
-	return simpleUnquotePattern.ReplaceAllString(s, `$1`)
+	return unquotePattern.ReplaceAllString(s, `$1`)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -58,14 +45,14 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(unquoteSimple(docString.Content)),
+		[]byte(unquote(docString.Content)),
 		0o644,
 	)
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
 	// TODO Unquote only once?
-	command = unquoteSimple(unquoteSimple(command))
+	command = unquote(unquote(command))
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -119,7 +106,7 @@ func fileContains(ctx context.Context, p, not, pattern string) error {
 		return err
 	}
 
-	pattern = unquoteSimple(strings.TrimSpace(pattern))
+	pattern = unquote(strings.TrimSpace(pattern))
 
 	if strings.Contains(string(bs), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
@@ -136,7 +123,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
 		func(ctx context.Context, port, not, exactly, pattern string) error {
-			return stdout(ctx, port, not, exactly, unquoteSimple(strings.TrimSpace(pattern)))
+			return stdout(ctx, port, not, exactly, unquote(strings.TrimSpace(pattern)))
 		},
 	)
 	ctx.Step(
