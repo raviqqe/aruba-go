@@ -23,7 +23,8 @@ Feature: Character escape
       a\"b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should not contain "a\\\"b"
+    Then the stdout should contain "a\\\"b"
+    And the stdout should not contain "a\"b"
 
   Scenario Outline: Escape a normal character
     Given a file named "foo.txt" with:
