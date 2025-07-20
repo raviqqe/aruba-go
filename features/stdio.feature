@@ -44,28 +44,28 @@ Feature: Standard I/O
 
   Rule: Containing doc-strings
 
-    Scenario: Check stdout to contain a multi-line string
+    Scenario: Check stdout to contain a string
       When I successfully run `echo foo`
       Then the stdout should contain:
         """
         foo
         """
 
-    Scenario: Check stdout to contain exactly a multi-line string
+    Scenario: Check stdout to contain an exact string
       When I successfully run `echo foo`
       Then the stdout should contain exactly:
         """
         foo
         """
 
-    Scenario: Check stdout not to contain a multi-line string
+    Scenario: Check stdout not to contain a string
       When I successfully run `echo foo`
       Then the stdout should not contain:
         """
         bar
         """
 
-    Scenario: Check stdout not to contain exactly a multi-line string
+    Scenario: Check stdout not to contain an exact string
       When I successfully run `echo foo`
       Then the stdout should not contain exactly:
         """
