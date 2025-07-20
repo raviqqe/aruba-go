@@ -22,17 +22,36 @@ Feature: File
       """
     Then a file named "foo.txt" should contain "foo"
 
-  Scenario: Check a file not to contain a string
-    When a file named "foo.txt" with:
-      """foo
-      foo
-      """
-    Then a file named "foo.txt" should not contain "bar"
+  Rule: Contain strings
 
-  Scenario: Check a file not to contain a string with a newline
-    When a file named "foo.txt" with:
-      """foo
-      a
-      b
-      """
-    Then a file named "foo.txt" should not contain "a\\nb"
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        foo
+        """
+      Then a file named "foo.txt" should not contain "bar"
+
+    Scenario: Check a file not to contain a string with a newline
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should not contain "a\\nb"
+
+  Rule: Contain doc-strings
+
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        foo
+        """
+      Then a file named "foo.txt" should not contain "bar"
+
+    Scenario: Check a file not to contain a string with a newline
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should not contain "a\\nb"
