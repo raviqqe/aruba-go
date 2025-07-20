@@ -32,7 +32,7 @@ Feature: Standard I/O
 
     Scenario: Check stdout to contain an exact string
       When I run `echo foo`
-      Then the stdout should contain exactly "bar"
+      Then the stdout should contain exactly "foo"
 
     Scenario: Check stdout not to contain a string
       When I run `echo foo`
