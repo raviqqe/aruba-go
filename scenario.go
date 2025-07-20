@@ -110,7 +110,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 		return err
 	}
 
-	s := string(bs)
+	s := strings.TrimRight(string(bs), "\n")
 	ok := strings.Contains(s, pattern)
 
 	if exactly != "" {

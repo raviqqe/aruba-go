@@ -67,6 +67,29 @@ Feature: File
         b
         """
 
+    Scenario: Check a file to contain an exact string with trailing spaces
+      When a file named "foo.txt" with:
+        """foo
+        a
+
+        """
+      Then a file named "foo.txt" should contain exactly:
+        """
+        a
+        """
+
+    Scenario: Check a file not to contain an exact string with surrounding spaces
+      When a file named "foo.txt" with:
+        """foo
+
+        a
+
+        """
+      Then a file named "foo.txt" should not contain exactly:
+        """
+        a
+        """
+
     Scenario: Check a file not to contain a string
       When a file named "foo.txt" with:
         """foo
