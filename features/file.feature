@@ -1,4 +1,5 @@
 Feature: File
+
   Scenario: Create a file
     Given a file named "foo.txt" with:
       """
@@ -13,3 +14,17 @@ Feature: File
       """
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
+
+  Scenario: Check if a file contains a content
+    When a file named "foo.txt" with:
+      """foo
+      foo
+      """
+    Then a file named "foo.txt" should contain "foo"
+
+  Scenario: Check if a file contains a content
+    When a file named "foo.txt" with:
+      """foo
+      foo
+      """
+    Then a file named "foo.txt" should contain exactly "foo"
