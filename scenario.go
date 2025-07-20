@@ -97,9 +97,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 }
 
-func stdout(
-	ctx context.Context, stdout, not, exactly, expected string, docString *godog.DocString,
-) error {
+func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	key := any(stdoutKey{})
 
 	if stdout == "stderr" {
@@ -107,11 +105,6 @@ func stdout(
 	}
 
 	s := string(ctx.Value(key).([]byte))
-
-	if docString != nil {
-		expected = docString.Content
-	}
-
 	expected = unquoteSimple(strings.TrimSpace(expected))
 
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
@@ -131,13 +124,13 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(
 		`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`,
 		func(ctx context.Context, port, not, exactly, expected string) error {
-			return stdout(ctx, port, not, exactly, expected, nil)
+			return stdout(ctx, port, not, exactly, expected)
 		},
 	)
 	scenario.Step(
 		`^the (std(?:out|err)) should( not|) contain( exactly|):$`,
 		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, not, exactly, "", docString)
+			return stdout(ctx, port, not, exactly, docString.Content)
 		},
 	)
 }
