@@ -21,13 +21,14 @@ type stderrKey struct{}
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
 
-var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|t)`)
+var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|t|")`)
 
 func unquoteString(s string) string {
 	return stringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
 		return map[string]string{
 			"n":  "\n",
 			"t":  "\t",
+			"\"": "\"",
 			"\\": "\\",
 		}[s[1:]]
 	})
