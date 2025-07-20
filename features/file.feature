@@ -28,3 +28,11 @@ Feature: File
       foo
       """
     Then a file named "foo.txt" should not contain "bar"
+
+  Scenario: Check a file not to contain a string with a newline
+    When a file named "foo.txt" with:
+      """foo
+      a
+      b
+      """
+    Then a file named "foo.txt" should not contain "a\\nb"
