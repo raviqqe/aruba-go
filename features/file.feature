@@ -15,14 +15,14 @@ Feature: File
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
 
-  Scenario: Check a file to contain a string
-    When a file named "foo.txt" with:
-      """foo
-      foo
-      """
-    Then a file named "foo.txt" should contain "foo"
-
   Rule: Contain strings
+
+    Scenario: Check a file to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        foo
+        """
+      Then a file named "foo.txt" should contain "foo"
 
     Scenario: Check a file not to contain a string
       When a file named "foo.txt" with:
@@ -41,21 +41,26 @@ Feature: File
 
   Rule: Contain doc-strings
 
-    Scenario: Check a file not to contain a string
+    Scenario: Check a file to contain a string
       When a file named "foo.txt" with:
         """foo
-        foo
+        a
+        b
         """
-      Then a file named "foo.txt" should not contain "bar"
+      Then a file named "foo.txt" should contain:
+        """
+        a
+        b
+        """
 
-    Scenario: Check a file not to contain a string with a newline
+    Scenario: Check a file not to contain a string
       When a file named "foo.txt" with:
         """foo
         a
         b
         """
       Then a file named "foo.txt" should not contain:
-        """foo
+        """
         a
-        b
+        c
         """
