@@ -119,16 +119,16 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Before(before)
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
-	scenario.Step("^I( successfully|) run `(.*)`$", runCommand)
-	scenario.Step(`^the exit status should( not|) be (\d+)$`, exitStatus)
+	scenario.Step("^I( successfully)? run `(.*)`$", runCommand)
+	scenario.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	scenario.Step(
-		`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`,
+		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
 		func(ctx context.Context, port, not, exactly, expected string) error {
 			return stdout(ctx, port, not, exactly, unquoteSimple(strings.TrimSpace(expected)))
 		},
 	)
 	scenario.Step(
-		`^the (std(?:out|err)) should( not|) contain( exactly|):$`,
+		`^the (std(?:out|err)) should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
 			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
 		},
