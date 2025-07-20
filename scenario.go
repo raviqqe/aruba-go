@@ -105,12 +105,12 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	}
 
 	s := string(ctx.Value(key).([]byte))
-	expected = unquoteSimple(strings.TrimSpace(expected))
 
+	fmt.Printf("Checking %s%s for %q in %q\n", stdout, not, expected, s)
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
-		return fmt.Errorf("expected %s %sto contain %q but got %q", stdout, not, expected, s)
+		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, expected, s)
 	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
-		return fmt.Errorf("expected %s %sto be %q but got %q", stdout, not, expected, s)
+		return fmt.Errorf("expected %s%s to be %q but got %q", stdout, not, expected, s)
 	}
 
 	return nil
@@ -121,5 +121,16 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I( successfully|) run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should( not|) be (\d+)$`, exitStatus)
-	scenario.Step(`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`, stdout)
+	scenario.Step(
+		`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`,
+		func(ctx context.Context, port, not, exactly, expected string) error {
+			return stdout(ctx, port, not, exactly, unquoteSimple(strings.TrimSpace(expected)))
+		},
+	)
+	scenario.Step(
+		`^the (std(?:out|err)) should( not|) contain( exactly|):$`,
+		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
+			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
+		},
+	)
 }
