@@ -15,14 +15,14 @@ Feature: File
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
 
-  Scenario: Check if a file contains a content
+  Scenario: Check a file to contain a string
     When a file named "foo.txt" with:
       """foo
       foo
       """
     Then a file named "foo.txt" should contain "foo"
 
-  Scenario: Check if a file contains a content
+  Scenario: Check a file not to contain a string
     When a file named "foo.txt" with:
       """foo
       foo
