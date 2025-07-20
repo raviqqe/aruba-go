@@ -89,13 +89,13 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 
 func exitStatus(ctx context.Context, not string, code int) error {
 	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
-		return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
+		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
 	}
 
 	return nil
 }
 
-func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
+func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	key := any(stdoutKey{})
 
 	if stdout == "stderr" {
@@ -104,30 +104,47 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 
 	s := string(ctx.Value(key).([]byte))
 
-	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
-		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, expected, s)
-	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
-		return fmt.Errorf("expected %s%s to be %q but got %q", stdout, not, expected, s)
+	if exactly == "" && strings.Contains(quote(s), pattern) != (not == "") {
+		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, pattern, s)
+	} else if exactly != "" && (quote(s) == pattern || quote(strings.TrimSpace(s)) == pattern) != (not == "") {
+		return fmt.Errorf("expected %s%s to be %q but got %q", stdout, not, pattern, s)
 	}
 
 	return nil
 }
 
-func InitializeScenario(scenario *godog.ScenarioContext) {
-	scenario.Before(before)
-	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
-	scenario.Step("^I( successfully)? run `(.*)`$", runCommand)
-	scenario.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
-	scenario.Step(
+func fileContains(ctx context.Context, p, not, pattern string) error {
+	bs, err := os.ReadFile(path.Join(ctx.Value(directoryKey{}).(string), p))
+	if err != nil {
+		return err
+	}
+
+	pattern = unquoteSimple(strings.TrimSpace(pattern))
+
+	if strings.Contains(string(bs), pattern) != (not == "") {
+		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
+	}
+
+	return nil
+}
+
+func InitializeScenario(ctx *godog.ScenarioContext) {
+	ctx.Before(before)
+	ctx.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
+	ctx.Step("^I( successfully)? run `(.*)`$", runCommand)
+	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
+	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
-		func(ctx context.Context, port, not, exactly, expected string) error {
-			return stdout(ctx, port, not, exactly, unquoteSimple(strings.TrimSpace(expected)))
+		func(ctx context.Context, port, not, exactly, pattern string) error {
+			return stdout(ctx, port, not, exactly, unquoteSimple(strings.TrimSpace(pattern)))
 		},
 	)
-	scenario.Step(
+	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
 			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
 		},
 	)
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, fileContains)
+
 }
