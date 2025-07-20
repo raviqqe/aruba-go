@@ -10,11 +10,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-type directoryKey struct{}
-type exitCodeKey struct{}
-type stdoutKey struct{}
-type stderrKey struct{}
-
 var options = godog.Options{
 	Concurrency: runtime.NumCPU(),
 	Output:      colors.Colored(os.Stdout),
