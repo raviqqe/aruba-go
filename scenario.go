@@ -21,23 +21,30 @@ type stderrKey struct{}
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
 
-func quote(s string) string {
-	s = strings.ReplaceAll(s, "\n", "\\n")
-	s = strings.ReplaceAll(s, "\t", "\\t")
-	s = doubleQuotePattern.ReplaceAllString(s, `$1\"`)
-	s = headDoubleQuotePattern.ReplaceAllString(s, `\"`)
+var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|t)`)
 
-	return s
+func unquoteString(s string) string {
+	return stringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
+		return map[string]string{
+			"n":  "\n",
+			"t":  "\t",
+			"\\": "\\",
+		}[s[1:]]
+	})
 }
 
-var unquotePattern = regexp.MustCompile(`\\(\\)`)
+var docStringUnquotePattern = regexp.MustCompile(`\\(\\)`)
 
-func unquote(s string) string {
-	return unquotePattern.ReplaceAllString(s, `$1`)
+func unquoteDocString(s string) string {
+	return docStringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
+		return map[string]string{
+			"\\": "\\",
+		}[s[1:]]
+	})
 }
 
 func parseString(s string) string {
-	return unquote(strings.TrimSpace(s))
+	return unquoteString(strings.TrimSpace(s))
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -49,14 +56,14 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(unquote(docString.Content)),
+		[]byte(unquoteDocString(docString.Content)),
 		0o644,
 	)
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
 	// TODO Unquote only once?
-	command = unquote(parseString(command))
+	command = unquoteString(parseString(command))
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -95,9 +102,9 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 
 	s := string(ctx.Value(key).([]byte))
 
-	if exactly == "" && strings.Contains(quote(s), pattern) != (not == "") {
+	if exactly == "" && strings.Contains(s, pattern) != (not == "") {
 		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, pattern, s)
-	} else if exactly != "" && (quote(s) == pattern || quote(strings.TrimSpace(s)) == pattern) != (not == "") {
+	} else if exactly != "" && (s == pattern || (strings.TrimSpace(s)) == pattern) != (not == "") {
 		return fmt.Errorf("expected %s%s to be %q but got %q", stdout, not, pattern, s)
 	}
 
@@ -138,7 +145,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
+			return stdout(ctx, port, not, exactly, strings.TrimSpace(docString.Content))
 		},
 	)
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
