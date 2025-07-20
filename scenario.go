@@ -1,4 +1,4 @@
-package main
+package aruba
 
 import (
 	"bytes"
@@ -8,28 +8,15 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/cucumber/godog"
-	"github.com/cucumber/godog/colors"
-	"github.com/spf13/pflag"
 )
 
 type directoryKey struct{}
 type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
-
-var options = godog.Options{
-	Concurrency: runtime.NumCPU(),
-	Output:      colors.Colored(os.Stdout),
-	Format:      "pretty",
-}
-
-func init() {
-	godog.BindCommandLineFlags("", &options)
-}
 
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
@@ -129,23 +116,10 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	return nil
 }
 
-func initializeScenario(scenario *godog.ScenarioContext) {
+func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Before(before)
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I (successfully |)run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should (not |)be (\d+)$`, exitStatus)
 	scenario.Step(`^the (std(?:out|err)) should (not |)contain (exactly |)"((?:\\.|[^"\\])*)"$`, stdout)
-}
-
-func main() {
-	pflag.Parse()
-	options.Paths = pflag.Args()
-
-	status := godog.TestSuite{
-		Name:                "aruba",
-		ScenarioInitializer: initializeScenario,
-		Options:             &options,
-	}.Run()
-
-	os.Exit(status)
 }

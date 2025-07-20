@@ -8,17 +8,25 @@ The Go implementation of [Aruba](https://github.com/cucumber/aruba), the command
 
 ## Install
 
+To install a standalone `aruba` command, run:
+
 ```sh
-go install github.com/raviqqe/aruba-go@latest
+go install github.com/raviqqe/aruba-go/cmd/aruba@latest
+```
+
+To install it as a library, run:
+
+```sh
+go get github.com/raviqqe/aruba-go@latest
 ```
 
 ## Usage
 
 ```sh
-aruba-go
+aruba
 ```
 
-For more information, see `aruba-go --help`.
+For more information, see `aruba --help`.
 
 ## License
 
