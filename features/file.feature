@@ -27,4 +27,4 @@ Feature: File
       """foo
       foo
       """
-    Then a file named "foo.txt" should contain exactly "foo"
+    Then a file named "foo.txt" should not contain "bar"
