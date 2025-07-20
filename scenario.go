@@ -121,7 +121,7 @@ func fileContains(ctx context.Context, p, not, pattern string) error {
 
 	pattern = unquoteSimple(strings.TrimSpace(pattern))
 
-	if !strings.Contains(string(bs), pattern) {
+	if strings.Contains(string(bs), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
 	}
 
