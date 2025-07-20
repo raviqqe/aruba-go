@@ -1,8 +1,8 @@
 Feature: Standard I/O
 
   Scenario: Check stdout
-    When I run `echo foo bar baz`
-    Then the stdout should contain "bar"
+    When I run `echo foo bar`
+    Then the stdout should contain "foo"
 
   Scenario: Check exact stdout
     When I run `echo foo`
@@ -24,6 +24,24 @@ Feature: Standard I/O
     When I successfully run `echo`
     Then the stdout should contain exactly ""
 
+  Rule: Containing strings
+
+    Scenario: Check stdout to contain a string
+      When I run `echo foo bar`
+      Then the stdout should contain "foo"
+
+    Scenario: Check stdout to contain an exact string
+      When I run `echo foo`
+      Then the stdout should contain exactly "bar"
+
+    Scenario: Check stdout not to contain a string
+      When I run `echo foo`
+      Then the stdout should not contain "bar"
+
+    Scenario: Check stdout not to contain an exact string
+      When I run `echo foo`
+      Then the stdout should contain exactly "bar"
+
   Rule: Containing doc-strings
 
     Scenario: Check stdout to contain a multi-line string
@@ -40,14 +58,14 @@ Feature: Standard I/O
         foo
         """
 
-    Scenario: Check stdout to contain a multi-line string
+    Scenario: Check stdout not to contain a multi-line string
       When I successfully run `echo foo`
       Then the stdout should not contain:
         """
         bar
         """
 
-    Scenario: Check stdout to contain exactly a multi-line string
+    Scenario: Check stdout not to contain exactly a multi-line string
       When I successfully run `echo foo`
       Then the stdout should not contain exactly:
         """
