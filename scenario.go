@@ -48,7 +48,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(docString.Content),
+		[]byte(parseDocString(docString.Content)),
 		0o644,
 	)
 }
