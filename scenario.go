@@ -88,13 +88,11 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := ctx.Value(exitCodeKey{}).(int)
-
-	if (not == "") == (c == code) {
-		return nil
+	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
+		return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 	}
 
-	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
+	return nil
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
@@ -106,7 +104,6 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 
 	s := string(ctx.Value(key).([]byte))
 
-	fmt.Printf("Checking %s%s for %q in %q\n", stdout, not, expected, s)
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
 		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, expected, s)
 	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
