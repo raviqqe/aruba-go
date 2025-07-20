@@ -104,7 +104,6 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 
 	s := string(ctx.Value(key).([]byte))
 
-	fmt.Printf("Checking %s%s for %q in %q\n", stdout, not, expected, s)
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
 		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, expected, s)
 	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
