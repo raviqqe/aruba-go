@@ -108,9 +108,9 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	expected = unquoteSimple(strings.TrimSpace(expected))
 
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
-		return fmt.Errorf("expected %s %sto contain %q but got %q", stdout, not, expected, s)
+		return fmt.Errorf("expected %s%s to contain %q but got %q", stdout, not, expected, s)
 	} else if exactly != "" && (quote(s) == expected || quote(strings.TrimSpace(s)) == expected) != (not == "") {
-		return fmt.Errorf("expected %s %sto be %q but got %q", stdout, not, expected, s)
+		return fmt.Errorf("expected %s%s to be %q but got %q", stdout, not, expected, s)
 	}
 
 	return nil
