@@ -19,6 +19,7 @@ type stdoutKey struct{}
 type stderrKey struct{}
 
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
+var backSlashPattern = regexp.MustCompile(`([^\\])\\`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
 
 func quote(s string) string {
@@ -110,7 +111,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 		return err
 	}
 
-	if strings.Contains(quote(string(bs)), pattern) != (not == "") {
+	if strings.Contains(string(bs), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q", p, not, pattern)
 	}
 
@@ -138,6 +139,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		return fileContains(ctx, p, not, "", parseString(pattern))
 	})
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
-		return fileContains(ctx, p, not, exactly, quote(strings.TrimSpace(docString.Content)))
+		return fileContains(ctx, p, not, exactly, strings.TrimSpace(docString.Content))
 	})
 }
