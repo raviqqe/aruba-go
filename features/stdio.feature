@@ -24,7 +24,7 @@ Feature: Standard I/O
     When I successfully run `echo`
     Then the stdout should contain exactly ""
 
-  Rule: Containing doc-string
+  Rule: Containing doc-strings
 
     Scenario: Check stdout to contain a multi-line string
       When I successfully run `echo foo`
