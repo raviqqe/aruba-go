@@ -51,6 +51,7 @@ jobs:
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
+      - run: which aruba
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.environment }} bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
