@@ -94,7 +94,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	s := string(ctx.Value(key).([]byte))
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
-		exactly != "" && (s == pattern || (strings.TrimSpace(s)) == pattern) != (not == "") {
+		exactly != "" && (s == pattern || strings.TrimSpace(s) == pattern) != (not == "") {
 		return fmt.Errorf("expected %s %q%s to contain%s %q", stdout, s, not, exactly, pattern)
 	}
 
