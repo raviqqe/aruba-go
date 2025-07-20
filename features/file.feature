@@ -46,8 +46,22 @@ Feature: File
         """foo
         a
         b
+        c
+        d
         """
       Then a file named "foo.txt" should contain:
+        """
+        b
+        c
+        """
+
+    Scenario: Check a file to contain an exact string
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should contain exactly:
         """
         a
         b
