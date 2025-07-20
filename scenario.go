@@ -65,7 +65,7 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
 	// TODO Unquote only once?
-	command = unquote(unquote(command))
+	command = unquoteSimple(unquoteSimple(command))
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
