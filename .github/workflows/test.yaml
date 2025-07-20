@@ -48,16 +48,13 @@ jobs:
           go-version: stable
       - uses: ruby/setup-ruby@v1
       - run: go install ./cmd/aruba
-      - run: echo PATH=$(go env GOPATH)/bin:$PATH >> ${{ github.env }}
-      - run: which aruba
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.environment }} bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: which aruba
-      - run: ${{ matrix.dependent.environment }} aruba
+      - run: ${{ matrix.dependent.environment }} $(go env GOPATH)/bin/aruba
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
