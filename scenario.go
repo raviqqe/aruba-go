@@ -110,8 +110,6 @@ func fileContains(ctx context.Context, p, not, pattern string) error {
 		return err
 	}
 
-	pattern = parseString(pattern)
-
 	if strings.Contains(string(bs), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
 	}
@@ -136,6 +134,11 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
 		},
 	)
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, fileContains)
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
+		return fileContains(ctx, p, not, parseString(pattern))
+	})
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not string, docString *godog.DocString) error {
+		return fileContains(ctx, p, not, quote(strings.TrimSpace(docString.Content)))
+	})
 
 }
