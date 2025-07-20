@@ -40,7 +40,7 @@ Feature: Standard I/O
 
     Scenario: Check stdout not to contain an exact string
       When I run `echo foo`
-      Then the stdout should contain exactly "bar"
+      Then the stdout should not contain exactly "bar"
 
   Rule: Containing doc-strings
 
