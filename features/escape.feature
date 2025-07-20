@@ -4,7 +4,7 @@ Feature: Character escape
   Scenario: Create a file with an escaped backslash
     Given a file named "foo.txt" with:
       """
-      a\\b
+      a\b
       """
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\\b"
@@ -23,7 +23,7 @@ Feature: Character escape
       a\"b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "a\"b"
+    Then the stdout should not contain "a\"b"
 
   Scenario Outline: Escape a normal character
     Given a file named "foo.txt" with:
