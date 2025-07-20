@@ -67,8 +67,7 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
-	// TODO Unquote only once?
-	command = unquoteString(parseString(command))
+	command = parseString(command)
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -122,7 +121,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 		return err
 	}
 
-	s := strings.TrimRight(string(bs), "\n")
+	s := strings.TrimSpace(string(bs))
 	ok := strings.Contains(s, pattern)
 
 	if exactly != "" {
