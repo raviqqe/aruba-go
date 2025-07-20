@@ -18,9 +18,6 @@ type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
 
-var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
-var headDoubleQuotePattern = regexp.MustCompile(`^"`)
-
 var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|t|")`)
 
 func unquoteString(s string) string {
