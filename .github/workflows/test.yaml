@@ -45,7 +45,7 @@ jobs:
           submodules: true
       - uses: actions/setup-go@v5
       - uses: ruby/setup-ruby@v1
-      - run: go install .
+      - run: go install ./cmd/aruba
       - run: echo PATH=$(go env $GOPATH/bin):$PATH >> ${{ github.env }}
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
