@@ -132,7 +132,7 @@ Feature: Character escape
       a
       b
       """
-    Then a file named "foo.txt" should not contain "a\nb"
+    Then a file named "foo.txt" should contain "a\nb"
 
   Scenario: Check a file to contain an exact string with surrounding spaces
     When a file named "foo.txt" with:
