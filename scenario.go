@@ -36,6 +36,10 @@ func unquote(s string) string {
 	return unquotePattern.ReplaceAllString(s, `$1`)
 }
 
+func parseString(s string) string {
+	return unquote(strings.TrimSpace(s))
+}
+
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "godog-*")
 
@@ -52,7 +56,7 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
 	// TODO Unquote only once?
-	command = unquote(unquote(command))
+	command = unquote(parseString(command))
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -106,7 +110,7 @@ func fileContains(ctx context.Context, p, not, pattern string) error {
 		return err
 	}
 
-	pattern = unquote(strings.TrimSpace(pattern))
+	pattern = parseString(pattern)
 
 	if strings.Contains(string(bs), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
@@ -123,7 +127,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
 		func(ctx context.Context, port, not, exactly, pattern string) error {
-			return stdout(ctx, port, not, exactly, unquote(strings.TrimSpace(pattern)))
+			return stdout(ctx, port, not, exactly, parseString(pattern))
 		},
 	)
 	ctx.Step(
