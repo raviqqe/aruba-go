@@ -98,7 +98,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdout(
-	ctx context.Context, stdout, not, exactly, expected, colon string, docString *godog.DocString,
+	ctx context.Context, stdout, not, exactly, expected string, docString *godog.DocString,
 ) error {
 	key := any(stdoutKey{})
 
@@ -108,7 +108,7 @@ func stdout(
 
 	s := string(ctx.Value(key).([]byte))
 
-	if colon != "" {
+	if docString != nil {
 		expected = docString.Content
 	}
 
@@ -128,5 +128,16 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I( successfully|) run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should( not|) be (\d+)$`, exitStatus)
-	scenario.Step(`^the (std(?:out|err)) should( not|) contain( exactly|)(?: "((?:\\.|[^"\\])*)"|(:))$`, stdout)
+	scenario.Step(
+		`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`,
+		func(ctx context.Context, port, not, exactly, expected string) {
+			stdout(ctx, port, not, exactly, expected, nil)
+		},
+	)
+	scenario.Step(
+		`^the (std(?:out|err)) should( not|) contain( exactly|):$`,
+		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) {
+			stdout(ctx, port, not, exactly, "", docString)
+		},
+	)
 }

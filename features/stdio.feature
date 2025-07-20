@@ -8,20 +8,6 @@ Feature: Standard I/O
     When I run `echo foo`
     Then the stdout should contain exactly "foo"
 
-  Scenario: Check stdout to contain a multi-line string
-    When I successfully run `echo foo`
-    Then the stdout should contain:
-      """
-      foo
-      """
-
-  Scenario: Check stdout to contain exactly a multi-line string
-    When I successfully run `echo foo`
-    Then the stdout should contain exactly:
-      """
-      foo
-      """
-
   Scenario: Check stderr
     When I run `rm foo`
     Then the stderr should contain "file"
@@ -37,3 +23,33 @@ Feature: Standard I/O
   Scenario: Check stdout to contain exactly nothing
     When I successfully run `echo`
     Then the stdout should contain exactly ""
+
+  Rule: Doc string
+
+    Scenario: Check stdout to contain a multi-line string
+      When I successfully run `echo foo`
+      Then the stdout should contain:
+        """
+        foo
+        """
+
+    Scenario: Check stdout to contain exactly a multi-line string
+      When I successfully run `echo foo`
+      Then the stdout should contain exactly:
+        """
+        foo
+        """
+
+    Scenario: Check stdout to contain a multi-line string
+      When I successfully run `echo foo`
+      Then the stdout should not contain:
+        """
+        bar
+        """
+
+    Scenario: Check stdout to contain exactly a multi-line string
+      When I successfully run `echo foo`
+      Then the stdout should not contain exactly:
+        """
+        bar
+        """
