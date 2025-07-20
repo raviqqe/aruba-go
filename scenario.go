@@ -48,6 +48,10 @@ func parseString(s string) string {
 	return unquoteString(strings.TrimSpace(s))
 }
 
+func parseDocString(s string) string {
+	return unquoteDocString(strings.TrimSpace(s))
+}
+
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "godog-*")
 
@@ -146,13 +150,13 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, not, exactly, strings.TrimSpace(docString.Content))
+			return stdout(ctx, port, not, exactly, parseDocString(docString.Content))
 		},
 	)
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
 		return fileContains(ctx, p, not, "", parseString(pattern))
 	})
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
-		return fileContains(ctx, p, not, exactly, strings.TrimSpace(docString.Content))
+		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
 }
