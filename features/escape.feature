@@ -1,4 +1,5 @@
 Feature: Character escape
+
   Scenario: Create a file with an escaped backslash
     Given a file named "foo.txt" with:
       """
@@ -99,3 +100,17 @@ Feature: Character escape
     Examples:
       | input | output    |
       | "foo" | \\"foo\\" |
+
+  Scenario: Match a file content with itself
+    Given a file named "foo.txt" with:
+      """
+      a
+      b
+      """
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly "a\nb"
+    Then the stdout should contain exactly:
+      """
+      a
+      b
+      """
