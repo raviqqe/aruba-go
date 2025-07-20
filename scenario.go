@@ -19,7 +19,6 @@ type stdoutKey struct{}
 type stderrKey struct{}
 
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
-var backSlashPattern = regexp.MustCompile(`([^\\])\\`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
 
 func quote(s string) string {
