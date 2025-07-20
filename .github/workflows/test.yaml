@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: go run ./cmd/aruba
+      - run: go run ./cmd/aruba --strict
   integration_test_test:
     runs-on: ubuntu-latest
     steps:
