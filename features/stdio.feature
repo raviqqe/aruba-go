@@ -1,4 +1,5 @@
 Feature: Standard I/O
+
   Scenario: Check stdout
     When I run `echo foo bar baz`
     Then the stdout should contain "bar"
