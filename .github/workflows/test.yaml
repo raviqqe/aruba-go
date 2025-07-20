@@ -44,6 +44,8 @@ jobs:
         with:
           submodules: true
       - uses: actions/setup-go@v5
+        with:
+          go-version: stable
       - uses: ruby/setup-ruby@v1
       - run: go install ./cmd/aruba
       - run: echo PATH=$(go env GOPATH)/bin:$PATH >> ${{ github.env }}
