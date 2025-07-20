@@ -104,7 +104,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	return nil
 }
 
-func fileContains(ctx context.Context, p, not, pattern string) error {
+func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	bs, err := os.ReadFile(path.Join(ctx.Value(directoryKey{}).(string), p))
 	if err != nil {
 		return err
@@ -135,10 +135,10 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		},
 	)
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
-		return fileContains(ctx, p, not, parseString(pattern))
+		return fileContains(ctx, p, not, "", parseString(pattern))
 	})
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not string, docString *godog.DocString) error {
-		return fileContains(ctx, p, not, quote(strings.TrimSpace(docString.Content)))
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
+		return fileContains(ctx, p, not, exactly, quote(strings.TrimSpace(docString.Content)))
 	})
 
 }
