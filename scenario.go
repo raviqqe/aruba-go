@@ -97,7 +97,9 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 }
 
-func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
+func stdout(
+	ctx context.Context, stdout, not, exactly, expected, colon string, docString *godog.DocString,
+) error {
 	key := any(stdoutKey{})
 
 	if stdout == "stderr" {
@@ -105,6 +107,11 @@ func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
 	}
 
 	s := string(ctx.Value(key).([]byte))
+
+	if colon != "" {
+		expected = docString.Content
+	}
+
 	expected = unquoteSimple(strings.TrimSpace(expected))
 
 	if exactly == "" && strings.Contains(quote(s), expected) != (not == "") {
@@ -121,5 +128,5 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
 	scenario.Step("^I( successfully|) run `(.*)`$", runCommand)
 	scenario.Step(`^the exit status should( not|) be (\d+)$`, exitStatus)
-	scenario.Step(`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`, stdout)
+	scenario.Step(`^the (std(?:out|err)) should( not|) contain( exactly|)(?: "((?:\\.|[^"\\])*)"|(:))$`, stdout)
 }
