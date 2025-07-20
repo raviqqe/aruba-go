@@ -31,22 +31,12 @@ func unquoteString(s string) string {
 	})
 }
 
-var docStringUnquotePattern = regexp.MustCompile(`\\(\\)`)
-
-func unquoteDocString(s string) string {
-	return docStringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
-		return map[string]string{
-			"\\": "\\",
-		}[s[1:]]
-	})
-}
-
 func parseString(s string) string {
 	return unquoteString(strings.TrimSpace(s))
 }
 
 func parseDocString(s string) string {
-	return unquoteDocString(strings.TrimSpace(s))
+	return strings.TrimSpace(s)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -58,7 +48,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(unquoteDocString(docString.Content)),
+		[]byte(docString.Content),
 		0o644,
 	)
 }
