@@ -1,3 +1,4 @@
+@go
 Feature: Character escape
 
   Scenario: Create a file with an escaped backslash
