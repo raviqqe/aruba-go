@@ -49,6 +49,7 @@ jobs:
       - uses: ruby/setup-ruby@v1
       - run: go install ./cmd/aruba
       - run: echo PATH=$(go env GOPATH)/bin:$PATH >> ${{ github.env }}
+      - run: which aruba
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
