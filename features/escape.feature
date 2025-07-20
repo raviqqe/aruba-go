@@ -38,8 +38,8 @@ Feature: Character escape
       | value |
       | \\a   |
 
-  Scenario: Check stdout with a blank character
-    When I successfully run `echo \\\\\\\\`
+  Scenario: Check stdout with many backslashes
+    When I successfully run `echo \\\\`
     Then the stdout should contain exactly "\\\\"
 
   Scenario: Create a file with an escaped newline
