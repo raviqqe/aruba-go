@@ -1,4 +1,5 @@
 Feature: Command
+
   Scenario: Run a command
     When I run `echo hello world`
 
