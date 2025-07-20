@@ -15,10 +15,10 @@ go install github.com/raviqqe/aruba-go@latest
 ## Usage
 
 ```sh
-aruba-go
+aruba
 ```
 
-For more information, see `aruba-go --help`.
+For more information, see `aruba --help`.
 
 ## License
 
