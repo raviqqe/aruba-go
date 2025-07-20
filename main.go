@@ -8,27 +8,15 @@ import (
 	"os/exec"
 	"path"
 	"regexp"
-	"runtime"
 	"strings"
 
 	"github.com/cucumber/godog"
-	"github.com/cucumber/godog/colors"
 )
 
 type directoryKey struct{}
 type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
-
-var options = godog.Options{
-	Concurrency: runtime.NumCPU(),
-	Output:      colors.Colored(os.Stdout),
-	Format:      "pretty",
-}
-
-func init() {
-	godog.BindCommandLineFlags("", &options)
-}
 
 var doubleQuotePattern = regexp.MustCompile(`([^\\])"`)
 var headDoubleQuotePattern = regexp.MustCompile(`^"`)
