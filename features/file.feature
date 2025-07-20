@@ -15,24 +15,89 @@ Feature: File
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
 
-  Scenario: Check a file to contain a string
-    When a file named "foo.txt" with:
-      """foo
-      foo
-      """
-    Then a file named "foo.txt" should contain "foo"
+  Rule: Contain strings
 
-  Scenario: Check a file not to contain a string
-    When a file named "foo.txt" with:
-      """foo
-      foo
-      """
-    Then a file named "foo.txt" should not contain "bar"
+    Scenario: Check a file to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        foo
+        """
+      Then a file named "foo.txt" should contain "foo"
 
-  Scenario: Check a file not to contain a string with a newline
-    When a file named "foo.txt" with:
-      """foo
-      a
-      b
-      """
-    Then a file named "foo.txt" should not contain "a\\nb"
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        foo
+        """
+      Then a file named "foo.txt" should not contain "bar"
+
+    Scenario: Check a file not to contain a string with a newline
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should not contain "a\\nb"
+
+  Rule: Contain doc-strings
+
+    Scenario: Check a file to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        c
+        d
+        """
+      Then a file named "foo.txt" should contain:
+        """
+        b
+        c
+        """
+
+    Scenario: Check a file to contain an exact string
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should contain exactly:
+        """
+        a
+        b
+        """
+
+    Scenario: Check a file to contain an exact string with trailing spaces
+      When a file named "foo.txt" with:
+        """foo
+        a
+
+        """
+      Then a file named "foo.txt" should contain exactly:
+        """
+        a
+        """
+
+    Scenario: Check a file not to contain an exact string with surrounding spaces
+      When a file named "foo.txt" with:
+        """foo
+
+        a
+
+        """
+      Then a file named "foo.txt" should not contain exactly:
+        """
+        a
+        """
+
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """foo
+        a
+        b
+        """
+      Then a file named "foo.txt" should not contain:
+        """
+        a
+        c
+        """

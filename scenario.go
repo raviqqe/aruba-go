@@ -104,16 +104,21 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	return nil
 }
 
-func fileContains(ctx context.Context, p, not, pattern string) error {
+func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	bs, err := os.ReadFile(path.Join(ctx.Value(directoryKey{}).(string), p))
 	if err != nil {
 		return err
 	}
 
-	pattern = parseString(pattern)
+	s := strings.TrimRight(string(bs), "\n")
+	ok := strings.Contains(s, pattern)
 
-	if strings.Contains(string(bs), pattern) != (not == "") {
-		return fmt.Errorf("expected file %q%s to contain %q but it did not", p, not, pattern)
+	if exactly != "" {
+		ok = s == pattern
+	}
+
+	if ok != (not == "") {
+		return fmt.Errorf("expected file %q%s to contain %q", p, not, pattern)
 	}
 
 	return nil
@@ -136,6 +141,10 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return stdout(ctx, port, not, exactly, quote(strings.TrimSpace(docString.Content)))
 		},
 	)
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, fileContains)
-
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
+		return fileContains(ctx, p, not, "", parseString(pattern))
+	})
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
+		return fileContains(ctx, p, not, exactly, strings.TrimSpace(docString.Content))
+	})
 }

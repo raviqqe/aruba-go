@@ -109,7 +109,7 @@ Feature: Character escape
       """
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\nb"
-    Then the stdout should contain exactly:
+    And the stdout should contain exactly:
       """
       a
       b
