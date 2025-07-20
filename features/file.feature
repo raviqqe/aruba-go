@@ -54,4 +54,8 @@ Feature: File
         a
         b
         """
-      Then a file named "foo.txt" should not contain "a\\nb"
+      Then a file named "foo.txt" should not contain:
+        """foo
+        a
+        b
+        """
