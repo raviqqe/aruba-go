@@ -110,7 +110,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 		return err
 	}
 
-	if strings.Contains(string(bs), pattern) != (not == "") {
+	if strings.Contains(quote(string(bs)), pattern) != (not == "") {
 		return fmt.Errorf("expected file %q%s to contain %q", p, not, pattern)
 	}
 
