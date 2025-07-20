@@ -140,5 +140,4 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, quote(strings.TrimSpace(docString.Content)))
 	})
-
 }
