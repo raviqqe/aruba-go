@@ -130,14 +130,14 @@ func InitializeScenario(scenario *godog.ScenarioContext) {
 	scenario.Step(`^the exit status should( not|) be (\d+)$`, exitStatus)
 	scenario.Step(
 		`^the (std(?:out|err)) should( not|) contain( exactly|) "((?:\\.|[^"\\])*)"$`,
-		func(ctx context.Context, port, not, exactly, expected string) {
-			stdout(ctx, port, not, exactly, expected, nil)
+		func(ctx context.Context, port, not, exactly, expected string) error {
+			return stdout(ctx, port, not, exactly, expected, nil)
 		},
 	)
 	scenario.Step(
 		`^the (std(?:out|err)) should( not|) contain( exactly|):$`,
-		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) {
-			stdout(ctx, port, not, exactly, "", docString)
+		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
+			return stdout(ctx, port, not, exactly, "", docString)
 		},
 	)
 }
