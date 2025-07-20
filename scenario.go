@@ -90,11 +90,11 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 func exitStatus(ctx context.Context, not string, code int) error {
 	c := ctx.Value(exitCodeKey{}).(int)
 
-	if (not == "") == (c == code) {
-		return nil
+	if (c == code) != (not == "") {
+		return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 	}
 
-	return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
+	return nil
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, expected string) error {
