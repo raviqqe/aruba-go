@@ -14,7 +14,7 @@ To install a standalone `aruba` command, run:
 go install github.com/raviqqe/aruba-go/cmd/aruba@latest
 ```
 
-To install it as a library, run:
+To install it as a library for [`Godog`](https://github.com/cucumber/godog), run:
 
 ```sh
 go get github.com/raviqqe/aruba-go@latest
