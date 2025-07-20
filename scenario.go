@@ -88,9 +88,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := ctx.Value(exitCodeKey{}).(int)
-
-	if (c == code) != (not == "") {
+	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
 		return fmt.Errorf("expected exit code %s%d but got %d", not, code, c)
 	}
 
