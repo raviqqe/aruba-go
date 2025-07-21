@@ -1,11 +1,17 @@
 Feature: File
 
   Scenario: Create a file
+    Given a file named "foo.txt" with "foo"
+    When I successfully run `test -r foo.txt`
+    Then a file named "foo.txt" should contain "foo"
+
+  Scenario: Create a file with a doc-string
     Given a file named "foo.txt" with:
       """
       foo
       """
     When I successfully run `test -r foo.txt`
+    Then a file named "foo.txt" should contain "foo"
 
   Scenario: Create a file with a content type
     Given a file named "foo.txt" with:
@@ -17,7 +23,7 @@ Feature: File
 
   Scenario: Check file existence
     Given a file named "foo.txt" with:
-      """foo
+      """
       foo
       """
     Then <article> file named "foo.txt" should exist
@@ -39,14 +45,14 @@ Feature: File
 
     Scenario: Check a file to contain a string
       When a file named "foo.txt" with:
-        """foo
+        """
         foo
         """
       Then a file named "foo.txt" should contain "foo"
 
     Scenario: Check a file not to contain a string
       When a file named "foo.txt" with:
-        """foo
+        """
         foo
         """
       Then a file named "foo.txt" should not contain "bar"
@@ -55,7 +61,7 @@ Feature: File
 
     Scenario: Check a file to contain a string
       When a file named "foo.txt" with:
-        """foo
+        """
         a
         b
         c
@@ -69,7 +75,7 @@ Feature: File
 
     Scenario: Check a file to contain an exact string
       When a file named "foo.txt" with:
-        """foo
+        """
         a
         b
         """
@@ -81,7 +87,7 @@ Feature: File
 
     Scenario: Check a file to contain an exact string with trailing spaces
       When a file named "foo.txt" with:
-        """foo
+        """
         a
 
         """
@@ -92,7 +98,7 @@ Feature: File
 
     Scenario: Check a file not to contain a string
       When a file named "foo.txt" with:
-        """foo
+        """
         a
         b
         """
