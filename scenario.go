@@ -149,9 +149,9 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	return nil
 }
 
-func fileExists(ctx context.Context, file, p, not string) error {
-	if i, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil && i.IsDir() == (file == "directory")) != (not == "") {
-		return fmt.Errorf("file %q should%s exist", p, not)
+func fileExists(ctx context.Context, ty, p, not string) error {
+	if i, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
+		return fmt.Errorf("%s %q should%s exist", ty, p, not)
 	}
 
 	return nil
