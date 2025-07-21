@@ -17,3 +17,16 @@ Feature: Command
   Scenario: Check a non-zero exit status
     When I run `false`
     Then the exit status should not be 0
+
+  Scenario: Run a command interactively
+    When I run `echo`
+    Then the exit status should be 0
+
+  Scenario: Pipe in a file
+    Given a file named "foo.txt" with:
+      """
+      foo
+      """
+    When I run `cat` interactively
+    And I pipe in the file named "foo.txt"
+    Then the exit status should be 0

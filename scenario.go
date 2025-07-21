@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path"
@@ -15,6 +16,7 @@ import (
 
 type commandKey struct{}
 type directoryKey struct{}
+type stdinKey struct{}
 
 func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
@@ -63,6 +65,13 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c.Stderr = stderr
 	ctx = context.WithValue(ctx, commandKey{}, c)
 
+	in, err := c.StdinPipe()
+	if err != nil {
+		return ctx, err
+	}
+
+	ctx = context.WithValue(ctx, stdinKey{}, in)
+
 	err = c.Start()
 	if err != nil {
 		return ctx, err
@@ -90,6 +99,21 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	}
 
 	return nil
+}
+
+func stdin(ctx context.Context, p string) error {
+	f, err := os.Open(path.Join(ctx.Value(directoryKey{}).(string), p))
+	if err != nil {
+		return err
+	}
+
+	go func() {
+		w := ctx.Value(stdinKey{}).(io.WriteCloser)
+		_, _ = io.Copy(w, f)
+		_ = w.Close()
+	}()
+
+	return err
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
@@ -164,5 +188,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
-	// ctx.Step(`^I pipe in the file "([^"]*)"$`, pipeFile)
+	ctx.Step(`^I pipe in the file named "([^"]*)"$`, stdin)
 }
