@@ -29,11 +29,15 @@ func unquote(s string) (string, error) {
 }
 
 func parseString(s string) (string, error) {
-	return unquote(strings.TrimSpace(s))
+	return unquote(s)
 }
 
 func parseDocString(s string) string {
-	return strings.TrimSpace(s)
+	return strings.TrimRight(s, "\n")
+}
+
+func matchesExactly(s, t string) bool {
+	return s == t || strings.TrimSpace(s) == t
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -45,7 +49,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(parseDocString(docString.Content)),
+		[]byte(parseDocString(docString.Content)+"\n"),
 		0o644,
 	)
 }
@@ -128,7 +132,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
-		exactly != "" && (s == pattern || strings.TrimSpace(s) == pattern) != (not == "") {
+		exactly != "" && matchesExactly(s, pattern) != (not == "") {
 		return fmt.Errorf("expected %s %q%s to contain%s %q", stdout, s, not, exactly, pattern)
 	}
 
@@ -141,15 +145,16 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 		return err
 	}
 
-	s := strings.TrimSpace(string(bs))
+	s := string(bs)
 	ok := strings.Contains(s, pattern)
 
+	fmt.Printf("%q %q %q", exactly, s, pattern)
 	if exactly != "" {
-		ok = s == pattern
+		ok = matchesExactly(s, pattern)
 	}
 
 	if ok != (not == "") {
-		return fmt.Errorf("expected file %q%s to contain %q", p, not, pattern)
+		return fmt.Errorf("expected file %q%s to contain%s %q", p, not, exactly, pattern)
 	}
 
 	return nil

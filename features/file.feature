@@ -81,3 +81,27 @@ Feature: File
         a
         c
         """
+
+    Scenario: Check a file to contain a newline
+      When a file named "foo.txt" with:
+        """
+        a
+        """
+      Then a file named "foo.txt" should contain "a\n"
+
+    Scenario: Check a file to contain two newlines
+      When a file named "foo.txt" with:
+        """
+        a
+
+
+        """
+      Then a file named "foo.txt" should contain "a\n"
+      And a file named "foo.txt" should not contain "a\n\n"
+
+    Scenario: Check a file to contain two newlines
+      When a file named "foo.txt" with:
+        """
+          a
+        """
+      Then a file named "foo.txt" should contain "  a"
