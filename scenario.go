@@ -18,12 +18,13 @@ type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
 
-var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|t|")`)
+var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|r|t|")`)
 
 func unquoteString(s string) string {
 	return stringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
 		return map[string]string{
 			"n":  "\n",
+			"r":  "\r",
 			"t":  "\t",
 			"\"": "\"",
 			"\\": "\\",
