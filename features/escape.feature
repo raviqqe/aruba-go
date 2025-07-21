@@ -26,18 +26,6 @@ Feature: Character escape
     Then the stdout should contain "a\\\"b"
     And the stdout should not contain "a\"b"
 
-  Scenario Outline: Escape a normal character
-    Given a file named "foo.txt" with:
-      """
-      <value>
-      """
-    When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "<value>"
-
-    Examples:
-      | value |
-      | \\a   |
-
   Scenario: Check stdout with many backslashes
     When I successfully run `echo \\\\`
     Then the stdout should contain exactly "\\\\"
@@ -81,6 +69,7 @@ Feature: Character escape
 
     Examples:
       | value |
+      | \\a   |
       | \\n   |
       | \\t   |
       | \\r   |

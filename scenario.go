@@ -7,7 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
-	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/cucumber/godog"
@@ -18,18 +18,14 @@ type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
 
-var stringUnquotePattern = regexp.MustCompile(`\\(\\|n|r|t|")`)
-
 func unquoteString(s string) string {
-	return stringUnquotePattern.ReplaceAllStringFunc(s, func(s string) string {
-		return map[string]string{
-			"n":  "\n",
-			"r":  "\r",
-			"t":  "\t",
-			"\"": "\"",
-			"\\": "\\",
-		}[s[1:]]
-	})
+	s, err := strconv.Unquote(`"` + s + `"`)
+
+	if err != nil {
+		panic(err)
+	}
+
+	return s
 }
 
 func parseString(s string) string {
