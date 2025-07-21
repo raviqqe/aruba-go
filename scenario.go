@@ -76,6 +76,17 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	return ctx, nil
 }
 
+func runScript(ctx context.Context, s *godog.DocString) (context.Context, error) {
+	const scriptPath = "script"
+
+	err := createFile(ctx, scriptPath, s.Content)
+	if err != nil {
+		return ctx, err
+	}
+
+	return runCommand(ctx, "", strconv.Quote("sh "+scriptPath), "")
+}
+
 func exitStatus(ctx context.Context, not string, code int) error {
 	c := contextWorld(ctx).Command
 	_ = c.Wait()
@@ -148,6 +159,10 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 	return nil
 }
 
+func setEnvVar(ctx context.Context, k, v string) error {
+	return os.Setenv(k, v)
+}
+
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
@@ -194,4 +209,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
+	ctx.Step(`^I run the following script:$`, runScript)
 }
