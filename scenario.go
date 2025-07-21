@@ -95,12 +95,10 @@ func stdin(ctx context.Context, p string) error {
 		return err
 	}
 
-	_, err = io.Copy(w.Stdin, f)
-	if err != nil {
-		return err
-	}
+	_, _ = io.Copy(w.Stdin, f)
+	_ = w.Stdin.Close()
 
-	return w.Stdin.Close()
+	return nil
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
