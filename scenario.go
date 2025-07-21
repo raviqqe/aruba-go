@@ -14,18 +14,8 @@ import (
 	"github.com/cucumber/godog"
 )
 
-func unquote(s string) (string, error) {
-	s, err := strconv.Unquote(`"` + s + `"`)
-
-	if err != nil {
-		return "", err
-	}
-
-	return s, nil
-}
-
 func parseString(s string) (string, error) {
-	return unquote(s)
+	return strconv.Unquote(s)
 }
 
 func parseDocString(s string) string {
@@ -51,11 +41,6 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
-	command, err := parseString(command)
-	if err != nil {
-		return ctx, err
-	}
-
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
@@ -169,7 +154,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step("^I( successfully)? run `(.*)`( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
+		`^the (std(?:out|err)) should( not)? contain( exactly)? ("(?:\\.|[^"\\])*")$`,
 		func(ctx context.Context, port, not, exactly, pattern string) error {
 			pattern, err := parseString(pattern)
 			if err != nil {
@@ -185,7 +170,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return stdout(ctx, port, not, exactly, parseDocString(docString.Content))
 		},
 	)
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
+	ctx.Step(`^a file named "([^"]*)" should( not)? contain ("[^"]*")$`, func(ctx context.Context, p, not, pattern string) error {
 		pattern, err := parseString(pattern)
 		if err != nil {
 			return err
