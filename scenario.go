@@ -36,8 +36,12 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 	return os.WriteFile(
 		path.Join(contextWorld(ctx).Directory, p),
 		[]byte(parseDocString(docString.Content)+"\n"),
-		0o644,
+		0o600,
 	)
+}
+
+func createDirectory(ctx context.Context, p string) error {
+	return os.Mkdir(path.Join(contextWorld(ctx).Directory, p), 0o700)
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
@@ -145,17 +149,19 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	return nil
 }
 
-func fileExists(ctx context.Context, p, not string) error {
-	if _, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil) != (not == "") {
-		return fmt.Errorf("file %q should%s exist", p, not)
+func fileExists(ctx context.Context, ty, p, not string) error {
+	if i, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
+		return fmt.Errorf("%s %q should%s exist", ty, p, not)
 	}
 
 	return nil
 }
 
+// [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "(.+)" with:$`, createFile)
+	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
@@ -187,5 +193,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
-	ctx.Step(`^(a|the) file(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^(a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 }
