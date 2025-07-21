@@ -13,6 +13,7 @@ import (
 	"github.com/cucumber/godog"
 )
 
+type commandKey struct{}
 type directoryKey struct{}
 type exitCodeKey struct{}
 type stdoutKey struct{}
