@@ -86,7 +86,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 	_ = c.Wait()
 
 	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
-		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
+		return fmt.Errorf("expected exit code %d%s to be %d", c, not, code)
 	}
 
 	return nil
