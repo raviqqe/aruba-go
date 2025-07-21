@@ -30,3 +30,4 @@ Feature: Command
     When I run `cat` interactively
     And I pipe in the file named "foo.txt"
     Then the exit status should be 0
+    And the stdout should contain exactly "foo"
