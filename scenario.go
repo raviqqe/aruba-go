@@ -36,8 +36,12 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 	return os.WriteFile(
 		path.Join(contextWorld(ctx).Directory, p),
 		[]byte(parseDocString(docString.Content)+"\n"),
-		0o644,
+		0o600,
 	)
+}
+
+func createDirectory(ctx context.Context, p string) error {
+	return os.Mkdir(path.Join(contextWorld(ctx).Directory, p), 0o700)
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
@@ -156,6 +160,7 @@ func fileExists(ctx context.Context, p, not string) error {
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "(.+)" with:$`, createFile)
+	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
