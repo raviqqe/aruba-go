@@ -155,11 +155,11 @@ func fileExists(ctx context.Context, p, not string) error {
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
-	ctx.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
+	ctx.Step(`^a file named "(.+)" with:$`, createFile)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^the (std(?:out|err)) should( not)? contain( exactly)? ("(?:\\.|[^"\\])*")$`,
+		`^the (std(?:out|err)) should( not)? contain( exactly)? (".*")$`,
 		func(ctx context.Context, port, not, exactly, pattern string) error {
 			pattern, err := parseString(pattern)
 			if err != nil {
@@ -175,7 +175,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return stdout(ctx, port, not, exactly, parseDocString(docString.Content))
 		},
 	)
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain ("[^"]*")$`, func(ctx context.Context, p, not, pattern string) error {
+	ctx.Step(`^a file named "(.*)" should( not)? contain (".*")$`, func(ctx context.Context, p, not, pattern string) error {
 		pattern, err := parseString(pattern)
 		if err != nil {
 			return err
@@ -183,9 +183,9 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 		return fileContains(ctx, p, not, "", pattern)
 	})
-	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
+	ctx.Step(`^a file named "(.+)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
-	ctx.Step(`^I pipe in the file(?: named)? "([^"]*)"$`, stdin)
-	ctx.Step(`^(a|the) file(?: named)? "([^"]*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
+	ctx.Step(`^(a|the) file(?: named)? "(.*)" should( not)? exist$`, fileExists)
 }
