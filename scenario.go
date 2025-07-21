@@ -82,9 +82,10 @@ func command(ctx context.Context) *exec.Cmd {
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	_ = command(ctx).Wait()
+	c := command(ctx)
+	_ = c.Wait()
 
-	if c := command(ctx).ProcessState.ExitCode(); (c == code) != (not == "") {
+	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
 		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
 	}
 
