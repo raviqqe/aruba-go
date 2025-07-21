@@ -82,6 +82,8 @@ func command(ctx context.Context) *exec.Cmd {
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
+	_ = command(ctx).Wait()
+
 	if c := command(ctx).ProcessState.ExitCode(); (c == code) != (not == "") {
 		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
 	}
@@ -91,6 +93,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	c := command(ctx)
+	_ = c.Wait()
 	out := c.Stdout
 
 	if stdout == "stderr" {
