@@ -1,6 +1,7 @@
 package aruba
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"os/exec"
@@ -13,6 +14,8 @@ type world struct {
 	RootDirectory    string
 	CurrentDirectory string
 	Stdin            io.WriteCloser
+	Stdout           *bytes.Buffer
+	Stderr           *bytes.Buffer
 }
 
 func contextWorld(ctx context.Context) world {
