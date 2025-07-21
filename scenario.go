@@ -77,6 +77,32 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	return ctx, err
 }
 
+func runCommandInteractively(ctx context.Context, successfully, command string) (context.Context, error) {
+	command, err := parseString(command)
+	if err != nil {
+		return ctx, err
+	}
+
+	ss := strings.Split(command, " ")
+	c := exec.Command(ss[0], ss[1:]...)
+	c.Dir = ctx.Value(directoryKey{}).(string)
+	stdout := bytes.NewBuffer(nil)
+	c.Stdout = stdout
+	stderr := bytes.NewBuffer(nil)
+	c.Stderr = stderr
+
+	err = c.Run()
+	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
+	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
+	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
+
+	if successfully == "" {
+		err = nil
+	}
+
+	return ctx, err
+}
+
 func exitStatus(ctx context.Context, not string, code int) error {
 	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
 		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
