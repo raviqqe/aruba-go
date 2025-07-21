@@ -194,4 +194,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^I set an environment variable "(.*)" to "(.*)"$`, iSetAnEnvironmentVariableTo)
 }
