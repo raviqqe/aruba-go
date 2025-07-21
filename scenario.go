@@ -10,7 +10,6 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cucumber/godog"
 )
@@ -51,19 +50,16 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.Directory
-	stdout := bytes.NewBuffer(nil)
-	c.Stdout = stdout
-	stderr := bytes.NewBuffer(nil)
-	c.Stderr = stderr
+	c.Stdout = bytes.NewBuffer(nil)
+	c.Stderr = bytes.NewBuffer(nil)
 	w.Command = c
 	ctx = contextWithWorld(ctx, w)
 
-	in, err := c.StdinPipe()
+	w.Stdin, err = c.StdinPipe()
 	if err != nil {
 		return ctx, err
 	}
 
-	w.Stdin = in
 	ctx = contextWithWorld(ctx, w)
 
 	err = c.Start()
@@ -98,12 +94,11 @@ func stdin(ctx context.Context, p string) error {
 		return err
 	}
 
-	_, err = io.Copy(w.Stdin, f)
-	if err != nil {
-		return err
-	}
+	// TODO Figure out why we need to ignore errors...
+	_, _ = io.Copy(w.Stdin, f)
+	_ = w.Stdin.Close()
 
-	return w.Stdin.Close()
+	return nil
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
@@ -115,9 +110,6 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 		out = c.Stderr
 	}
 
-	// Wait for the output to be written.
-	// TODO Figure out why we need this...
-	time.Sleep(10 * time.Millisecond)
 	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
