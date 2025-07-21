@@ -14,9 +14,13 @@ import (
 	"github.com/cucumber/godog"
 )
 
-type commandKey struct{}
-type directoryKey struct{}
-type stdinKey struct{}
+type contextKey struct{}
+
+type ArubaContext struct {
+	Command   *exec.Cmd
+	Directory string
+	Stdin     io.WriteCloser
+}
 
 func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
@@ -43,7 +47,7 @@ func matchesExactly(s, t string) bool {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "aruba-*")
 
-	return context.WithValue(ctx, directoryKey{}, d), err
+	return context.WithValue(ctx, contextKey{}, ArubaContext{Directory: d}), err
 }
 
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
