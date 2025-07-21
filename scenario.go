@@ -56,12 +56,11 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	w.Command = c
 	ctx = contextWithWorld(ctx, w)
 
-	in, err := c.StdinPipe()
+	w.Stdin, err = c.StdinPipe()
 	if err != nil {
 		return ctx, err
 	}
 
-	w.Stdin = in
 	ctx = contextWithWorld(ctx, w)
 
 	err = c.Start()
