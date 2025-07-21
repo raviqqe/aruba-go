@@ -35,7 +35,7 @@ jobs:
         dependent:
           - directory: schemat
             build: cargo install --path .
-            fail: true
+            fail: false
           - directory: stak
             build: cargo install stak && cargo install --path root
             environment: STAK_ROOT=$PWD
