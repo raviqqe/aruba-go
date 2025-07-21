@@ -154,7 +154,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
-	ctx.Step(`^I pipe in the file "([^"]*)"$`, iPipeInTheFile)
-	ctx.Step(`^I run `schemat -c` interactively$`, iRunSchematCInteractively)
-	ctx.Step(`^I run `schemat` interactively$`, iRunSchematInteractively)
+	ctx.Step(`^I pipe in the file "([^"]*)"$`, pipeFile)
+	ctx.Step("^I run `([^`]*)` interactively$", runCommandInteractively)
 }
