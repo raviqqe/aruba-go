@@ -97,7 +97,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 		out = c.Stderr
 	}
 
-	s := string(out.(*bytes.Buffer).Bytes())
+	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
 		exactly != "" && (s == pattern || strings.TrimSpace(s) == pattern) != (not == "") {
