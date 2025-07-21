@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -29,15 +30,15 @@ func matchesExactly(s, t string) bool {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "aruba-*")
 
-	return contextWithWorld(ctx, world{Directory: d}), err
+	return contextWithWorld(ctx, world{RootDirectory: d, CurrentDirectory: d}), err
 }
 
 func createFile(ctx context.Context, p, s string) error {
-	return os.WriteFile(path.Join(contextWorld(ctx).Directory, p), []byte(s), 0o600)
+	return os.WriteFile(path.Join(contextWorld(ctx).CurrentDirectory, p), []byte(s), 0o600)
 }
 
 func createDirectory(ctx context.Context, p string) error {
-	return os.Mkdir(path.Join(contextWorld(ctx).Directory, p), 0o700)
+	return os.Mkdir(path.Join(contextWorld(ctx).CurrentDirectory, p), 0o700)
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
@@ -49,7 +50,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
-	c.Dir = w.Directory
+	c.Dir = w.CurrentDirectory
 	c.Stdout = bytes.NewBuffer(nil)
 	c.Stderr = bytes.NewBuffer(nil)
 	w.Command = c
@@ -100,7 +101,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 
 func stdin(ctx context.Context, p string) error {
 	w := contextWorld(ctx)
-	f, err := os.Open(path.Join(w.Directory, p))
+	f, err := os.Open(path.Join(w.CurrentDirectory, p))
 	if err != nil {
 		return err
 	}
@@ -132,7 +133,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 }
 
 func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
-	bs, err := os.ReadFile(path.Join(contextWorld(ctx).Directory, p))
+	bs, err := os.ReadFile(path.Join(contextWorld(ctx).CurrentDirectory, p))
 	if err != nil {
 		return err
 	}
@@ -152,7 +153,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 }
 
 func fileExists(ctx context.Context, ty, p, not string) error {
-	if i, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
+	if i, err := os.Stat(path.Join(contextWorld(ctx).CurrentDirectory, p)); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
 		return fmt.Errorf("%s %q should%s exist", ty, p, not)
 	}
 
@@ -161,6 +162,20 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 
 func setEnvVar(ctx context.Context, k, v string) error {
 	return os.Setenv(k, v)
+}
+
+func changeDirectory(ctx context.Context, p string) (context.Context, error) {
+	w := contextWorld(ctx)
+
+	w.CurrentDirectory = filepath.Clean(filepath.Join(w.CurrentDirectory, p))
+	d, err := filepath.Rel(w.RootDirectory, w.CurrentDirectory)
+	if err != nil {
+		return ctx, err
+	} else if strings.HasPrefix(d, ".") {
+		return ctx, fmt.Errorf("cannot change directory to %q", p)
+	}
+
+	return contextWithWorld(ctx, w), nil
 }
 
 // [InitializeScenario] initializes a scenario.
@@ -211,4 +226,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
 	ctx.Step(`^I run the following script:$`, runScript)
+	ctx.Step(`^I cd to "(.*)"$`, changeDirectory)
 }

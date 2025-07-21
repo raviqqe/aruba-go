@@ -9,9 +9,10 @@ import (
 type worldKey struct{}
 
 type world struct {
-	Command   *exec.Cmd
-	Directory string
-	Stdin     io.WriteCloser
+	Command          *exec.Cmd
+	RootDirectory    string
+	CurrentDirectory string
+	Stdin            io.WriteCloser
 }
 
 func contextWorld(ctx context.Context) world {
