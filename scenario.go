@@ -102,12 +102,17 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdin(ctx context.Context, p string) error {
-	bs, err := os.ReadFile(path.Join(ctx.Value(directoryKey{}).(string), p))
+	f, err := os.Open(path.Join(ctx.Value(directoryKey{}).(string), p))
 	if err != nil {
 		return err
 	}
 
-	_, err = ctx.Value(stdinKey{}).(io.Writer).Write(bs)
+	go func() {
+		w := ctx.Value(stdinKey{}).(io.WriteCloser)
+		_, _ = io.Copy(w, f)
+		_ = w.Close()
+	}()
+
 	return err
 }
 
