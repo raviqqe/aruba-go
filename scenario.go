@@ -76,6 +76,22 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	return ctx, nil
 }
 
+func runScript(ctx context.Context, s *godog.DocString) (context.Context, error) {
+	ext := "sh"
+
+	if s.MediaType != "" {
+		ext = s.MediaType
+	}
+
+	p := "script." + ext
+	err := createFile(ctx, p, s.Content)
+	if err != nil {
+		return ctx, err
+	}
+
+	return runCommand(ctx, "", strconv.Quote("sh "+p), "")
+}
+
 func exitStatus(ctx context.Context, not string, code int) error {
 	c := contextWorld(ctx).Command
 	_ = c.Wait()
@@ -199,4 +215,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
+	ctx.Step(`^I run the following script:$`, runScript)
 }
