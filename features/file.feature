@@ -15,6 +15,16 @@ Feature: File
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
 
+  Scenario: Check file existence
+    Given a file named "foo.txt" with:
+      """foo
+      foo
+      """
+    Then the file named "foo.txt" should exist
+    And the file "foo.txt" should exist
+    And the file named "bar.txt" should not exist
+    And the file "bar.txt" should not exist
+
   Rule: Contain strings
 
     Scenario: Check a file to contain a string
