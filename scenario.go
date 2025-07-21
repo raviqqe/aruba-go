@@ -51,7 +51,7 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 	)
 }
 
-func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
+func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
 	command, err := parseString(command)
 	if err != nil {
 		return ctx, err
@@ -125,7 +125,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
-	ctx.Step("^I( successfully)? run `(.*)`$", runCommand)
+	ctx.Step("^I( successfully)? run `(.*)`( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
