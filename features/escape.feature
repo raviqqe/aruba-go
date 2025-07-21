@@ -83,6 +83,7 @@ Feature: Character escape
       | value |
       | \\n   |
       | \\t   |
+      | \\r   |
       | \\"   |
 
   Scenario Outline: Escape special characters in examples
