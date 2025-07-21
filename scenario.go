@@ -193,5 +193,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
-	ctx.Step(`^(a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 }
