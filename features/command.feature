@@ -21,3 +21,12 @@ Feature: Command
   Scenario: Run a command interactively
     When I run `echo`
     Then the exit status should be 0
+
+  Scenario: Pipe in a file
+    Given a file named "foo.txt" with:
+      """
+      foo
+      """
+    When I run `cat`
+    And I pipe in the file named "foo.txt"
+    Then the exit status should be 0
