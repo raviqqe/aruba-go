@@ -163,6 +163,12 @@ func setEnvVar(ctx context.Context, k, v string) error {
 	return os.Setenv(k, v)
 }
 
+func changeDirectory(ctx context.Context, p string) (context.Context, error) {
+	w := contextWorld(ctx)
+
+	return contextWithWorld(ctx, w), nil
+}
+
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
@@ -211,4 +217,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
 	ctx.Step(`^I run the following script:$`, runScript)
+	ctx.Step(`^I cd to "(.*)"$`, changeDirectory)
 }
