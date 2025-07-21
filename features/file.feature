@@ -20,10 +20,15 @@ Feature: File
       """foo
       foo
       """
-    Then the file named "foo.txt" should exist
-    And the file "foo.txt" should exist
-    And the file named "bar.txt" should not exist
-    And the file "bar.txt" should not exist
+    Then <article> file named "foo.txt" should exist
+    And <article> file "foo.txt" should exist
+    And <article> file named "bar.txt" should not exist
+    And <article> file "bar.txt" should not exist
+
+    Examples:
+      | article |
+      | a       |
+      | the     |
 
   Rule: Contain strings
 
