@@ -148,6 +148,10 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 	return nil
 }
 
+func setEnvVar(ctx context.Context, k, v string) error {
+	return os.Setenv(k, v)
+}
+
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
@@ -194,5 +198,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
-	ctx.Step(`^I set an environment variable "(.*)" to "(.*)"$`, iSetAnEnvironmentVariableTo)
+	ctx.Step(`^I set an environment variable "(.*)" to "(.*)"$`, setEnvVar)
 }
