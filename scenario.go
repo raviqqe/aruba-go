@@ -33,7 +33,7 @@ func parseString(s string) (string, error) {
 }
 
 func parseDocString(s string) string {
-	return strings.TrimSpace(s)
+	return strings.TrimRight(s, "\n")
 }
 
 func matchesExactly(s, t string) bool {
@@ -49,7 +49,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
 		path.Join(ctx.Value(directoryKey{}).(string), p),
-		[]byte(strings.TrimRight(docString.Content, "\n")+"\n"),
+		[]byte(parseDocString(docString.Content)+"\n"),
 		0o644,
 	)
 }
