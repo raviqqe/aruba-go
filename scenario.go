@@ -120,6 +120,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 	}
 
 	// Wait for the output to be written.
+	// TODO Figure out why we need this...
 	time.Sleep(10 * time.Millisecond)
 	s := out.(*bytes.Buffer).String()
 
