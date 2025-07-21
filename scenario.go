@@ -51,10 +51,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.Directory
-	stdout := bytes.NewBuffer(nil)
-	c.Stdout = stdout
-	stderr := bytes.NewBuffer(nil)
-	c.Stderr = stderr
+	c.Stdout = bytes.NewBuffer(nil)
+	c.Stderr = bytes.NewBuffer(nil)
 	w.Command = c
 	ctx = contextWithWorld(ctx, w)
 
