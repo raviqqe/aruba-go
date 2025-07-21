@@ -68,13 +68,13 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		return ctx, err
 	}
 
-	err = c.Wait()
-
-	if successfully == "" {
-		err = nil
+	if interactively == "" {
+		if err := c.Wait(); successfully != "" {
+			return ctx, err
+		}
 	}
 
-	return ctx, err
+	return ctx, nil
 }
 
 func command(ctx context.Context) *exec.Cmd {
