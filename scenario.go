@@ -149,8 +149,8 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	return nil
 }
 
-func fileExists(ctx context.Context, p, not string) error {
-	if _, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil) != (not == "") {
+func fileExists(ctx context.Context, file, p, not string) error {
+	if i, err := os.Stat(path.Join(contextWorld(ctx).Directory, p)); (err == nil && i.IsDir() == (file == "directory")) != (not == "") {
 		return fmt.Errorf("file %q should%s exist", p, not)
 	}
 
@@ -192,5 +192,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
-	ctx.Step(`^(a|the) file(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^(a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 }
