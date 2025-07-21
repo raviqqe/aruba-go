@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: go run ./cmd/aruba --strict
+      - run: go run ./cmd/agoa --strict
   integration_test_test:
     runs-on: ubuntu-latest
     steps:
@@ -52,7 +52,7 @@ jobs:
         with:
           go-version: stable
       - uses: ruby/setup-ruby@v1
-      - run: go install ./cmd/aruba
+      - run: go install ./cmd/agoa
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
