@@ -10,7 +10,6 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cucumber/godog"
 )
@@ -95,6 +94,7 @@ func stdin(ctx context.Context, p string) error {
 		return err
 	}
 
+	// TODO Figure out why we need to ignore errors...
 	_, _ = io.Copy(w.Stdin, f)
 	_ = w.Stdin.Close()
 
@@ -110,9 +110,6 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 		out = c.Stderr
 	}
 
-	// Wait for the output to be written.
-	// TODO Figure out why we need this...
-	time.Sleep(10 * time.Millisecond)
 	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
