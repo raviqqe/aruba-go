@@ -33,12 +33,8 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return contextWithWorld(ctx, world{Directory: d}), err
 }
 
-func createFile(ctx context.Context, p string, docString *godog.DocString) error {
-	return os.WriteFile(
-		path.Join(contextWorld(ctx).Directory, p),
-		[]byte(parseDocString(docString.Content)+"\n"),
-		0o600,
-	)
+func createFile(ctx context.Context, p, s string) error {
+	return os.WriteFile(path.Join(contextWorld(ctx).Directory, p), []byte(s), 0o600)
 }
 
 func createDirectory(ctx context.Context, p string) error {
@@ -163,7 +159,16 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
-	ctx.Step(`^a file named "(.+)" with:$`, createFile)
+	ctx.Step(`^a file named "(.+)" with:$`, func(ctx context.Context, p string, s *godog.DocString) error {
+		return createFile(ctx, p, parseDocString(s.Content)+"\n")
+	})
+	ctx.Step(`^a file named "(.+)" with (".*")$`, func(ctx context.Context, p, s string) error {
+		s, err := parseString(s)
+		if err != nil {
+			return err
+		}
+		return createFile(ctx, p, s)
+	})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
