@@ -77,8 +77,12 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	return ctx, err
 }
 
+func command(ctx context.Context) *exec.Cmd {
+	return ctx.Value(commandKey{}).(*exec.Cmd)
+}
+
 func exitStatus(ctx context.Context, not string, code int) error {
-	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
+	if c := command(ctx).ProcessState.ExitCode(); (c == code) != (not == "") {
 		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
 	}
 
