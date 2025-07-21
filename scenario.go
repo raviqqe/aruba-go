@@ -90,13 +90,14 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
-	key := any(stdoutKey{})
+	c := command(ctx)
+	out := c.Stdout
 
 	if stdout == "stderr" {
-		key = stderrKey{}
+		out = c.Stderr
 	}
 
-	s := string(ctx.Value(key).([]byte))
+	s := string(out.(*bytes.Buffer).Bytes())
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
 		exactly != "" && (s == pattern || strings.TrimSpace(s) == pattern) != (not == "") {
