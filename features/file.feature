@@ -33,6 +33,7 @@ Feature: File
   Scenario: Create a directory
     Given a directory named "foo"
     Then the directory named "foo" should exist
+    And the directory named "bar" should not exist
 
   Rule: Contain strings
 
