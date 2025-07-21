@@ -27,7 +27,7 @@ Feature: Character escape
     And the stdout should not contain "a\"b"
 
   Scenario: Check stdout with many backslashes
-    When I successfully run `echo \\\\`
+    When I successfully run `echo \\`
     Then the stdout should contain exactly "\\\\"
 
   Scenario: Create a file with an escaped newline
