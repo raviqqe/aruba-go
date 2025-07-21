@@ -92,14 +92,13 @@ Feature: Character escape
       print("{!r}".format("<value>"))
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain exactly "'<value>'"
+    Then the stdout should contain exactly "'\<value>'"
 
     Examples:
-      | value     |
-      | \\n       |
-      | \\t       |
-      | \\r       |
-      | \\n\\t\\r |
+      | value |
+      | \\n   |
+      | \\t   |
+      | \\r   |
 
   Scenario Outline: Compare asymmetric escapes in examples
     Given a file named "foo.py" with:
