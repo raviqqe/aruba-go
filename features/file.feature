@@ -22,6 +22,8 @@ Feature: File
       """
     Then the file named "foo.txt" should exist
     And the file "foo.txt" should exist
+    And the file named "bar.txt" should not exist
+    And the file "bar.txt" should not exist
 
   Rule: Contain strings
 
