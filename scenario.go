@@ -30,7 +30,7 @@ func matchesExactly(s, t string) bool {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "aruba-*")
 
-	return contextWithWorld(ctx, world{RootDirectory: d, CurrentDirectory: d}), err
+	return contextWithWorld(ctx, newWorld(d)), err
 }
 
 func createFile(ctx context.Context, p, s string) error {

@@ -18,6 +18,15 @@ type world struct {
 	Stderr           *bytes.Buffer
 }
 
+func newWorld(d string) world {
+	return world{
+		RootDirectory:    d,
+		CurrentDirectory: d,
+		Stdout:           bytes.NewBuffer(nil),
+		Stderr:           bytes.NewBuffer(nil),
+	}
+}
+
 func contextWorld(ctx context.Context) world {
 	return ctx.Value(worldKey{}).(world)
 }
