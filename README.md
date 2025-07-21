@@ -8,10 +8,10 @@ The Go implementation of [Aruba](https://github.com/cucumber/aruba), the command
 
 ## Install
 
-To install a standalone `aruba` command, run:
+To install a standalone `agoa` command, run:
 
 ```sh
-go install github.com/raviqqe/aruba-go/cmd/aruba@latest
+go install github.com/raviqqe/aruba-go/cmd/agoa@latest
 ```
 
 To install it as a library for [`Godog`](https://github.com/cucumber/godog), run:
@@ -23,10 +23,10 @@ go get github.com/raviqqe/aruba-go@latest
 ## Usage
 
 ```sh
-aruba
+agoa
 ```
 
-For more information, see `aruba --help`.
+For more information, see `agoa --help`.
 
 ## License
 
