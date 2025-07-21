@@ -142,7 +142,6 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 	s := string(bs)
 	ok := strings.Contains(s, pattern)
 
-	fmt.Printf("%q %q %q", exactly, s, pattern)
 	if exactly != "" {
 		ok = matchesExactly(s, pattern)
 	}
