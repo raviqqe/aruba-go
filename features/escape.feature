@@ -1,12 +1,21 @@
+@go
 Feature: Character escape
 
-  Scenario: Create a file with an escaped backslash
+  Scenario: Create a file with a backslash
     Given a file named "foo.txt" with:
       """
-      a\\b
+      a\b
       """
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\\b"
+
+  Scenario: Create a file with a double quote
+    Given a file named "foo.txt" with:
+      """
+      a"b
+      """
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly "a\"b"
 
   Scenario: Create a file with an escaped double quote
     Given a file named "foo.txt" with:
@@ -14,22 +23,11 @@ Feature: Character escape
       a\"b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "a\"b"
+    Then the stdout should contain "a\\\"b"
+    And the stdout should not contain "a\"b"
 
-  Scenario Outline: Escape a normal character
-    Given a file named "foo.txt" with:
-      """
-      <value>
-      """
-    When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "<value>"
-
-    Examples:
-      | value |
-      | \\a   |
-
-  Scenario: Check stdout with a blank character
-    When I successfully run `echo \\\\\\\\`
+  Scenario: Check stdout with many backslashes
+    When I successfully run `echo \\\\`
     Then the stdout should contain exactly "\\\\"
 
   Scenario: Create a file with an escaped newline
@@ -47,6 +45,7 @@ Feature: Character escape
       """
     When I successfully run `python3 foo.py`
     Then the stdout should contain exactly "<value>"
+    And the stdout should contain exactly "foo\nbar"
 
     Examples:
       | value     |
@@ -58,7 +57,7 @@ Feature: Character escape
       print("\\\\\\\\")
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain "\\\\"
+    Then the stdout should contain "\\\\\\\\"
 
   Scenario Outline: Compare special characters in examples
     Given a file named "foo.py" with:
@@ -70,8 +69,10 @@ Feature: Character escape
 
     Examples:
       | value |
+      | \\a   |
       | \\n   |
       | \\t   |
+      | \\r   |
       | \\"   |
 
   Scenario Outline: Escape special characters in examples
@@ -80,16 +81,15 @@ Feature: Character escape
       print("{!r}".format("<value>"))
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain exactly "'<value>'"
+    Then the stdout should contain exactly "'\<value>'"
 
     Examples:
-      | value     |
-      | \\n       |
-      | \\t       |
-      | \\r       |
-      | \\n\\t\\r |
+      | value |
+      | \\n   |
+      | \\t   |
+      | \\r   |
 
-  Scenario Outline: Compar asymmetric escapes in examples
+  Scenario Outline: Compare asymmetric escapes in examples
     Given a file named "foo.py" with:
       """python
       print("{!r}".format(<input>).replace("'", '"'))
@@ -109,8 +109,29 @@ Feature: Character escape
       """
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\nb"
+    And the stdout should not contain exactly "a\\nb"
     And the stdout should contain exactly:
       """
       a
       b
+      """
+
+  Scenario: Check a file to contain a string with a newline
+    When a file named "foo.txt" with:
+      """foo
+      a
+      b
+      """
+    Then a file named "foo.txt" should contain "a\nb"
+
+  Scenario: Check a file to contain an exact string with surrounding spaces
+    When a file named "foo.txt" with:
+      """foo
+
+      a
+
+      """
+    Then a file named "foo.txt" should contain exactly:
+      """
+      a
       """
