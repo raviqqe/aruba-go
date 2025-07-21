@@ -18,18 +18,18 @@ type exitCodeKey struct{}
 type stdoutKey struct{}
 type stderrKey struct{}
 
-func unquoteString(s string) string {
+func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	return s
+	return s, nil
 }
 
-func parseString(s string) string {
-	return unquoteString(strings.TrimSpace(s))
+func parseString(s string) (string, error) {
+	return unquote(strings.TrimSpace(s))
 }
 
 func parseDocString(s string) string {
@@ -51,7 +51,10 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
-	command = parseString(command)
+	command, err := parseString(command)
+	if err != nil {
+		return ctx, err
+	}
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
@@ -61,7 +64,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
 
-	err := c.Run()
+	err = c.Run()
 	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
 	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
 	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
@@ -126,7 +129,12 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
 		func(ctx context.Context, port, not, exactly, pattern string) error {
-			return stdout(ctx, port, not, exactly, parseString(pattern))
+			pattern, err := parseString(pattern)
+			if err != nil {
+				return err
+			}
+
+			return stdout(ctx, port, not, exactly, pattern)
 		},
 	)
 	ctx.Step(
@@ -136,7 +144,12 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		},
 	)
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain "([^"]*)"$`, func(ctx context.Context, p, not, pattern string) error {
-		return fileContains(ctx, p, not, "", parseString(pattern))
+		pattern, err := parseString(pattern)
+		if err != nil {
+			return err
+		}
+
+		return fileContains(ctx, p, not, "", pattern)
 	})
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
