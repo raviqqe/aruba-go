@@ -77,13 +77,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 }
 
 func runScript(ctx context.Context, s *godog.DocString) (context.Context, error) {
-	ext := "sh"
-
-	if s.MediaType != "" {
-		ext = s.MediaType
-	}
-
-	p := "script." + ext
+	p := "script"
 	err := createFile(ctx, p, s.Content)
 	if err != nil {
 		return ctx, err
