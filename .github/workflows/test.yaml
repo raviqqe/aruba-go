@@ -59,7 +59,7 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.environment }} bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.dependent.environment }} $(go env GOPATH)/bin/aruba || ${{ matrix.dependent.fail }}
+      - run: ${{ matrix.dependent.environment }} agoa || ${{ matrix.dependent.fail }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
