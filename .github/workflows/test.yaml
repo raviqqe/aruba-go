@@ -40,6 +40,9 @@ jobs:
             build: cargo install stak && cargo install --path root
             environment: STAK_ROOT=$PWD
             fail: true
+          - directory: turtle-build
+            build: cargo install --path .
+            fail: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

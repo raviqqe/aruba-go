@@ -4,3 +4,6 @@
 [submodule "dependents/schemat"]
 	path = dependents/schemat
 	url = https://github.com/raviqqe/schemat
+[submodule "dependents/turtle-build"]
+	path = dependents/turtle-build
+	url = https://github.com/raviqqe/turtle-build
