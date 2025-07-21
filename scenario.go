@@ -161,5 +161,4 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
 	// ctx.Step(`^I pipe in the file "([^"]*)"$`, pipeFile)
-	// ctx.Step("^I run `([^`]*)` interactively$", runCommandInteractively)
 }
