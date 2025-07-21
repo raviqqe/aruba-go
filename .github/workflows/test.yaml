@@ -67,6 +67,7 @@ jobs:
       - unit_test
       - integration_test
       - integration_test_test
+      - dependent_test
     if: always()
     runs-on: ubuntu-latest
     steps:
