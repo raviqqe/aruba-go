@@ -39,12 +39,12 @@ func matchesExactly(s, t string) bool {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "aruba-*")
 
-	return context.WithValue(ctx, contextKey{}, ArubaContext{Directory: d}), err
+	return contextWithWorld(ctx, world{Directory: d}), err
 }
 
 func createFile(ctx context.Context, p string, docString *godog.DocString) error {
 	return os.WriteFile(
-		path.Join(ctx.Value(directoryKey{}).(string), p),
+		path.Join(contextWorld(ctx).Directory, p),
 		[]byte(parseDocString(docString.Content)+"\n"),
 		0o644,
 	)
@@ -58,19 +58,22 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
-	c.Dir = ctx.Value(directoryKey{}).(string)
+	w := contextWorld(ctx)
+	c.Dir = w.Directory
 	stdout := bytes.NewBuffer(nil)
 	c.Stdout = stdout
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
-	ctx = context.WithValue(ctx, commandKey{}, c)
+	w.Command = c
+	ctx = contextWithWorld(ctx, w)
 
 	in, err := c.StdinPipe()
 	if err != nil {
 		return ctx, err
 	}
 
-	ctx = context.WithValue(ctx, stdinKey{}, in)
+	w.Stdin = in
+	ctx = contextWithWorld(ctx, w)
 
 	err = c.Start()
 	if err != nil {
@@ -86,12 +89,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	return ctx, nil
 }
 
-func command(ctx context.Context) *exec.Cmd {
-	return ctx.Value(commandKey{}).(*exec.Cmd)
-}
-
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := command(ctx)
+	c := contextWorld(ctx).Command
 	_ = c.Wait()
 
 	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
@@ -102,13 +101,13 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdin(ctx context.Context, p string) error {
-	f, err := os.Open(path.Join(ctx.Value(directoryKey{}).(string), p))
+	f, err := os.Open(path.Join(contextWorld(ctx).Directory, p))
 	if err != nil {
 		return err
 	}
 
 	go func() {
-		w := ctx.Value(stdinKey{}).(io.WriteCloser)
+		w := contextWorld(ctx).Stdin
 		_, _ = io.Copy(w, f)
 		_ = w.Close()
 	}()
@@ -117,7 +116,7 @@ func stdin(ctx context.Context, p string) error {
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
-	c := command(ctx)
+	c := contextWorld(ctx).Command
 	_ = c.Wait()
 	out := c.Stdout
 
@@ -136,7 +135,7 @@ func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
 }
 
 func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
-	bs, err := os.ReadFile(path.Join(ctx.Value(directoryKey{}).(string), p))
+	bs, err := os.ReadFile(path.Join(contextWorld(ctx).Directory, p))
 	if err != nil {
 		return err
 	}
