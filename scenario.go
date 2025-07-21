@@ -95,16 +95,21 @@ func exitStatus(ctx context.Context, not string, code int) error {
 }
 
 func stdin(ctx context.Context, p string) error {
-	f, err := os.Open(path.Join(contextWorld(ctx).Directory, p))
+	w := contextWorld(ctx)
+	f, err := os.Open(path.Join(w.Directory, p))
 	if err != nil {
 		return err
 	}
 
-	go func() {
-		w := contextWorld(ctx).Stdin
-		_, _ = io.Copy(w, f)
-		_ = w.Close()
-	}()
+	_, err = io.Copy(w.Stdin, f)
+	if err != nil {
+		return err
+	}
+
+	err = w.Stdin.Close()
+	if err != nil {
+		return err
+	}
 
 	return err
 }
