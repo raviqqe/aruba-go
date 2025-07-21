@@ -14,14 +14,6 @@ import (
 	"github.com/cucumber/godog"
 )
 
-type contextKey struct{}
-
-type ArubaContext struct {
-	Command   *exec.Cmd
-	Directory string
-	Stdin     io.WriteCloser
-}
-
 func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
 
