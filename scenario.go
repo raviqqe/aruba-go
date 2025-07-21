@@ -157,6 +157,7 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 	return nil
 }
 
+// Initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "(.+)" with:$`, createFile)
