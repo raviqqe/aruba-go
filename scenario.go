@@ -41,6 +41,11 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
+	command, err := parseString(command)
+	if err != nil {
+		return ctx, err
+	}
+
 	ss := strings.Split(command, " ")
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
@@ -151,7 +156,7 @@ func fileExists(ctx context.Context, p, not string) error {
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
-	ctx.Step("^I( successfully)? run `(.*)`( interactively)?$", runCommand)
+	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? ("(?:\\.|[^"\\])*")$`,
