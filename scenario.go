@@ -77,13 +77,14 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 }
 
 func runScript(ctx context.Context, s *godog.DocString) (context.Context, error) {
-	p := "script"
-	err := createFile(ctx, p, s.Content)
+	const scriptPath = "script"
+
+	err := createFile(ctx, scriptPath, s.Content)
 	if err != nil {
 		return ctx, err
 	}
 
-	return runCommand(ctx, "", strconv.Quote("sh "+p), "")
+	return runCommand(ctx, "", strconv.Quote("sh "+scriptPath), "")
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
