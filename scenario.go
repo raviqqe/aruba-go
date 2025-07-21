@@ -106,12 +106,7 @@ func stdin(ctx context.Context, p string) error {
 		return err
 	}
 
-	err = w.Stdin.Close()
-	if err != nil {
-		return err
-	}
-
-	return err
+	return w.Stdin.Close()
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
