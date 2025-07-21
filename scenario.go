@@ -70,7 +70,7 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
 
 	if successfully == "" {
-		return ctx, nil
+		err = nil
 	}
 
 	return ctx, err
