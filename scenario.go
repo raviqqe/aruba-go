@@ -37,7 +37,7 @@ func parseDocString(s string) string {
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
-	d, err := os.MkdirTemp("", "godog-*")
+	d, err := os.MkdirTemp("", "aruba-*")
 
 	return context.WithValue(ctx, directoryKey{}, d), err
 }
