@@ -13,10 +13,8 @@ import (
 	"github.com/cucumber/godog"
 )
 
+type commandKey struct{}
 type directoryKey struct{}
-type exitCodeKey struct{}
-type stdoutKey struct{}
-type stderrKey struct{}
 
 func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
@@ -50,7 +48,7 @@ func createFile(ctx context.Context, p string, docString *godog.DocString) error
 	)
 }
 
-func runCommand(ctx context.Context, successfully, command string) (context.Context, error) {
+func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
 	command, err := parseString(command)
 	if err != nil {
 		return ctx, err
@@ -63,35 +61,47 @@ func runCommand(ctx context.Context, successfully, command string) (context.Cont
 	c.Stdout = stdout
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
+	ctx = context.WithValue(ctx, commandKey{}, c)
 
-	err = c.Run()
-	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
-	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
-	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
-
-	if successfully == "" {
-		err = nil
+	err = c.Start()
+	if err != nil {
+		return ctx, err
 	}
 
-	return ctx, err
+	if interactively == "" {
+		if err := c.Wait(); successfully != "" {
+			return ctx, err
+		}
+	}
+
+	return ctx, nil
+}
+
+func command(ctx context.Context) *exec.Cmd {
+	return ctx.Value(commandKey{}).(*exec.Cmd)
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	if c := ctx.Value(exitCodeKey{}).(int); (c == code) != (not == "") {
-		return fmt.Errorf("expected exit code%s %d but got %d", not, code, c)
+	c := command(ctx)
+	_ = c.Wait()
+
+	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
+		return fmt.Errorf("expected exit code %d%s to be %d", c, not, code)
 	}
 
 	return nil
 }
 
 func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
-	key := any(stdoutKey{})
+	c := command(ctx)
+	_ = c.Wait()
+	out := c.Stdout
 
 	if stdout == "stderr" {
-		key = stderrKey{}
+		out = c.Stderr
 	}
 
-	s := string(ctx.Value(key).([]byte))
+	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
 		exactly != "" && (s == pattern || strings.TrimSpace(s) == pattern) != (not == "") {
@@ -124,7 +134,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
 	ctx.Step(`^a file named "((?:\\.|[^"\\])+)" with:$`, createFile)
-	ctx.Step("^I( successfully)? run `(.*)`$", runCommand)
+	ctx.Step("^I( successfully)? run `(.*)`( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
 		`^the (std(?:out|err)) should( not)? contain( exactly)? "((?:\\.|[^"\\])*)"$`,
@@ -154,4 +164,5 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a file named "([^"]*)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
 	})
+	// ctx.Step(`^I pipe in the file "([^"]*)"$`, pipeFile)
 }
