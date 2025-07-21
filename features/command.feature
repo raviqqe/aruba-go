@@ -27,6 +27,6 @@ Feature: Command
       """
       foo
       """
-    When I run `cat`
+    When I run `cat` interactively
     And I pipe in the file named "foo.txt"
     Then the exit status should be 0
