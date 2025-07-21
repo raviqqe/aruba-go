@@ -30,6 +30,10 @@ Feature: File
       | a       |
       | the     |
 
+  Scenario: Create a directory
+    Given a directory named "foo"
+    Then the directory named "foo" should exist
+
   Rule: Contain strings
 
     Scenario: Check a file to contain a string
