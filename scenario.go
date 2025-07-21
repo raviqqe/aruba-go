@@ -15,9 +15,6 @@ import (
 
 type commandKey struct{}
 type directoryKey struct{}
-type exitCodeKey struct{}
-type stdoutKey struct{}
-type stderrKey struct{}
 
 func unquote(s string) (string, error) {
 	s, err := strconv.Unquote(`"` + s + `"`)
@@ -64,11 +61,14 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c.Stdout = stdout
 	stderr := bytes.NewBuffer(nil)
 	c.Stderr = stderr
+	ctx = context.WithValue(ctx, commandKey{}, c)
 
-	err = c.Run()
-	ctx = context.WithValue(ctx, exitCodeKey{}, c.ProcessState.ExitCode())
-	ctx = context.WithValue(ctx, stdoutKey{}, stdout.Bytes())
-	ctx = context.WithValue(ctx, stderrKey{}, stderr.Bytes())
+	err = c.Start()
+	if err != nil {
+		return ctx, err
+	}
+
+	err = c.Wait()
 
 	if successfully == "" {
 		err = nil
