@@ -1,34 +1,34 @@
 
 [TestFailedFeatures - 1]
-[1;37mFeature:[0m File
+Feature: File
 
-  [1;37mScenario:[0m Create a file                                [1;30m# failures/file.feature:3[0m
-    [32mGiven[0m [32ma file named "foo.txt" with "foo"[0m              [1;30m# scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1[0m
-    [32mWhen[0m [32mI successfully run `test -r foo.txt`[0m            [1;30m# scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand[0m
-    [31mThen[0m [31ma file named "foo.txt" should not contain "foo"[0m [1;30m# scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5[0m
-    [1;31mexpected file "foo.txt" not to contain "foo"[0m
+  Scenario: Create a file                                # failures/file.feature:3
+    Given a file named "foo.txt" with "foo"              # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
+    When I successfully run `test -r foo.txt`            # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" not to contain "foo"
 
-  [1;37mScenario:[0m Create a file with a doc-string              [1;30m# failures/file.feature:8[0m
-    [32mGiven[0m [32ma file named "foo.txt" with:[0m                   [1;30m# scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2[0m
-      [36m"""[0m
-      [36mfoo[0m
-      [36m"""[0m
-    [32mWhen[0m [32mI successfully run `test -r foo.txt`[0m            [1;30m# scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand[0m
-    [31mThen[0m [31ma file named "foo.txt" should not contain "foo"[0m [1;30m# scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5[0m
-    [1;31mexpected file "foo.txt" not to contain "foo"[0m
+  Scenario: Create a file with a doc-string              # failures/file.feature:8
+    Given a file named "foo.txt" with:                   # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      foo
+      """
+    When I successfully run `test -r foo.txt`            # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" not to contain "foo"
 
---- [31mFailed steps:[0m
+--- Failed steps:
 
-  [31mScenario: Create a file[0m [1;30m# failures/file.feature:3[0m
-    [31mThen a file named "foo.txt" should not contain "foo"[0m [1;30m# failures/file.feature:6[0m
-      [31mError: [0m[1;31mexpected file "foo.txt" not to contain "foo"[0m
+  Scenario: Create a file # failures/file.feature:3
+    Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
+      Error: expected file "foo.txt" not to contain "foo"
 
-  [31mScenario: Create a file with a doc-string[0m [1;30m# failures/file.feature:8[0m
-    [31mThen a file named "foo.txt" should not contain "foo"[0m [1;30m# failures/file.feature:14[0m
-      [31mError: [0m[1;31mexpected file "foo.txt" not to contain "foo"[0m
+  Scenario: Create a file with a doc-string # failures/file.feature:8
+    Then a file named "foo.txt" should not contain "foo" # failures/file.feature:14
+      Error: expected file "foo.txt" not to contain "foo"
 
 
-2 scenarios ([31m2 failed[0m)
-6 steps ([32m4 passed[0m, [31m2 failed[0m)
+2 scenarios (2 failed)
+6 steps (4 passed, 2 failed)
 
 ---

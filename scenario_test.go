@@ -36,6 +36,7 @@ func TestFailedFeatures(t *testing.T) {
 		Options: &godog.Options{
 			Concurrency: 1,
 			Format:      "pretty",
+			NoColors:    true,
 			Output:      b,
 			Paths:       []string{"failures"},
 		},
