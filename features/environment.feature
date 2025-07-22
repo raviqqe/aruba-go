@@ -14,3 +14,8 @@ Feature: Environment
     When I cd to "foo"
     And I successfully run `cat bar.txt`
     Then the stdout should contain exactly "foo"
+
+  Scenario: Change a directory up
+    Given a directory named "foo"
+    When I cd to "foo"
+    Then I cd to ".."
