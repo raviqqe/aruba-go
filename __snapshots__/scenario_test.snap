@@ -1,5 +1,48 @@
 
 [TestFailedFeatures - 1]
+Feature: Command
+
+  Scenario: Run a command successfully # failures/command.feature:3
+    When I successfully run `false`    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    exit status 1
+
+  Scenario: Check an exit status         # failures/command.feature:6
+    When I run `true`                    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 0 not to be 0
+
+  Scenario: Check an exit status of 1    # failures/command.feature:10
+    When I run `false`                   # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 1 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 1 not to be 1
+
+  Scenario: Run a command interactively  # failures/command.feature:14
+    When I run `echo` interactively      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 0 not to be 0
+
+  Scenario: Pipe in a file                  # failures/command.feature:18
+    Given a file named "foo.txt" with:      # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      foo
+      """
+    When I run `cat` interactively          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    And I pipe in the file named "foo.txt"  # scenario.go:234 -> github.com/raviqqe/aruba-go.stdin
+    Then the exit status should be 0        # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    And the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Pipe in a file without named    # failures/command.feature:28
+    Given a file named "foo.txt" with:      # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      foo
+      """
+    When I run `cat` interactively          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    And I pipe in the file "foo.txt"        # scenario.go:234 -> github.com/raviqqe/aruba-go.stdin
+    Then the exit status should be 0        # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    And the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "foo"
+
 Feature: File
 
   Scenario: Create a file                                # failures/file.feature:3
@@ -155,6 +198,30 @@ Feature: File
 
 --- Failed steps:
 
+  Scenario: Run a command successfully # failures/command.feature:3
+    When I successfully run `false` # failures/command.feature:4
+      Error: exit status 1
+
+  Scenario: Check an exit status # failures/command.feature:6
+    Then the exit status should not be 0 # failures/command.feature:8
+      Error: expected exit code 0 not to be 0
+
+  Scenario: Check an exit status of 1 # failures/command.feature:10
+    Then the exit status should not be 1 # failures/command.feature:12
+      Error: expected exit code 1 not to be 1
+
+  Scenario: Run a command interactively # failures/command.feature:14
+    Then the exit status should not be 0 # failures/command.feature:16
+      Error: expected exit code 0 not to be 0
+
+  Scenario: Pipe in a file # failures/command.feature:18
+    And the stdout should not contain "foo" # failures/command.feature:26
+      Error: expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Pipe in a file without named # failures/command.feature:28
+    And the stdout should not contain "foo" # failures/command.feature:36
+      Error: expected stdout "foo\n" not to contain "foo"
+
   Scenario: Create a file # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
       Error: expected file "foo.txt" not to contain "foo"
@@ -224,7 +291,7 @@ Feature: File
       Error: expected file "foo.txt" not to contain "  a"
 
 
-17 scenarios (17 failed)
-40 steps (23 passed, 17 failed)
+23 scenarios (23 failed)
+57 steps (34 passed, 23 failed)
 
 ---
