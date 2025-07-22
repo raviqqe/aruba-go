@@ -11,26 +11,10 @@ Feature: Command
     When I run `false`
     Then the exit status should not be 1
 
+  Scenario: Check an exit status of 0
+    When I run `true`
+    Then the exit status should be 1
+
   Scenario: Run a command interactively
     When I run `echo` interactively
     Then the exit status should not be 0
-
-  Scenario: Pipe in a file
-    Given a file named "foo.txt" with:
-      """
-      foo
-      """
-    When I run `cat` interactively
-    And I pipe in the file named "foo.txt"
-    Then the exit status should be 0
-    And the stdout should not contain "foo"
-
-  Scenario: Pipe in a file without named
-    Given a file named "foo.txt" with:
-      """
-      foo
-      """
-    When I run `cat` interactively
-    And I pipe in the file "foo.txt"
-    Then the exit status should be 0
-    And the stdout should not contain "foo"
