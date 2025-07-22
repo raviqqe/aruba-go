@@ -37,8 +37,10 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: ! bundler exec cucumber --strict failures > result.txt
-      - run: grep '[0-9]\+ scenarios ([0-9]\+ failed)' result.txt
+      - run: >
+          bundler exec cucumber --strict failures |
+          tee /dev/stderr |
+          grep '[0-9]\+ scenarios ([0-9]\+ failed)'
   dependent_test:
     strategy:
       fail-fast: false
