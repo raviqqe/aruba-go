@@ -4,6 +4,8 @@ on:
     branches:
       - main
   pull_request:
+env:
+  CUCUMBER_PUBLISH_ENABLED:
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,7 +29,16 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - run: bundler exec cucumber --publish-quiet --strict --tags 'not @go'
+      - run: bundler exec cucumber --strict --tags 'not @go'
+  integration_failure_test_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+      - run: ! bundler exec cucumber --strict failures > result.txt
+      - run: grep '[0-9]\+ scenarios ([0-9]\+ failed)' result.txt
   dependent_test:
     strategy:
       fail-fast: false
@@ -67,6 +78,7 @@ jobs:
       - unit_test
       - integration_test
       - integration_test_test
+      - integration_failure_test_test
       - dependent_test
     if: always()
     runs-on: ubuntu-latest
