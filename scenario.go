@@ -180,7 +180,7 @@ func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 	d, err := filepath.Rel(w.RootDirectory, w.CurrentDirectory)
 	if err != nil {
 		return ctx, err
-	} else if strings.HasPrefix(d, ".") {
+	} else if strings.HasPrefix(d, "..") {
 		return ctx, fmt.Errorf("cannot change directory to %q", p)
 	}
 
