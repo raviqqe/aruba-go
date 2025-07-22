@@ -62,77 +62,78 @@ Feature: File
         foo
         """
       Then a file named "foo.txt" should contain "bar"
-  # Rule: Contain doc-strings
-  #
-  #   Scenario: Check a file to contain a string
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #       b
-  #       c
-  #       d
-  #       """
-  #     Then a file named "foo.txt" should contain:
-  #       """
-  #       b
-  #       c
-  #       """
-  #
-  #   Scenario: Check a file to contain an exact string
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #       b
-  #       """
-  #     Then a file named "foo.txt" should contain exactly:
-  #       """
-  #       a
-  #       b
-  #       """
-  #
-  #   Scenario: Check a file to contain an exact string with trailing spaces
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #
-  #       """
-  #     Then a file named "foo.txt" should contain exactly:
-  #       """
-  #       a
-  #       """
-  #
-  #   Scenario: Check a file not to contain a string
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #       b
-  #       """
-  #     Then a file named "foo.txt" should not contain:
-  #       """
-  #       a
-  #       c
-  #       """
-  #
-  #   Scenario: Check a file to contain a newline
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #       """
-  #     Then a file named "foo.txt" should contain "a\n"
-  #
-  #   Scenario: Check a file to contain two newlines
-  #     When a file named "foo.txt" with:
-  #       """
-  #       a
-  #
-  #
-  #       """
-  #     Then a file named "foo.txt" should contain "a\n"
-  #     And a file named "foo.txt" should not contain "a\n\n"
-  #
-  #   Scenario: Check a file to contain two newlines
-  #     When a file named "foo.txt" with:
-  #       """
-  #         a
-  #       """
-  #     Then a file named "foo.txt" should contain "  a"
+
+  Rule: Contain doc-strings
+
+    Scenario: Check a file to contain a string
+      When a file named "foo.txt" with:
+        """
+        a
+        b
+        c
+        d
+        """
+      Then a file named "foo.txt" should not contain:
+        """
+        b
+        c
+        """
+
+    Scenario: Check a file to contain an exact string
+      When a file named "foo.txt" with:
+        """
+        a
+        b
+        """
+      Then a file named "foo.txt" should not contain exactly:
+        """
+        a
+        b
+        """
+
+    Scenario: Check a file to contain an exact string with trailing spaces
+      When a file named "foo.txt" with:
+        """
+        a
+
+        """
+      Then a file named "foo.txt" should not contain exactly:
+        """
+        a
+        """
+
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """
+        a
+        b
+        """
+      Then a file named "foo.txt" should contain:
+        """
+        a
+        c
+        """
+
+    Scenario: Check a file to contain a newline
+      When a file named "foo.txt" with:
+        """
+        a
+        """
+      Then a file named "foo.txt" should not contain "a\n"
+
+    Scenario: Check a file to contain two newlines
+      When a file named "foo.txt" with:
+        """
+        a
+
+
+        """
+      Then a file named "foo.txt" should contain "a\n"
+      And a file named "foo.txt" should contain "a\n\n"
+
+    Scenario: Check a file to contain two newlines
+      When a file named "foo.txt" with:
+        """
+          a
+        """
+      Then a file named "foo.txt" should not contain "  a"

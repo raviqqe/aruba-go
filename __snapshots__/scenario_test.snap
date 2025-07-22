@@ -73,6 +73,86 @@ Feature: File
     Then a file named "foo.txt" should contain "bar" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" to contain "bar"
 
+  Scenario: Check a file to contain a string        # failures/file.feature:68
+    When a file named "foo.txt" with:               # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      b
+      c
+      d
+      """
+    Then a file named "foo.txt" should not contain: # scenario.go:231 -> github.com/raviqqe/aruba-go.InitializeScenario.func6
+      """
+      b
+      c
+      """
+    expected file "foo.txt" not to contain "b\nc"
+
+  Scenario: Check a file to contain an exact string         # failures/file.feature:82
+    When a file named "foo.txt" with:                       # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      b
+      """
+    Then a file named "foo.txt" should not contain exactly: # scenario.go:231 -> github.com/raviqqe/aruba-go.InitializeScenario.func6
+      """
+      a
+      b
+      """
+    expected file "foo.txt" not to contain exactly "a\nb"
+
+  Scenario: Check a file to contain an exact string with trailing spaces # failures/file.feature:94
+    When a file named "foo.txt" with:                                    # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      
+      """
+    Then a file named "foo.txt" should not contain exactly:              # scenario.go:231 -> github.com/raviqqe/aruba-go.InitializeScenario.func6
+      """
+      a
+      """
+    expected file "foo.txt" not to contain exactly "a"
+
+  Scenario: Check a file not to contain a string # failures/file.feature:105
+    When a file named "foo.txt" with:            # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      b
+      """
+    Then a file named "foo.txt" should contain:  # scenario.go:231 -> github.com/raviqqe/aruba-go.InitializeScenario.func6
+      """
+      a
+      c
+      """
+    expected file "foo.txt" to contain "a\nc"
+
+  Scenario: Check a file to contain a newline            # failures/file.feature:117
+    When a file named "foo.txt" with:                    # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      """
+    Then a file named "foo.txt" should not contain "a\n" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" not to contain "a\n"
+
+  Scenario: Check a file to contain two newlines      # failures/file.feature:124
+    When a file named "foo.txt" with:                 # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      a
+      
+      
+      """
+    Then a file named "foo.txt" should contain "a\n"  # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    And a file named "foo.txt" should contain "a\n\n" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" to contain "a\n\n"
+
+  Scenario: Check a file to contain two newlines         # failures/file.feature:134
+    When a file named "foo.txt" with:                    # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+        a
+      """
+    Then a file named "foo.txt" should not contain "  a" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" not to contain "  a"
+
 --- Failed steps:
 
   Scenario: Create a file # failures/file.feature:3
@@ -115,8 +195,36 @@ Feature: File
     Then a file named "foo.txt" should contain "bar" # failures/file.feature:64
       Error: expected file "foo.txt" to contain "bar"
 
+  Scenario: Check a file to contain a string # failures/file.feature:68
+    Then a file named "foo.txt" should not contain: # failures/file.feature:76
+      Error: expected file "foo.txt" not to contain "b\nc"
 
-10 scenarios (10 failed)
-25 steps (15 passed, 10 failed)
+  Scenario: Check a file to contain an exact string # failures/file.feature:82
+    Then a file named "foo.txt" should not contain exactly: # failures/file.feature:88
+      Error: expected file "foo.txt" not to contain exactly "a\nb"
+
+  Scenario: Check a file to contain an exact string with trailing spaces # failures/file.feature:94
+    Then a file named "foo.txt" should not contain exactly: # failures/file.feature:100
+      Error: expected file "foo.txt" not to contain exactly "a"
+
+  Scenario: Check a file not to contain a string # failures/file.feature:105
+    Then a file named "foo.txt" should contain: # failures/file.feature:111
+      Error: expected file "foo.txt" to contain "a\nc"
+
+  Scenario: Check a file to contain a newline # failures/file.feature:117
+    Then a file named "foo.txt" should not contain "a\n" # failures/file.feature:122
+      Error: expected file "foo.txt" not to contain "a\n"
+
+  Scenario: Check a file to contain two newlines # failures/file.feature:124
+    And a file named "foo.txt" should contain "a\n\n" # failures/file.feature:132
+      Error: expected file "foo.txt" to contain "a\n\n"
+
+  Scenario: Check a file to contain two newlines # failures/file.feature:134
+    Then a file named "foo.txt" should not contain "  a" # failures/file.feature:139
+      Error: expected file "foo.txt" not to contain "  a"
+
+
+17 scenarios (17 failed)
+40 steps (23 passed, 17 failed)
 
 ---
