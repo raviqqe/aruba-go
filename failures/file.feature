@@ -3,7 +3,7 @@ Feature: File
   Scenario: Create a file
     Given a file named "foo.txt" with "foo"
     When I successfully run `test -r foo.txt`
-    Then a file named "foo.txt" should contain "foo"
+    Then a file named "foo.txt" should not contain "foo"
 
   Scenario: Create a file with a doc-string
     Given a file named "foo.txt" with:
@@ -11,7 +11,7 @@ Feature: File
       foo
       """
     When I successfully run `test -r foo.txt`
-    Then a file named "foo.txt" should contain "foo"
+    Then a file named "foo.txt" should not contain "foo"
 
   Scenario: Create a file with a content type
     Given a file named "foo.txt" with:
