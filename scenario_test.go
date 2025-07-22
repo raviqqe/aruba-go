@@ -42,5 +42,11 @@ func TestFailedFeatures(t *testing.T) {
 	}.Run()
 
 	assert.NotZero(t, status)
-	snaps.MatchSnapshot(t, regexp.MustCompile(`[[:space:]]*[0-9.]+ms`).ReplaceAllString(b.String(), ""))
+
+	s := b.String()
+
+	snaps.MatchSnapshot(
+		t,
+		regexp.MustCompile(`[[:space:]]*[0-9.]+ms`).ReplaceAllString(s, ""),
+	)
 }
