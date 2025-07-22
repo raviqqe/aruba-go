@@ -47,7 +47,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		return ctx, err
 	}
 
-	ss := strings.Split(command, " ")
+	ss := strings.Fields(command)
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.CurrentDirectory
