@@ -8,9 +8,10 @@ import (
 	"github.com/cucumber/godog"
 	"github.com/cucumber/godog/colors"
 	"github.com/raviqqe/aruba-go"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestMain(m *testing.M) {
+func TestSuccessFeatures(t *testing.T) {
 	status := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
@@ -21,5 +22,5 @@ func TestMain(m *testing.M) {
 		},
 	}.Run()
 
-	os.Exit(status)
+	assert.Zero(t, status)
 }
