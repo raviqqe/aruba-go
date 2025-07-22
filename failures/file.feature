@@ -20,21 +20,15 @@ Feature: File
       """
     When I successfully run `cat foo.txt`
     Then the stdout should not contain "foo"
-  # Scenario: Check file existence
-  #   Given a file named "foo.txt" with:
-  #     """
-  #     foo
-  #     """
-  #   Then <article> file named "foo.txt" should exist
-  #   And <article> file "foo.txt" should exist
-  #   And <article> file named "bar.txt" should not exist
-  #   And <article> file "bar.txt" should not exist
-  #
-  #   Examples:
-  #     | article |
-  #     | a       |
-  #     | the     |
-  #
+
+  Scenario: Check file existence
+    Given a file named "foo.txt" with ""
+    Then <article> file named "foo.txt" should not exist
+
+    Examples:
+      | article |
+      | a       |
+      | the     |
   # Scenario: Create a directory
   #   Given a directory named "foo"
   #   Then the directory named "foo" should exist

@@ -26,6 +26,17 @@ Feature: File
     Then the stdout should not contain "foo"  # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
     expected stdout "foo\n" not to contain "foo"
 
+  Scenario: Check file existence                         # failures/file.feature:24
+    Given a file named "foo.txt" with ""                 # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
+    Then <article> file named "foo.txt" should not exist # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
+
+    Examples:
+      | article |
+      | a       |
+        file "foo.txt" should not exist
+      | the     |
+        file "foo.txt" should not exist
+
 --- Failed steps:
 
   Scenario: Create a file # failures/file.feature:3
@@ -40,8 +51,16 @@ Feature: File
     Then the stdout should not contain "foo" # failures/file.feature:22
       Error: expected stdout "foo\n" not to contain "foo"
 
+  Scenario: Check file existence # failures/file.feature:24
+    Then a file named "foo.txt" should not exist # failures/file.feature:26
+      Error: file "foo.txt" should not exist
 
-3 scenarios (3 failed)
-9 steps (6 passed, 3 failed)
+  Scenario: Check file existence # failures/file.feature:24
+    Then the file named "foo.txt" should not exist # failures/file.feature:26
+      Error: file "foo.txt" should not exist
+
+
+5 scenarios (5 failed)
+13 steps (8 passed, 5 failed)
 
 ---
