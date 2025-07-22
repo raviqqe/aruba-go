@@ -12,14 +12,14 @@ Feature: File
       """
     When I successfully run `test -r foo.txt`
     Then a file named "foo.txt" should not contain "foo"
-  # Scenario: Create a file with a content type
-  #   Given a file named "foo.txt" with:
-  #     """foo
-  #     foo
-  #     """
-  #   When I successfully run `cat foo.txt`
-  #   Then the stdout should contain exactly "foo"
-  #
+
+  Scenario: Create a file with a content type
+    Given a file named "foo.txt" with:
+      """foo
+      foo
+      """
+    When I successfully run `cat foo.txt`
+    Then the stdout should not contain "foo"
   # Scenario: Check file existence
   #   Given a file named "foo.txt" with:
   #     """

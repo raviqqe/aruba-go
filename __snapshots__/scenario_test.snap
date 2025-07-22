@@ -17,6 +17,15 @@ Feature: File
     Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" not to contain "foo"
 
+  Scenario: Create a file with a content type # failures/file.feature:16
+    Given a file named "foo.txt" with:        # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """ foo
+      foo
+      """
+    When I successfully run `cat foo.txt`     # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain "foo"  # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "foo"
+
 --- Failed steps:
 
   Scenario: Create a file # failures/file.feature:3
@@ -27,8 +36,12 @@ Feature: File
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:14
       Error: expected file "foo.txt" not to contain "foo"
 
+  Scenario: Create a file with a content type # failures/file.feature:16
+    Then the stdout should not contain "foo" # failures/file.feature:22
+      Error: expected stdout "foo\n" not to contain "foo"
 
-2 scenarios (2 failed)
-6 steps (4 passed, 2 failed)
+
+3 scenarios (3 failed)
+9 steps (6 passed, 3 failed)
 
 ---
