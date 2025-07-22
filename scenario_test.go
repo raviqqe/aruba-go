@@ -33,7 +33,7 @@ func TestFailedFeatures(t *testing.T) {
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
 		Options: &godog.Options{
-			Concurrency: runtime.NumCPU(),
+			Concurrency: 1,
 			Format:      "pretty",
 			Output:      b,
 			Paths:       []string{"failures"},
