@@ -16,6 +16,13 @@ Feature: Standard I/O
     When I successfully run `echo`
     Then the stdout should contain exactly ""
 
+  Scenario: Concatenate stdout
+    When I successfully run `echo foo`
+    And I successfully run `echo bar`
+    Then the stdout should contain exactly "foo\nbar"
+    And the stdout from "echo foo" should contain exactly "foo"
+    And the stdout from "echo bar" should contain exactly "bar"
+
   Rule: Containing strings
 
     Scenario: Check stdout to contain a string

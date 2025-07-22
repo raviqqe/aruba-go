@@ -30,7 +30,7 @@ func matchesExactly(s, t string) bool {
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	d, err := os.MkdirTemp("", "aruba-*")
 
-	return contextWithWorld(ctx, world{RootDirectory: d, CurrentDirectory: d}), err
+	return contextWithWorld(ctx, newWorld(d)), err
 }
 
 func createFile(ctx context.Context, p, s string) error {
@@ -53,7 +53,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c.Dir = w.CurrentDirectory
 	c.Stdout = bytes.NewBuffer(nil)
 	c.Stderr = bytes.NewBuffer(nil)
-	w.Command = c
+	w = w.AddCommand(c)
 	ctx = contextWithWorld(ctx, w)
 
 	w.Stdin, err = c.StdinPipe()
@@ -89,7 +89,7 @@ func runScript(ctx context.Context, s *godog.DocString) (context.Context, error)
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := contextWorld(ctx).Command
+	c := contextWorld(ctx).LastCommand()
 	_ = c.Wait()
 
 	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
@@ -113,16 +113,25 @@ func stdin(ctx context.Context, p string) error {
 	return nil
 }
 
-func stdout(ctx context.Context, stdout, not, exactly, pattern string) error {
-	c := contextWorld(ctx).Command
-	_ = c.Wait()
-	out := c.Stdout
+func stdout(ctx context.Context, stdout, from, not, exactly, pattern string) error {
+	w := contextWorld(ctx)
+	s := ""
 
-	if stdout == "stderr" {
-		out = c.Stderr
+	if from == "" {
+
+		if stdout == "stdout" {
+			s = w.Stdout()
+		} else {
+			s = w.Stderr()
+		}
+	} else {
+		from, err := parseString(from)
+		if err != nil {
+			return err
+		}
+
+		s = w.FindCommand(from).Stdout.(*bytes.Buffer).String()
 	}
-
-	s := out.(*bytes.Buffer).String()
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
 		exactly != "" && matchesExactly(s, pattern) != (not == "") {
@@ -171,7 +180,7 @@ func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 	d, err := filepath.Rel(w.RootDirectory, w.CurrentDirectory)
 	if err != nil {
 		return ctx, err
-	} else if strings.HasPrefix(d, ".") {
+	} else if strings.HasPrefix(d, "..") {
 		return ctx, fmt.Errorf("cannot change directory to %q", p)
 	}
 
@@ -195,20 +204,20 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^the (std(?:out|err)) should( not)? contain( exactly)? (".*")$`,
-		func(ctx context.Context, port, not, exactly, pattern string) error {
+		`^the (std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
+		func(ctx context.Context, port, from, not, exactly, pattern string) error {
 			pattern, err := parseString(pattern)
 			if err != nil {
 				return err
 			}
 
-			return stdout(ctx, port, not, exactly, pattern)
+			return stdout(ctx, port, from, not, exactly, pattern)
 		},
 	)
 	ctx.Step(
-		`^the (std(?:out|err)) should( not)? contain( exactly)?:$`,
-		func(ctx context.Context, port, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, not, exactly, parseDocString(docString.Content))
+		`^the (std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
+		func(ctx context.Context, port, from, not, exactly string, docString *godog.DocString) error {
+			return stdout(ctx, port, from, not, exactly, parseDocString(docString.Content))
 		},
 	)
 	ctx.Step(`^a file named "(.*)" should( not)? contain (".*")$`, func(ctx context.Context, p, not, pattern string) error {
