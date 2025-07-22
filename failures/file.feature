@@ -5,6 +5,11 @@ Feature: File
     When I successfully run `test -r foo.txt`
     Then a file named "foo.txt" should not contain "foo"
 
+  Scenario: Create a file without its content
+    Given a file named "foo.txt" with ""
+    When I successfully run `test -r foo.txt`
+    Then a file named "foo.txt" should contain "foo"
+
   Scenario: Create a file with a doc-string
     Given a file named "foo.txt" with:
       """
@@ -12,6 +17,14 @@ Feature: File
       """
     When I successfully run `test -r foo.txt`
     Then a file named "foo.txt" should not contain "foo"
+
+  Scenario: Create a file with an empty doc-string
+    Given a file named "foo.txt" with:
+      """
+
+      """
+    When I successfully run `test -r foo.txt`
+    Then a file named "foo.txt" should contain "foo"
 
   Scenario: Create a file with a content type
     Given a file named "foo.txt" with:
@@ -29,27 +42,26 @@ Feature: File
       | article |
       | a       |
       | the     |
-  # Scenario: Create a directory
-  #   Given a directory named "foo"
-  #   Then the directory named "foo" should exist
-  #   And the directory named "bar" should not exist
-  #
-  # Rule: Contain strings
-  #
-  #   Scenario: Check a file to contain a string
-  #     When a file named "foo.txt" with:
-  #       """
-  #       foo
-  #       """
-  #     Then a file named "foo.txt" should contain "foo"
-  #
-  #   Scenario: Check a file not to contain a string
-  #     When a file named "foo.txt" with:
-  #       """
-  #       foo
-  #       """
-  #     Then a file named "foo.txt" should not contain "bar"
-  #
+
+  Scenario: Create a directory
+    Given a directory named "foo"
+    Then the directory named "foo" should not exist
+
+  Rule: Contain strings
+
+    Scenario: Check a file to contain a string
+      When a file named "foo.txt" with:
+        """
+        foo
+        """
+      Then a file named "foo.txt" should not contain "foo"
+
+    Scenario: Check a file not to contain a string
+      When a file named "foo.txt" with:
+        """
+        foo
+        """
+      Then a file named "foo.txt" should contain "bar"
   # Rule: Contain doc-strings
   #
   #   Scenario: Check a file to contain a string

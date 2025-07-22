@@ -8,7 +8,13 @@ Feature: File
     Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" not to contain "foo"
 
-  Scenario: Create a file with a doc-string              # failures/file.feature:8
+  Scenario: Create a file without its content        # failures/file.feature:8
+    Given a file named "foo.txt" with ""             # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
+    When I successfully run `test -r foo.txt`        # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then a file named "foo.txt" should contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" to contain "foo"
+
+  Scenario: Create a file with a doc-string              # failures/file.feature:13
     Given a file named "foo.txt" with:                   # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
       """
       foo
@@ -17,7 +23,16 @@ Feature: File
     Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" not to contain "foo"
 
-  Scenario: Create a file with a content type # failures/file.feature:16
+  Scenario: Create a file with an empty doc-string   # failures/file.feature:21
+    Given a file named "foo.txt" with:               # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      
+      """
+    When I successfully run `test -r foo.txt`        # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then a file named "foo.txt" should contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" to contain "foo"
+
+  Scenario: Create a file with a content type # failures/file.feature:29
     Given a file named "foo.txt" with:        # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
       """ foo
       foo
@@ -26,7 +41,7 @@ Feature: File
     Then the stdout should not contain "foo"  # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check file existence                         # failures/file.feature:24
+  Scenario: Check file existence                         # failures/file.feature:37
     Given a file named "foo.txt" with ""                 # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
     Then <article> file named "foo.txt" should not exist # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
 
@@ -37,30 +52,71 @@ Feature: File
       | the     |
         file "foo.txt" should not exist
 
+  Scenario: Create a directory                      # failures/file.feature:46
+    Given a directory named "foo"                   # scenario.go:203 -> github.com/raviqqe/aruba-go.createDirectory
+    Then the directory named "foo" should not exist # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
+    directory "foo" should not exist
+
+  Scenario: Check a file to contain a string             # failures/file.feature:52
+    When a file named "foo.txt" with:                    # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      foo
+      """
+    Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" not to contain "foo"
+
+  Scenario: Check a file not to contain a string     # failures/file.feature:59
+    When a file named "foo.txt" with:                # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+      """
+      foo
+      """
+    Then a file named "foo.txt" should contain "bar" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    expected file "foo.txt" to contain "bar"
+
 --- Failed steps:
 
   Scenario: Create a file # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
       Error: expected file "foo.txt" not to contain "foo"
 
-  Scenario: Create a file with a doc-string # failures/file.feature:8
-    Then a file named "foo.txt" should not contain "foo" # failures/file.feature:14
+  Scenario: Create a file without its content # failures/file.feature:8
+    Then a file named "foo.txt" should contain "foo" # failures/file.feature:11
+      Error: expected file "foo.txt" to contain "foo"
+
+  Scenario: Create a file with a doc-string # failures/file.feature:13
+    Then a file named "foo.txt" should not contain "foo" # failures/file.feature:19
       Error: expected file "foo.txt" not to contain "foo"
 
-  Scenario: Create a file with a content type # failures/file.feature:16
-    Then the stdout should not contain "foo" # failures/file.feature:22
+  Scenario: Create a file with an empty doc-string # failures/file.feature:21
+    Then a file named "foo.txt" should contain "foo" # failures/file.feature:27
+      Error: expected file "foo.txt" to contain "foo"
+
+  Scenario: Create a file with a content type # failures/file.feature:29
+    Then the stdout should not contain "foo" # failures/file.feature:35
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check file existence # failures/file.feature:24
-    Then a file named "foo.txt" should not exist # failures/file.feature:26
+  Scenario: Check file existence # failures/file.feature:37
+    Then a file named "foo.txt" should not exist # failures/file.feature:39
       Error: file "foo.txt" should not exist
 
-  Scenario: Check file existence # failures/file.feature:24
-    Then the file named "foo.txt" should not exist # failures/file.feature:26
+  Scenario: Check file existence # failures/file.feature:37
+    Then the file named "foo.txt" should not exist # failures/file.feature:39
       Error: file "foo.txt" should not exist
 
+  Scenario: Create a directory # failures/file.feature:46
+    Then the directory named "foo" should not exist # failures/file.feature:48
+      Error: directory "foo" should not exist
 
-5 scenarios (5 failed)
-13 steps (8 passed, 5 failed)
+  Scenario: Check a file to contain a string # failures/file.feature:52
+    Then a file named "foo.txt" should not contain "foo" # failures/file.feature:57
+      Error: expected file "foo.txt" not to contain "foo"
+
+  Scenario: Check a file not to contain a string # failures/file.feature:59
+    Then a file named "foo.txt" should contain "bar" # failures/file.feature:64
+      Error: expected file "foo.txt" to contain "bar"
+
+
+10 scenarios (10 failed)
+25 steps (15 passed, 10 failed)
 
 ---
