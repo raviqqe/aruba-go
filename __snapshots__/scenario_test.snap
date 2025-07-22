@@ -179,6 +179,67 @@ Feature: File
     Then a file named "foo.txt" should not contain "  a" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" not to contain "  a"
 
+Feature: Standard I/O
+
+  Scenario: Check stderr                      # failures/stdio.feature:3
+    When I run `rm foo`                       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stderr should not contain "file" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stderr "rm: foo: No such file or directory\n" not to contain "file"
+
+  Scenario: Check stdout with a blank character # failures/stdio.feature:7
+    When I successfully run `echo foo`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain "\n"     # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "\n"
+
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:11
+    When I successfully run `echo foo`      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain ""
+
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:15
+    When I successfully run `echo`                  # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain exactly ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "\n" not to contain exactly ""
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:21
+    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:25
+    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain exactly "foo"    # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:29
+    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain "bar"         # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" to contain "bar"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:35
+    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain:      # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      foo
+      """
+    expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:42
+    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain exactly:         # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      foo
+      """
+    expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:49
+    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain:              # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      bar
+      """
+    expected stdout "foo\n" to contain "bar"
+
 --- Failed steps:
 
   Scenario: Run a command successfully # failures/command.feature:3
@@ -269,8 +330,48 @@ Feature: File
     Then a file named "foo.txt" should not contain "  a" # failures/file.feature:139
       Error: expected file "foo.txt" not to contain "  a"
 
+  Scenario: Check stderr # failures/stdio.feature:3
+    Then the stderr should not contain "file" # failures/stdio.feature:5
+      Error: expected stderr "rm: foo: No such file or directory\n" not to contain "file"
 
-22 scenarios (22 failed)
-49 steps (27 passed, 22 failed)
+  Scenario: Check stdout with a blank character # failures/stdio.feature:7
+    Then the stdout should not contain "\n" # failures/stdio.feature:9
+      Error: expected stdout "foo\n" not to contain "\n"
+
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:11
+    Then the stdout should not contain "" # failures/stdio.feature:13
+      Error: expected stdout "foo\n" not to contain ""
+
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:15
+    Then the stdout should not contain exactly "" # failures/stdio.feature:17
+      Error: expected stdout "\n" not to contain exactly ""
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:21
+    Then the stdout should not contain "foo" # failures/stdio.feature:23
+      Error: expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:25
+    Then the stdout should contain exactly "foo" # failures/stdio.feature:27
+      Error: expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:29
+    Then the stdout should contain "bar" # failures/stdio.feature:31
+      Error: expected stdout "foo\n" to contain "bar"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:35
+    Then the stdout should not contain: # failures/stdio.feature:37
+      Error: expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:42
+    Then the stdout should contain exactly: # failures/stdio.feature:44
+      Error: expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:49
+    Then the stdout should contain: # failures/stdio.feature:51
+      Error: expected stdout "foo\n" to contain "bar"
+
+
+32 scenarios (32 failed)
+69 steps (37 passed, 32 failed)
 
 ---
