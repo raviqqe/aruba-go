@@ -1,0 +1,35 @@
+
+[TestFailedFeatures - 1]
+[1;37mFeature:[0m File
+
+  [1;37mScenario:[0m Create a file with a doc-string              [1;30m# failures/file.feature:8[0m
+    [32mGiven[0m [32ma file named "foo.txt" with:[0m                   [1;30m# scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2[0m
+      [36m"""[0m
+      [36mfoo[0m
+      [36m"""[0m
+    [32mWhen[0m [32mI successfully run `test -r foo.txt`[0m            [1;30m# scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand[0m
+    [31mThen[0m [31ma file named "foo.txt" should not contain "foo"[0m [1;30m# scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5[0m
+    [1;31mexpected file "foo.txt" not to contain "foo"[0m
+
+  [1;37mScenario:[0m Create a file                                [1;30m# failures/file.feature:3[0m
+    [32mGiven[0m [32ma file named "foo.txt" with "foo"[0m              [1;30m# scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1[0m
+    [32mWhen[0m [32mI successfully run `test -r foo.txt`[0m            [1;30m# scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand[0m
+    [31mThen[0m [31ma file named "foo.txt" should not contain "foo"[0m [1;30m# scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5[0m
+    [1;31mexpected file "foo.txt" not to contain "foo"[0m
+
+--- [31mFailed steps:[0m
+
+  [31mScenario: Create a file[0m [1;30m# failures/file.feature:3[0m
+    [31mThen a file named "foo.txt" should not contain "foo"[0m [1;30m# failures/file.feature:6[0m
+      [31mError: [0m[1;31mexpected file "foo.txt" not to contain "foo"[0m
+
+  [31mScenario: Create a file with a doc-string[0m [1;30m# failures/file.feature:8[0m
+    [31mThen a file named "foo.txt" should not contain "foo"[0m [1;30m# failures/file.feature:14[0m
+      [31mError: [0m[1;31mexpected file "foo.txt" not to contain "foo"[0m
+
+
+2 scenarios ([31m2 failed[0m)
+6 steps ([32m4 passed[0m, [31m2 failed[0m)
+4.250666ms
+
+---
