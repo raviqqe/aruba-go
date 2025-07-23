@@ -1,6 +1,6 @@
 Feature: File
 
-  Scenario: Create a file
+  Scenario: Create a file with its content
     Given a file named "foo.txt" with "foo"
     When I successfully run `test -r foo.txt`
     Then a file named "foo.txt" should not contain "foo"
