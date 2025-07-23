@@ -46,7 +46,10 @@ func TestFailedFeatures(t *testing.T) {
 
 	snaps.MatchSnapshot(
 		t,
-		regexp.MustCompile(`[[:space:]]*[0-9.]+ms`).
-			ReplaceAllString(b.String(), ""),
+		regexp.MustCompile(` *# scenario\.go.*`).
+			ReplaceAllString(
+				regexp.MustCompile(`[[:space:]]*[0-9.]+ms`).
+					ReplaceAllString(b.String(), ""),
+				""),
 	)
 }
