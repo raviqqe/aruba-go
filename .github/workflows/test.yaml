@@ -41,6 +41,11 @@ jobs:
           bundler exec cucumber --strict failures |
           tee /dev/stderr |
           grep '[0-9]\+ scenarios ([0-9]\+ failed)'
+  action_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.
   dependent_test:
     strategy:
       fail-fast: false
