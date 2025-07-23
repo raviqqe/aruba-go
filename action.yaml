@@ -8,5 +8,5 @@ outputs: {}
 runs:
   using: composite
   steps:
-    - run: go run github.com/raviqqe/aruba-go/cmd/agoa@latest
+    - run: go run github.com/raviqqe/aruba-go/cmd/agoa@latest --strict
       shell: bash
