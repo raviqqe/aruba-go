@@ -1,5 +1,5 @@
 builds:
   - id: agoa
-    main: cmd/agoa
+    main: ./cmd/agoa
     env:
       - CGO_ENABLED=0
