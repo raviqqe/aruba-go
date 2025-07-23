@@ -18,6 +18,8 @@ jobs:
           snapshot: ${{ github.ref != 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        permissions:
+          contents: write
   release:
     needs:
       - go_release
