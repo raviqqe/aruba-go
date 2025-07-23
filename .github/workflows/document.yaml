@@ -63,10 +63,10 @@ jobs:
           cargo run --
           --accept-status 200
           --accept-status 403
-          http://localhost:4321/muffy/
-      - uses: ./.
+          http://localhost:4321/aruba-go/
+      - uses: raviqqe/muffy@main
         with:
-          url: http://localhost:4321/muffy/
+          url: http://localhost:4321/aruba-go/
           accept-status: 200,403
   document:
     needs:
