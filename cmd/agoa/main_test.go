@@ -12,7 +12,7 @@ import (
 
 func TestRunNoFeature(t *testing.T) {
 	b := bytes.NewBuffer(nil)
-	status, err := main.Run(b)
+	status, err := main.Run(b, true)
 
 	assert.Equal(t, 1, status)
 	assert.Equal(t, nil, err)
@@ -25,7 +25,7 @@ func TestRunNoFeature(t *testing.T) {
 
 func TestRunFeatures(t *testing.T) {
 	os.Chdir("../..")
-	status, err := main.Run(io.Discard)
+	status, err := main.Run(io.Discard, true)
 
 	assert.Equal(t, 0, status)
 	assert.Equal(t, nil, err)

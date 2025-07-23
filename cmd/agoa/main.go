@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	status, err := Run(os.Stdout)
+	status, err := Run(os.Stdout, false)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -23,8 +23,8 @@ func main() {
 
 }
 
-func Run(out io.Writer) (int, error) {
-	options := parseOptions(out)
+func Run(out io.Writer, test bool) (int, error) {
+	options := parseOptions(out, test)
 
 	suite := godog.TestSuite{
 		Name:                "aruba",
@@ -46,7 +46,7 @@ func Run(out io.Writer) (int, error) {
 	return status, nil
 }
 
-func parseOptions(out io.Writer) godog.Options {
+func parseOptions(out io.Writer, test bool) godog.Options {
 	options := godog.Options{
 		Concurrency: runtime.NumCPU(),
 		Output:      colors.Colored(out),
@@ -54,7 +54,9 @@ func parseOptions(out io.Writer) godog.Options {
 		Strict:      true,
 	}
 
-	godog.BindCommandLineFlags("", &options)
+	if !test {
+		godog.BindCommandLineFlags("", &options)
+	}
 
 	pflag.Parse()
 	options.Paths = pflag.Args()
