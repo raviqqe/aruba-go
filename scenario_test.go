@@ -22,6 +22,7 @@ func TestSuccessfulFeatures(t *testing.T) {
 			Concurrency: runtime.NumCPU(),
 			Output:      colors.Colored(os.Stdout),
 			Format:      "pretty",
+			Strict:      true,
 		},
 	}.Run()
 
@@ -39,6 +40,7 @@ func TestFailedFeatures(t *testing.T) {
 			NoColors:    true,
 			Output:      b,
 			Paths:       []string{"failures"},
+			Strict:      true,
 		},
 	}.Run()
 

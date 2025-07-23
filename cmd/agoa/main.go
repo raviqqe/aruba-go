@@ -14,6 +14,7 @@ var options = godog.Options{
 	Concurrency: runtime.NumCPU(),
 	Output:      colors.Colored(os.Stdout),
 	Format:      "pretty",
+	Strict:      true,
 }
 
 func init() {
