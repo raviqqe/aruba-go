@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -24,6 +23,17 @@ func init() {
 }
 
 func main() {
+	status, err := Run()
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+
+	os.Exit(status)
+
+}
+
+func Run() (int, error) {
 	pflag.Parse()
 	options.Paths = pflag.Args()
 
@@ -35,15 +45,14 @@ func main() {
 
 	fs, err := suite.RetrieveFeatures()
 	if err != nil {
-		fail(err)
-	} else if len(fs) == 0 {
-		fail(errors.New("no features found"))
+		return 1, err
 	}
 
-	os.Exit(suite.Run())
-}
+	status := suite.Run()
 
-func fail(err error) {
-	fmt.Fprintf(os.Stderr, "%v\n", err)
-	os.Exit(1)
+	if len(fs) == 0 {
+		status = 1
+	}
+
+	return status, nil
 }
