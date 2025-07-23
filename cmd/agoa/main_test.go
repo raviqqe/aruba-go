@@ -21,8 +21,8 @@ func TestRunNoFeature(t *testing.T) {
 
 	s := b.String()
 
-	assert.Regexp(t, `No scenarios`, s)
-	assert.Regexp(t, `No steps`, s)
+	assert.Regexp(t, "No scenarios", s)
+	assert.Regexp(t, "No steps", s)
 }
 
 func TestRunFeatures(t *testing.T) {
