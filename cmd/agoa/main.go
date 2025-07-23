@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"runtime"
 
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	status, err := Run()
+	status, err := Run(os.Stdout)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -22,8 +23,8 @@ func main() {
 
 }
 
-func Run() (int, error) {
-	options := parseOptions()
+func Run(out io.Writer) (int, error) {
+	options := parseOptions(out)
 
 	suite := godog.TestSuite{
 		Name:                "aruba",
@@ -45,10 +46,10 @@ func Run() (int, error) {
 	return status, nil
 }
 
-func parseOptions() godog.Options {
+func parseOptions(out io.Writer) godog.Options {
 	options := godog.Options{
 		Concurrency: runtime.NumCPU(),
-		Output:      colors.Colored(os.Stdout),
+		Output:      colors.Colored(out),
 		Format:      "pretty",
 		Strict:      true,
 	}

@@ -1,6 +1,8 @@
 package main_test
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"testing"
 
@@ -9,15 +11,21 @@ import (
 )
 
 func TestRunNoFeature(t *testing.T) {
-	status, err := main.Run()
+	b := bytes.NewBuffer(nil)
+	status, err := main.Run(b)
 
 	assert.Equal(t, 1, status)
 	assert.Equal(t, nil, err)
+
+	s := b.String()
+
+	assert.Regexp(t, `No scenarios`, s)
+	assert.Regexp(t, `No steps`, s)
 }
 
 func TestRunFeatures(t *testing.T) {
 	os.Chdir("../..")
-	status, err := main.Run()
+	status, err := main.Run(io.Discard)
 
 	assert.Equal(t, 0, status)
 	assert.Equal(t, nil, err)
