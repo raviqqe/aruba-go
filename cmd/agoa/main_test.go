@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRun(t *testing.T) {
+func TestRunNoFeature(t *testing.T) {
 	status, err := main.Run()
 
 	assert.Equal(t, 1, status)
