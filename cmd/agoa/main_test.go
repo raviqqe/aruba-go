@@ -15,7 +15,7 @@ func TestRunNoFeature(t *testing.T) {
 	status, err := main.Run(b, true)
 
 	assert.Equal(t, 1, status)
-	assert.Equal(t, nil, err)
+	assert.Nil(t, err)
 
 	s := b.String()
 
@@ -24,9 +24,11 @@ func TestRunNoFeature(t *testing.T) {
 }
 
 func TestRunFeatures(t *testing.T) {
-	os.Chdir("../..")
+	err := os.Chdir("../..")
+	assert.Nil(t, err)
+
 	status, err := main.Run(io.Discard, true)
 
-	assert.Equal(t, 0, status)
-	assert.Equal(t, nil, err)
+	assert.Zero(t, status)
+	assert.Nil(t, err)
 }
