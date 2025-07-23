@@ -125,7 +125,7 @@ Feature: File
       Then a file named "foo.txt" should contain "a\n"
       And a file named "foo.txt" should not contain "a\n\n"
 
-    Scenario: Check a file to contain two newlines
+    Scenario: Check a file to contain leading spaces
       When a file named "foo.txt" with:
         """
           a

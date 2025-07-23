@@ -1,5 +1,9 @@
 Feature: Standard I/O
 
+  Scenario: Check stdout
+    When I successfully run `echo foo`
+    Then the stdout should contain "foo"
+
   Scenario: Check stderr
     When I run the following script:
       """sh
