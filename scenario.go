@@ -190,16 +190,21 @@ func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
-	ctx.Step(`^a file named "(.+)" with (".*")$`, func(ctx context.Context, p, s string) error {
-		s, err := parseString(s)
-		if err != nil {
-			return err
-		}
-		return createFile(ctx, p, s)
-	})
-	ctx.Step(`^a file named "(.+)" with:$`, func(ctx context.Context, p string, s *godog.DocString) error {
-		return createFile(ctx, p, parseDocString(s.Content)+"\n")
-	})
+
+	ctx.Step(
+		`^a file named "(.+)" with (".*")$`,
+		func(ctx context.Context, p, s string) error {
+			s, err := parseString(s)
+			if err != nil {
+				return err
+			}
+			return createFile(ctx, p, s)
+		})
+	ctx.Step(
+		`^a file named "(.+)" with:$`,
+		func(ctx context.Context, p string, s *godog.DocString) error {
+			return createFile(ctx, p, parseDocString(s.Content)+"\n")
+		})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
@@ -220,17 +225,21 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return stdout(ctx, port, from, not, exactly, parseDocString(docString.Content))
 		},
 	)
-	ctx.Step(`^a file named "(.*)" should( not)? contain (".*")$`, func(ctx context.Context, p, not, pattern string) error {
-		pattern, err := parseString(pattern)
-		if err != nil {
-			return err
-		}
+	ctx.Step(
+		`^a file named "(.*)" should( not)? contain (".*")$`,
+		func(ctx context.Context, p, not, pattern string) error {
+			pattern, err := parseString(pattern)
+			if err != nil {
+				return err
+			}
 
-		return fileContains(ctx, p, not, "", pattern)
-	})
-	ctx.Step(`^a file named "(.+)" should( not)? contain( exactly)?:$`, func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
-		return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
-	})
+			return fileContains(ctx, p, not, "", pattern)
+		})
+	ctx.Step(
+		`^a file named "(.+)" should( not)? contain( exactly)?:$`,
+		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
+			return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
+		})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
