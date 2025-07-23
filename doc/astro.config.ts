@@ -3,7 +3,7 @@ import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  base: "/muffy",
+  base: "/aruba-go",
   integrations: [
     sitemap(),
     starlight({
@@ -15,14 +15,14 @@ export default defineConfig({
           tag: "link",
           attrs: {
             rel: "manifest",
-            href: "/muffy/manifest.json",
+            href: "/aruba-go/manifest.json",
           },
         },
         {
           tag: "meta",
           attrs: {
             property: "og:image",
-            content: "/muffy/icon.svg",
+            content: "/aruba-go/icon.svg",
           },
         },
       ],
@@ -33,7 +33,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/raviqqe/muffy",
+          href: "https://github.com/raviqqe/aruba-go",
         },
       ],
       sidebar: [
@@ -53,5 +53,5 @@ export default defineConfig({
     }),
   ],
   prefetch: { prefetchAll: true },
-  site: "https://raviqqe.github.io/muffy",
+  site: "https://raviqqe.github.io/aruba-go",
 });
