@@ -1,0 +1,12 @@
+name: raviqqe/aruba-go
+description: Run Aruba in Go
+branding:
+  icon: aperture
+  color: red
+inputs: {}
+outputs: {}
+runs:
+  using: composite
+  steps:
+    - run: go run github.com/raviqqe/aruba-go/cmd/agoa@latest
+      shell: bash
