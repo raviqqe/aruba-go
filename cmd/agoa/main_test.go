@@ -1,10 +1,15 @@
 package main_test
 
 import (
-	"github.com/raviqqe/aruba-go/cmd/agoa"
 	"testing"
+
+	"github.com/raviqqe/aruba-go/cmd/agoa"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRun(t *testing.T) {
-	main.Run()
+	status, err := main.Run()
+
+	assert.Equal(t, 1, status)
+	assert.Equal(t, nil, err)
 }
