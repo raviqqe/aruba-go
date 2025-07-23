@@ -11,17 +11,6 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var options = godog.Options{
-	Concurrency: runtime.NumCPU(),
-	Output:      colors.Colored(os.Stdout),
-	Format:      "pretty",
-	Strict:      true,
-}
-
-func init() {
-	godog.BindCommandLineFlags("", &options)
-}
-
 func main() {
 	status, err := Run()
 
@@ -34,8 +23,7 @@ func main() {
 }
 
 func Run() (int, error) {
-	pflag.Parse()
-	options.Paths = pflag.Args()
+	options := parseOptions()
 
 	suite := godog.TestSuite{
 		Name:                "aruba",
@@ -55,4 +43,20 @@ func Run() (int, error) {
 	}
 
 	return status, nil
+}
+
+func parseOptions() godog.Options {
+	options := godog.Options{
+		Concurrency: runtime.NumCPU(),
+		Output:      colors.Colored(os.Stdout),
+		Format:      "pretty",
+		Strict:      true,
+	}
+
+	godog.BindCommandLineFlags("", &options)
+
+	pflag.Parse()
+	options.Paths = pflag.Args()
+
+	return options
 }
