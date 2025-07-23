@@ -3,64 +3,64 @@
 Feature: Command
 
   Scenario: Run a command successfully # failures/command.feature:3
-    When I successfully run `false`    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    When I successfully run `false`
     exit status 1
 
   Scenario: Check an exit status         # failures/command.feature:6
-    When I run `true`                    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    When I run `true`
+    Then the exit status should not be 0
     expected exit code 0 not to be 0
 
   Scenario: Check an exit status of 1    # failures/command.feature:10
-    When I run `false`                   # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the exit status should not be 1 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    When I run `false`
+    Then the exit status should not be 1
     expected exit code 1 not to be 1
 
   Scenario: Check an exit status of 0 # failures/command.feature:14
-    When I run `true`                 # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the exit status should be 1  # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    When I run `true`
+    Then the exit status should be 1
     expected exit code 0 to be 1
 
   Scenario: Run a command interactively  # failures/command.feature:18
-    When I run `echo` interactively      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    When I run `echo` interactively
+    Then the exit status should not be 0
     expected exit code 0 not to be 0
 
 Feature: File
 
   Scenario: Create a file with its content               # failures/file.feature:3
-    Given a file named "foo.txt" with "foo"              # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
-    When the file named "foo.txt" should exist           # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
-    Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    Given a file named "foo.txt" with "foo"
+    When the file named "foo.txt" should exist
+    Then a file named "foo.txt" should not contain "foo"
     expected file "foo.txt" not to contain "foo"
 
   Scenario: Create a file without its content        # failures/file.feature:8
-    Given a file named "foo.txt" with ""             # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
-    When the file named "foo.txt" should exist       # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
-    Then a file named "foo.txt" should contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    Given a file named "foo.txt" with ""
+    When the file named "foo.txt" should exist
+    Then a file named "foo.txt" should contain "foo"
     expected file "foo.txt" to contain "foo"
 
   Scenario: Create a file with a doc-string              # failures/file.feature:13
-    Given a file named "foo.txt" with:                   # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+    Given a file named "foo.txt" with:
       """
       foo
       """
-    When the file named "foo.txt" should exist           # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
-    Then a file named "foo.txt" should not contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    When the file named "foo.txt" should exist
+    Then a file named "foo.txt" should not contain "foo"
     expected file "foo.txt" not to contain "foo"
 
   Scenario: Create a file with an empty doc-string   # failures/file.feature:21
-    Given a file named "foo.txt" with:               # scenario.go:200 -> github.com/raviqqe/aruba-go.InitializeScenario.func2
+    Given a file named "foo.txt" with:
       """
       
       """
-    When the file named "foo.txt" should exist       # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
-    Then a file named "foo.txt" should contain "foo" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
+    When the file named "foo.txt" should exist
+    Then a file named "foo.txt" should contain "foo"
     expected file "foo.txt" to contain "foo"
 
   Scenario: Check file existence                         # failures/file.feature:29
-    Given a file named "foo.txt" with ""                 # scenario.go:193 -> github.com/raviqqe/aruba-go.InitializeScenario.func1
-    Then <article> file named "foo.txt" should not exist # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
+    Given a file named "foo.txt" with ""
+    Then <article> file named "foo.txt" should not exist
 
     Examples:
       | article |
@@ -70,74 +70,74 @@ Feature: File
         file "foo.txt" should not exist
 
   Scenario: Create a directory                      # failures/file.feature:38
-    Given a directory named "foo"                   # scenario.go:203 -> github.com/raviqqe/aruba-go.createDirectory
-    Then the directory named "foo" should not exist # scenario.go:235 -> github.com/raviqqe/aruba-go.fileExists
+    Given a directory named "foo"
+    Then the directory named "foo" should not exist
     directory "foo" should not exist
 
 Feature: Standard I/O
 
   Scenario: Check stdout                     # failures/stdio.feature:3
-    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo`
+    Then the stdout should not contain "foo"
     expected stdout "foo\n" not to contain "foo"
 
   Scenario: Check stderr                     # failures/stdio.feature:7
-    When I run the following script:         # scenario.go:237 -> github.com/raviqqe/aruba-go.runScript
+    When I run the following script:
       """ sh
       echo foo >&2
       """
-    Then the stderr should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    Then the stderr should not contain "foo"
     expected stderr "foo\n" not to contain "foo"
 
   Scenario: Check stdout with a blank character # failures/stdio.feature:14
-    When I successfully run `echo foo`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain "\n"     # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo`
+    Then the stdout should not contain "\n"
     expected stdout "foo\n" not to contain "\n"
 
   Scenario: Check stdout to contain nothing # failures/stdio.feature:18
-    When I successfully run `echo foo`      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo`
+    Then the stdout should not contain ""
     expected stdout "foo\n" not to contain ""
 
   Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:22
-    When I successfully run `echo`                  # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain exactly ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo`
+    Then the stdout should not contain exactly ""
     expected stdout "\n" not to contain exactly ""
 
   Scenario: Check stdout to contain a string # failures/stdio.feature:28
-    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo`
+    Then the stdout should not contain "foo"
     expected stdout "foo\n" not to contain "foo"
 
   Scenario: Check stdout to contain an exact string # failures/stdio.feature:32
-    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should contain exactly "foo"    # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo bar`
+    Then the stdout should contain exactly "foo"
     expected stdout "foo bar\n" to contain exactly "foo"
 
   Scenario: Check stdout not to contain a string # failures/stdio.feature:36
-    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should contain "bar"         # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    When I successfully run `echo foo`
+    Then the stdout should contain "bar"
     expected stdout "foo\n" to contain "bar"
 
   Scenario: Check stdout to contain a string # failures/stdio.feature:42
-    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should not contain:      # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+    When I successfully run `echo foo`
+    Then the stdout should not contain:
       """
       foo
       """
     expected stdout "foo\n" not to contain "foo"
 
   Scenario: Check stdout to contain an exact string # failures/stdio.feature:49
-    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should contain exactly:         # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+    When I successfully run `echo foo bar`
+    Then the stdout should contain exactly:
       """
       foo
       """
     expected stdout "foo bar\n" to contain exactly "foo"
 
   Scenario: Check stdout not to contain a string # failures/stdio.feature:56
-    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
-    Then the stdout should contain:              # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+    When I successfully run `echo foo`
+    Then the stdout should contain:
       """
       bar
       """
