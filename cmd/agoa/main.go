@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -12,21 +11,25 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var options = godog.Options{
+var DefaultOptions = godog.Options{
 	Concurrency: runtime.NumCPU(),
-	Output:      colors.Colored(os.Stdout),
 	Format:      "pretty",
+	Output:      colors.Colored(os.Stdout),
 	Strict:      true,
 }
 
-func init() {
-	godog.BindCommandLineFlags("", &options)
+func main() {
+	status, err := Run(options())
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+
+	os.Exit(status)
+
 }
 
-func main() {
-	pflag.Parse()
-	options.Paths = pflag.Args()
-
+func Run(options godog.Options) (int, error) {
 	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
@@ -35,15 +38,25 @@ func main() {
 
 	fs, err := suite.RetrieveFeatures()
 	if err != nil {
-		fail(err)
-	} else if len(fs) == 0 {
-		fail(errors.New("no features found"))
+		return 1, err
 	}
 
-	os.Exit(suite.Run())
+	status := suite.Run()
+
+	if len(fs) == 0 {
+		status = 1
+	}
+
+	return status, nil
 }
 
-func fail(err error) {
-	fmt.Fprintf(os.Stderr, "%v\n", err)
-	os.Exit(1)
+func options() godog.Options {
+	options := DefaultOptions
+
+	godog.BindCommandLineFlags("", &options)
+
+	pflag.Parse()
+	options.Paths = pflag.Args()
+
+	return options
 }
