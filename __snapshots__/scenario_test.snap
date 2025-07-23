@@ -1,5 +1,31 @@
 
 [TestFailedFeatures - 1]
+Feature: Command
+
+  Scenario: Run a command successfully # failures/command.feature:3
+    When I successfully run `false`    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    exit status 1
+
+  Scenario: Check an exit status         # failures/command.feature:6
+    When I run `true`                    # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 0 not to be 0
+
+  Scenario: Check an exit status of 1    # failures/command.feature:10
+    When I run `false`                   # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 1 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 1 not to be 1
+
+  Scenario: Check an exit status of 0 # failures/command.feature:14
+    When I run `true`                 # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should be 1  # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 0 to be 1
+
+  Scenario: Run a command interactively  # failures/command.feature:18
+    When I run `echo` interactively      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the exit status should not be 0 # scenario.go:205 -> github.com/raviqqe/aruba-go.exitStatus
+    expected exit code 0 not to be 0
+
 Feature: File
 
   Scenario: Create a file                                # failures/file.feature:3
@@ -153,7 +179,91 @@ Feature: File
     Then a file named "foo.txt" should not contain "  a" # scenario.go:223 -> github.com/raviqqe/aruba-go.InitializeScenario.func5
     expected file "foo.txt" not to contain "  a"
 
+Feature: Standard I/O
+
+  Scenario: Check stderr                     # failures/stdio.feature:3
+    When I run the following script:         # scenario.go:237 -> github.com/raviqqe/aruba-go.runScript
+      """ sh
+      echo foo >&2
+      """
+    Then the stderr should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stderr "foo\n" not to contain "foo"
+
+  Scenario: Check stdout with a blank character # failures/stdio.feature:10
+    When I successfully run `echo foo`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain "\n"     # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "\n"
+
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:14
+    When I successfully run `echo foo`      # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain ""
+
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:18
+    When I successfully run `echo`                  # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain exactly ""   # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "\n" not to contain exactly ""
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:24
+    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain "foo" # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:28
+    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain exactly "foo"    # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:32
+    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain "bar"         # scenario.go:206 -> github.com/raviqqe/aruba-go.InitializeScenario.func3
+    expected stdout "foo\n" to contain "bar"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:38
+    When I successfully run `echo foo`       # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should not contain:      # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      foo
+      """
+    expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:45
+    When I successfully run `echo foo bar`          # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain exactly:         # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      foo
+      """
+    expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:52
+    When I successfully run `echo foo`           # scenario.go:204 -> github.com/raviqqe/aruba-go.runCommand
+    Then the stdout should contain:              # scenario.go:217 -> github.com/raviqqe/aruba-go.InitializeScenario.func4
+      """
+      bar
+      """
+    expected stdout "foo\n" to contain "bar"
+
 --- Failed steps:
+
+  Scenario: Run a command successfully # failures/command.feature:3
+    When I successfully run `false` # failures/command.feature:4
+      Error: exit status 1
+
+  Scenario: Check an exit status # failures/command.feature:6
+    Then the exit status should not be 0 # failures/command.feature:8
+      Error: expected exit code 0 not to be 0
+
+  Scenario: Check an exit status of 1 # failures/command.feature:10
+    Then the exit status should not be 1 # failures/command.feature:12
+      Error: expected exit code 1 not to be 1
+
+  Scenario: Check an exit status of 0 # failures/command.feature:14
+    Then the exit status should be 1 # failures/command.feature:16
+      Error: expected exit code 0 to be 1
+
+  Scenario: Run a command interactively # failures/command.feature:18
+    Then the exit status should not be 0 # failures/command.feature:20
+      Error: expected exit code 0 not to be 0
 
   Scenario: Create a file # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
@@ -223,8 +333,48 @@ Feature: File
     Then a file named "foo.txt" should not contain "  a" # failures/file.feature:139
       Error: expected file "foo.txt" not to contain "  a"
 
+  Scenario: Check stderr # failures/stdio.feature:3
+    Then the stderr should not contain "foo" # failures/stdio.feature:8
+      Error: expected stderr "foo\n" not to contain "foo"
 
-17 scenarios (17 failed)
-40 steps (23 passed, 17 failed)
+  Scenario: Check stdout with a blank character # failures/stdio.feature:10
+    Then the stdout should not contain "\n" # failures/stdio.feature:12
+      Error: expected stdout "foo\n" not to contain "\n"
+
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:14
+    Then the stdout should not contain "" # failures/stdio.feature:16
+      Error: expected stdout "foo\n" not to contain ""
+
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:18
+    Then the stdout should not contain exactly "" # failures/stdio.feature:20
+      Error: expected stdout "\n" not to contain exactly ""
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:24
+    Then the stdout should not contain "foo" # failures/stdio.feature:26
+      Error: expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:28
+    Then the stdout should contain exactly "foo" # failures/stdio.feature:30
+      Error: expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:32
+    Then the stdout should contain "bar" # failures/stdio.feature:34
+      Error: expected stdout "foo\n" to contain "bar"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:38
+    Then the stdout should not contain: # failures/stdio.feature:40
+      Error: expected stdout "foo\n" not to contain "foo"
+
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:45
+    Then the stdout should contain exactly: # failures/stdio.feature:47
+      Error: expected stdout "foo bar\n" to contain exactly "foo"
+
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:52
+    Then the stdout should contain: # failures/stdio.feature:54
+      Error: expected stdout "foo\n" to contain "bar"
+
+
+32 scenarios (32 failed)
+69 steps (37 passed, 32 failed)
 
 ---

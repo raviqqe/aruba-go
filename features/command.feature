@@ -19,7 +19,7 @@ Feature: Command
     Then the exit status should not be 0
 
   Scenario: Run a command interactively
-    When I run `echo`
+    When I run `echo` interactively
     Then the exit status should be 0
 
   Scenario: Pipe in a file

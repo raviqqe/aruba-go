@@ -1,8 +1,11 @@
 Feature: Standard I/O
 
   Scenario: Check stderr
-    When I run `rm foo`
-    Then the stderr should contain "file"
+    When I run the following script:
+      """sh
+      echo foo >&2
+      """
+    Then the stderr should contain "foo"
 
   Scenario: Check stdout with a blank character
     When I successfully run `echo foo`
