@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"os"
 	"runtime"
 
@@ -25,11 +27,23 @@ func main() {
 	pflag.Parse()
 	options.Paths = pflag.Args()
 
-	status := godog.TestSuite{
+	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
 		Options:             &options,
-	}.Run()
+	}
 
-	os.Exit(status)
+	fs, err := suite.RetrieveFeatures()
+	if err != nil {
+		fail(err)
+	} else if len(fs) == 0 {
+		fail(errors.New("no features found"))
+	}
+
+	os.Exit(suite.Run())
+}
+
+func fail(err error) {
+	fmt.Fprintf(os.Stderr, "%v\n", err)
+	os.Exit(1)
 }
