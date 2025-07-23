@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: raviqqe/goreleaser-action@v1
         with:
-          version: 0.1.1
+          version: 0.1.2
           snapshot: ${{ github.ref != 'refs/heads/main' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
