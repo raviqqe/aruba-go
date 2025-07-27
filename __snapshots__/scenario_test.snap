@@ -9,22 +9,31 @@ Feature: Command
   Scenario: Check an exit status         # failures/command.feature:6
     When I run `true`
     Then the exit status should not be 0
-    expected exit code 0 not to be 0
+    expected exit code 0 not to be 0 (stderr: "")
 
   Scenario: Check an exit status of 1    # failures/command.feature:10
     When I run `false`
     Then the exit status should not be 1
-    expected exit code 1 not to be 1
+    expected exit code 1 not to be 1 (stderr: "")
 
   Scenario: Check an exit status of 0 # failures/command.feature:14
     When I run `true`
     Then the exit status should be 1
-    expected exit code 0 to be 1
+    expected exit code 0 to be 1 (stderr: "")
 
   Scenario: Run a command interactively  # failures/command.feature:18
     When I run `echo` interactively
     Then the exit status should not be 0
-    expected exit code 0 not to be 0
+    expected exit code 0 not to be 0 (stderr: "")
+
+  Scenario: Output stderr on failure # failures/command.feature:22
+    When I run the following script:
+      """ sh
+      echo foo >&2
+      exit 1
+      """
+    Then the exit status should be 0
+    expected exit code 1 to be 0 (stderr: "foo\n")
 
 Feature: File
 
@@ -151,19 +160,23 @@ Feature: Standard I/O
 
   Scenario: Check an exit status # failures/command.feature:6
     Then the exit status should not be 0 # failures/command.feature:8
-      Error: expected exit code 0 not to be 0
+      Error: expected exit code 0 not to be 0 (stderr: "")
 
   Scenario: Check an exit status of 1 # failures/command.feature:10
     Then the exit status should not be 1 # failures/command.feature:12
-      Error: expected exit code 1 not to be 1
+      Error: expected exit code 1 not to be 1 (stderr: "")
 
   Scenario: Check an exit status of 0 # failures/command.feature:14
     Then the exit status should be 1 # failures/command.feature:16
-      Error: expected exit code 0 to be 1
+      Error: expected exit code 0 to be 1 (stderr: "")
 
   Scenario: Run a command interactively # failures/command.feature:18
     Then the exit status should not be 0 # failures/command.feature:20
-      Error: expected exit code 0 not to be 0
+      Error: expected exit code 0 not to be 0 (stderr: "")
+
+  Scenario: Output stderr on failure # failures/command.feature:22
+    Then the exit status should be 0 # failures/command.feature:28
+      Error: expected exit code 1 to be 0 (stderr: "foo\n")
 
   Scenario: Create a file with its content # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
@@ -238,7 +251,7 @@ Feature: Standard I/O
       Error: expected stdout "foo\n" to contain "bar"
 
 
-23 scenarios (23 failed)
-49 steps (26 passed, 23 failed)
+24 scenarios (24 failed)
+51 steps (27 passed, 24 failed)
 
 ---

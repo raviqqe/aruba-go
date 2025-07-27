@@ -18,3 +18,11 @@ Feature: Command
   Scenario: Run a command interactively
     When I run `echo` interactively
     Then the exit status should not be 0
+
+  Scenario: Output stderr on failure
+    When I run the following script:
+      """sh
+      echo foo >&2
+      exit 1
+      """
+    Then the exit status should be 0
