@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: go run github.com/raviqqe/gherkin-format@latest --check .
+      - run: go run github.com/raviqqe/gherkin-format@latest --check .
   golangci_lint:
     runs-on: ubuntu-latest
     steps:
