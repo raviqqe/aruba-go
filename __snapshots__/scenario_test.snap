@@ -113,22 +113,22 @@ Feature: Standard I/O
     Then the stdout should not contain exactly ""
     expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:27
+  Scenario: Check stdout to contain a string # failures/stdio.feature:28
     When I successfully run `echo foo`
     Then the stdout should not contain "foo"
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:31
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:32
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly "foo"
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:35
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:36
     When I successfully run `echo foo`
     Then the stdout should contain "bar"
     expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:40
+  Scenario: Check stdout to contain a string # failures/stdio.feature:42
     When I successfully run `echo foo`
     Then the stdout should not contain:
       """
@@ -136,7 +136,7 @@ Feature: Standard I/O
       """
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:47
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:49
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly:
       """
@@ -144,7 +144,7 @@ Feature: Standard I/O
       """
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:54
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:56
     When I successfully run `echo foo`
     Then the stdout should contain:
       """
@@ -226,28 +226,28 @@ Feature: Standard I/O
     Then the stdout should not contain exactly "" # failures/stdio.feature:24
       Error: expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:27
-    Then the stdout should not contain "foo" # failures/stdio.feature:29
+  Scenario: Check stdout to contain a string # failures/stdio.feature:28
+    Then the stdout should not contain "foo" # failures/stdio.feature:30
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:31
-    Then the stdout should contain exactly "foo" # failures/stdio.feature:33
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:32
+    Then the stdout should contain exactly "foo" # failures/stdio.feature:34
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:35
-    Then the stdout should contain "bar" # failures/stdio.feature:37
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:36
+    Then the stdout should contain "bar" # failures/stdio.feature:38
       Error: expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:40
-    Then the stdout should not contain: # failures/stdio.feature:42
+  Scenario: Check stdout to contain a string # failures/stdio.feature:42
+    Then the stdout should not contain: # failures/stdio.feature:44
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:47
-    Then the stdout should contain exactly: # failures/stdio.feature:49
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:49
+    Then the stdout should contain exactly: # failures/stdio.feature:51
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:54
-    Then the stdout should contain: # failures/stdio.feature:56
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:56
+    Then the stdout should contain: # failures/stdio.feature:58
       Error: expected stdout "foo\n" to contain "bar"
 
 
