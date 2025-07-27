@@ -21,12 +21,11 @@ Feature: File
   Scenario: Create a file with an empty doc-string
     Given a file named "foo.txt" with:
       """
-
       """
     When the file named "foo.txt" should exist
     Then a file named "foo.txt" should contain "foo"
 
-  Scenario: Check file existence
+  Scenario Outline: Check file existence
     Given a file named "foo.txt" with ""
     Then <article> file named "foo.txt" should not exist
 
