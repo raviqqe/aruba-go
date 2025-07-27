@@ -24,6 +24,7 @@ Feature: Standard I/O
     Then the stdout should not contain exactly ""
 
   Rule: Containing strings
+
     Scenario: Check stdout to contain a string
       When I successfully run `echo foo`
       Then the stdout should not contain "foo"
@@ -37,6 +38,7 @@ Feature: Standard I/O
       Then the stdout should contain "bar"
 
   Rule: Containing doc-strings
+
     Scenario: Check stdout to contain a string
       When I successfully run `echo foo`
       Then the stdout should not contain:
