@@ -9,22 +9,22 @@ Feature: Command
   Scenario: Check an exit status         # failures/command.feature:6
     When I run `true`
     Then the exit status should not be 0
-    expected exit code 0 not to be 0
+    expected exit code 0 not to be 0 (stderr: "")
 
   Scenario: Check an exit status of 1    # failures/command.feature:10
     When I run `false`
     Then the exit status should not be 1
-    expected exit code 1 not to be 1
+    expected exit code 1 not to be 1 (stderr: "")
 
   Scenario: Check an exit status of 0 # failures/command.feature:14
     When I run `true`
     Then the exit status should be 1
-    expected exit code 0 to be 1
+    expected exit code 0 to be 1 (stderr: "")
 
   Scenario: Run a command interactively  # failures/command.feature:18
     When I run `echo` interactively
     Then the exit status should not be 0
-    expected exit code 0 not to be 0
+    expected exit code 0 not to be 0 (stderr: "")
 
 Feature: File
 
@@ -151,19 +151,19 @@ Feature: Standard I/O
 
   Scenario: Check an exit status # failures/command.feature:6
     Then the exit status should not be 0 # failures/command.feature:8
-      Error: expected exit code 0 not to be 0
+      Error: expected exit code 0 not to be 0 (stderr: "")
 
   Scenario: Check an exit status of 1 # failures/command.feature:10
     Then the exit status should not be 1 # failures/command.feature:12
-      Error: expected exit code 1 not to be 1
+      Error: expected exit code 1 not to be 1 (stderr: "")
 
   Scenario: Check an exit status of 0 # failures/command.feature:14
     Then the exit status should be 1 # failures/command.feature:16
-      Error: expected exit code 0 to be 1
+      Error: expected exit code 0 to be 1 (stderr: "")
 
   Scenario: Run a command interactively # failures/command.feature:18
     Then the exit status should not be 0 # failures/command.feature:20
-      Error: expected exit code 0 not to be 0
+      Error: expected exit code 0 not to be 0 (stderr: "")
 
   Scenario: Create a file with its content # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6

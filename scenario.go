@@ -89,11 +89,12 @@ func runScript(ctx context.Context, s *godog.DocString) (context.Context, error)
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
-	c := contextWorld(ctx).LastCommand()
+	w := contextWorld(ctx)
+	c := w.LastCommand()
 	_ = c.Wait()
 
 	if c := c.ProcessState.ExitCode(); (c == code) != (not == "") {
-		return fmt.Errorf("expected exit code %d%s to be %d", c, not, code)
+		return fmt.Errorf("expected exit code %d%s to be %d (stderr: %q)", c, not, code, w.Stderr())
 	}
 
 	return nil
