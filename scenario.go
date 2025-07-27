@@ -118,7 +118,6 @@ func stdout(ctx context.Context, stdout, from, not, exactly, pattern string) err
 	s := ""
 
 	if from == "" {
-
 		if stdout == "stdout" {
 			s = w.Stdout()
 		} else {
