@@ -4,7 +4,7 @@ Feature: Command
 
   Scenario: Run a command successfully # failures/command.feature:3
     When I successfully run `false`
-    exit status 1
+    exit status 1 (stderr: "")
 
   Scenario: Check an exit status         # failures/command.feature:6
     When I run `true`
@@ -156,7 +156,7 @@ Feature: Standard I/O
 
   Scenario: Run a command successfully # failures/command.feature:3
     When I successfully run `false` # failures/command.feature:4
-      Error: exit status 1
+      Error: exit status 1 (stderr: "")
 
   Scenario: Check an exit status # failures/command.feature:6
     Then the exit status should not be 0 # failures/command.feature:8

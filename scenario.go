@@ -69,8 +69,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	}
 
 	if interactively == "" {
-		if err := c.Wait(); successfully != "" {
-			return ctx, err
+		if err := c.Wait(); successfully != "" && err != nil {
+			return ctx, fmt.Errorf("%v (stderr: %q)", err, w.Stderr())
 		}
 	}
 
