@@ -31,7 +31,6 @@ Feature: Standard I/O
     And the stdout from "echo bar" should contain exactly "bar"
 
   Rule: Containing strings
-
     Scenario: Check stdout to contain a string
       When I successfully run `echo foo bar`
       Then the stdout should contain "foo"
@@ -49,7 +48,6 @@ Feature: Standard I/O
       Then the stdout should not contain exactly "bar"
 
   Rule: Containing doc-strings
-
     Scenario: Check stdout to contain a string
       When I successfully run `echo foo bar`
       Then the stdout should contain:

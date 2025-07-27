@@ -67,7 +67,7 @@ Feature: File
     Then a file named "foo.txt" should contain "foo"
     expected file "foo.txt" to contain "foo"
 
-  Scenario: Check file existence                         # failures/file.feature:29
+  Scenario Outline: Check file existence                 # failures/file.feature:28
     Given a file named "foo.txt" with ""
     Then <article> file named "foo.txt" should not exist
 
@@ -78,7 +78,7 @@ Feature: File
       | the     |
         file "foo.txt" should not exist
 
-  Scenario: Create a directory                      # failures/file.feature:38
+  Scenario: Create a directory                      # failures/file.feature:37
     Given a directory named "foo"
     Then the directory named "foo" should not exist
     directory "foo" should not exist
@@ -113,22 +113,22 @@ Feature: Standard I/O
     Then the stdout should not contain exactly ""
     expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:28
+  Scenario: Check stdout to contain a string # failures/stdio.feature:27
     When I successfully run `echo foo`
     Then the stdout should not contain "foo"
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:32
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:31
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly "foo"
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:36
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:35
     When I successfully run `echo foo`
     Then the stdout should contain "bar"
     expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:42
+  Scenario: Check stdout to contain a string # failures/stdio.feature:40
     When I successfully run `echo foo`
     Then the stdout should not contain:
       """
@@ -136,7 +136,7 @@ Feature: Standard I/O
       """
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:49
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:47
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly:
       """
@@ -144,7 +144,7 @@ Feature: Standard I/O
       """
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:56
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:54
     When I successfully run `echo foo`
     Then the stdout should contain:
       """
@@ -191,19 +191,19 @@ Feature: Standard I/O
       Error: expected file "foo.txt" not to contain "foo"
 
   Scenario: Create a file with an empty doc-string # failures/file.feature:21
-    Then a file named "foo.txt" should contain "foo" # failures/file.feature:27
+    Then a file named "foo.txt" should contain "foo" # failures/file.feature:26
       Error: expected file "foo.txt" to contain "foo"
 
-  Scenario: Check file existence # failures/file.feature:29
-    Then a file named "foo.txt" should not exist # failures/file.feature:31
+  Scenario Outline: Check file existence # failures/file.feature:28
+    Then a file named "foo.txt" should not exist # failures/file.feature:30
       Error: file "foo.txt" should not exist
 
-  Scenario: Check file existence # failures/file.feature:29
-    Then the file named "foo.txt" should not exist # failures/file.feature:31
+  Scenario Outline: Check file existence # failures/file.feature:28
+    Then the file named "foo.txt" should not exist # failures/file.feature:30
       Error: file "foo.txt" should not exist
 
-  Scenario: Create a directory # failures/file.feature:38
-    Then the directory named "foo" should not exist # failures/file.feature:40
+  Scenario: Create a directory # failures/file.feature:37
+    Then the directory named "foo" should not exist # failures/file.feature:39
       Error: directory "foo" should not exist
 
   Scenario: Check stdout # failures/stdio.feature:3
@@ -226,28 +226,28 @@ Feature: Standard I/O
     Then the stdout should not contain exactly "" # failures/stdio.feature:24
       Error: expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:28
-    Then the stdout should not contain "foo" # failures/stdio.feature:30
+  Scenario: Check stdout to contain a string # failures/stdio.feature:27
+    Then the stdout should not contain "foo" # failures/stdio.feature:29
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:32
-    Then the stdout should contain exactly "foo" # failures/stdio.feature:34
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:31
+    Then the stdout should contain exactly "foo" # failures/stdio.feature:33
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:36
-    Then the stdout should contain "bar" # failures/stdio.feature:38
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:35
+    Then the stdout should contain "bar" # failures/stdio.feature:37
       Error: expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:42
-    Then the stdout should not contain: # failures/stdio.feature:44
+  Scenario: Check stdout to contain a string # failures/stdio.feature:40
+    Then the stdout should not contain: # failures/stdio.feature:42
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:49
-    Then the stdout should contain exactly: # failures/stdio.feature:51
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:47
+    Then the stdout should contain exactly: # failures/stdio.feature:49
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:56
-    Then the stdout should contain: # failures/stdio.feature:58
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:54
+    Then the stdout should contain: # failures/stdio.feature:56
       Error: expected stdout "foo\n" to contain "bar"
 
 

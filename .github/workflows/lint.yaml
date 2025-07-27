@@ -5,6 +5,11 @@ on:
       - main
   pull_request:
 jobs:
+  gherkin_format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: go run github.com/raviqqe/gherkin-format@latest --check .
   golangci_lint:
     runs-on: ubuntu-latest
     steps:
@@ -26,6 +31,7 @@ jobs:
           fail: true
   lint:
     needs:
+      - gherkin_format
       - golangci_lint
       - readme
       - spell_check
