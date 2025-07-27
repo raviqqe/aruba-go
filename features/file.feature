@@ -42,6 +42,7 @@ Feature: File
     And the directory named "bar" should not exist
 
   Rule: Contain strings
+
     Scenario: Check a file to contain a string
       When a file named "foo.txt" with:
         """
@@ -57,6 +58,7 @@ Feature: File
       Then a file named "foo.txt" should not contain "bar"
 
   Rule: Contain doc-strings
+
     Scenario: Check a file to contain a string
       When a file named "foo.txt" with:
         """
