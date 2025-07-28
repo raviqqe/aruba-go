@@ -35,7 +35,7 @@ Feature: Command
     Then the exit status should be 0
     expected exit code 1 to be 0 (stderr: "foo\n")
 
-  Scenario: Run a command interactively successfully # failures/command.feature:30
+  Scenario: Run a command interactively successfully # failures/command.feature:31
     When I successfully run `echo` interactively
     cannot check interactive command's success
 
@@ -182,8 +182,8 @@ Feature: Standard I/O
     Then the exit status should be 0 # failures/command.feature:28
       Error: expected exit code 1 to be 0 (stderr: "foo\n")
 
-  Scenario: Run a command interactively successfully # failures/command.feature:30
-    When I successfully run `echo` interactively # failures/command.feature:31
+  Scenario: Run a command interactively successfully # failures/command.feature:31
+    When I successfully run `echo` interactively # failures/command.feature:32
       Error: cannot check interactive command's success
 
   Scenario: Create a file with its content # failures/file.feature:3
