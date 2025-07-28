@@ -54,6 +54,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	c.Dir = w.CurrentDirectory
 	c.Stdout = bytes.NewBuffer(nil)
 	c.Stderr = bytes.NewBuffer(nil)
+	c.Env = w.Environment
 	w = w.AddCommand(c)
 	ctx = contextWithWorld(ctx, w)
 
@@ -172,8 +173,10 @@ func fileExists(ctx context.Context, ty, p, not string) error {
 	return nil
 }
 
-func setEnvVar(ctx context.Context, k, v string) error {
-	return os.Setenv(k, v)
+func setEnvVar(ctx context.Context, k, v string) context.Context {
+	w := contextWorld(ctx)
+	w.Environment = append(w.Environment, k+"="+v)
+	return contextWithWorld(ctx, w)
 }
 
 func changeDirectory(ctx context.Context, p string) (context.Context, error) {
