@@ -26,3 +26,7 @@ Feature: Command
       exit 1
       """
     Then the exit status should be 0
+
+  @go
+  Scenario: Run a command interactively successfully
+    When I successfully run `echo` interactively

@@ -35,6 +35,10 @@ Feature: Command
     Then the exit status should be 0
     expected exit code 1 to be 0 (stderr: "foo\n")
 
+  Scenario: Run a command interactively successfully # failures/command.feature:31
+    When I successfully run `echo` interactively
+    cannot check interactive command's success
+
 Feature: File
 
   Scenario: Create a file with its content               # failures/file.feature:3
@@ -178,6 +182,10 @@ Feature: Standard I/O
     Then the exit status should be 0 # failures/command.feature:28
       Error: expected exit code 1 to be 0 (stderr: "foo\n")
 
+  Scenario: Run a command interactively successfully # failures/command.feature:31
+    When I successfully run `echo` interactively # failures/command.feature:32
+      Error: cannot check interactive command's success
+
   Scenario: Create a file with its content # failures/file.feature:3
     Then a file named "foo.txt" should not contain "foo" # failures/file.feature:6
       Error: expected file "foo.txt" not to contain "foo"
@@ -251,7 +259,7 @@ Feature: Standard I/O
       Error: expected stdout "foo\n" to contain "bar"
 
 
-24 scenarios (24 failed)
-51 steps (27 passed, 24 failed)
+25 scenarios (25 failed)
+52 steps (27 passed, 25 failed)
 
 ---
