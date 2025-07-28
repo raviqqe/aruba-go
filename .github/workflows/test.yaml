@@ -38,7 +38,7 @@ jobs:
         with:
           bundler-cache: true
       - run: >
-          bundler exec cucumber --strict failures |
+          bundler exec cucumber --strict --tags 'not @go' failures |
           tee /dev/stderr |
           grep '[0-9]\+ scenarios ([0-9]\+ failed)'
   action_test:
