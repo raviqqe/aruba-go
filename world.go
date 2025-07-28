@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"io"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -15,12 +16,14 @@ type world struct {
 	RootDirectory    string
 	CurrentDirectory string
 	Stdin            io.WriteCloser
+	Environment      []string
 }
 
 func newWorld(d string) world {
 	return world{
 		RootDirectory:    d,
 		CurrentDirectory: d,
+		Environment:      os.Environ(),
 	}
 }
 
