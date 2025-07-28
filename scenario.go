@@ -3,6 +3,7 @@ package aruba
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -72,6 +73,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		if err := c.Wait(); successfully != "" && err != nil {
 			return ctx, fmt.Errorf("%v (stderr: %q)", err, w.Stderr())
 		}
+	} else if successfully != "" {
+		return ctx, errors.New("cannot check interactive command's success")
 	}
 
 	return ctx, nil
