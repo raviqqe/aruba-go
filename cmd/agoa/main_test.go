@@ -59,5 +59,5 @@ func TestRunVersion(t *testing.T) {
 	assert.Equal(t, 0, status)
 	assert.Nil(t, err)
 
-	assert.Equal(t, "0.1.5\n", b.String())
+	assert.Equal(t, main.Version+"\n", b.String())
 }

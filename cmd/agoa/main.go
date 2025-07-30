@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-const version = "0.1.5"
+const Version = "0.1.5"
 
 type Options struct {
 	Godog   godog.Options
@@ -31,7 +31,7 @@ func main() {
 
 func Run(options Options) (int, error) {
 	if options.Version {
-		fmt.Fprintln(options.Godog.Output, version)
+		fmt.Fprintln(options.Godog.Output, Version)
 		return 0, nil
 	}
 
