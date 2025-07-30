@@ -13,9 +13,9 @@ import (
 
 const version = "0.1.5"
 
-type options struct {
-	godog   godog.Options
-	version bool
+type Options struct {
+	Godog   godog.Options
+	Version bool
 }
 
 func main() {
@@ -29,16 +29,16 @@ func main() {
 
 }
 
-func Run(options options) (int, error) {
-	if options.version {
-		fmt.Println(version)
+func Run(options Options) (int, error) {
+	if options.Version {
+		fmt.Fprintln(options.Godog.Output, version)
 		return 0, nil
 	}
 
 	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
-		Options:             &options.godog,
+		Options:             &options.Godog,
 	}
 
 	fs, err := suite.RetrieveFeatures()
@@ -55,9 +55,9 @@ func Run(options options) (int, error) {
 	return status, nil
 }
 
-func parseOptions() options {
-	options := options{
-		godog: godog.Options{
+func parseOptions() Options {
+	options := Options{
+		Godog: godog.Options{
 			Concurrency: runtime.NumCPU(),
 			Format:      "pretty",
 			Output:      colors.Colored(os.Stdout),
@@ -65,11 +65,11 @@ func parseOptions() options {
 		},
 	}
 
-	godog.BindCommandLineFlags("", &options.godog)
-	pflag.BoolVar(&options.version, "version", false, "Show version.")
+	godog.BindCommandLineFlags("", &options.Godog)
+	pflag.BoolVar(&options.Version, "version", false, "Show version.")
 
 	pflag.Parse()
-	options.godog.Paths = pflag.Args()
+	options.Godog.Paths = pflag.Args()
 
 	return options
 }
