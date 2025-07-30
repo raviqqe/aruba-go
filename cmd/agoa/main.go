@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/pflag"
 )
 
+const version = "0.1.5"
+
 type options struct {
 	godog   godog.Options
 	version bool
@@ -28,6 +30,11 @@ func main() {
 }
 
 func Run(options options) (int, error) {
+	if options.version {
+		fmt.Println(version)
+		return 0, nil
+	}
+
 	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
@@ -59,10 +66,10 @@ func parseOptions() options {
 	}
 
 	godog.BindCommandLineFlags("", &options.godog)
-	version := pflag.Bool("version", false, "Show version.")
+	pflag.BoolVar(&options.version, "version", false, "Show version.")
 
 	pflag.Parse()
-	options.Paths = pflag.Args()
+	options.godog.Paths = pflag.Args()
 
 	return options
 }
