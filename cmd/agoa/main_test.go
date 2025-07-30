@@ -48,3 +48,18 @@ func TestRunFeatures(t *testing.T) {
 	assert.Zero(t, status)
 	assert.Nil(t, err)
 }
+
+func TestRunVersion(t *testing.T) {
+	b := bytes.NewBuffer(nil)
+	options := defaultOptions
+	options.Godog.Output = b
+	status, err := main.Run(options)
+
+	assert.Equal(t, 1, status)
+	assert.Nil(t, err)
+
+	s := b.String()
+
+	assert.Regexp(t, "No scenarios", s)
+	assert.Regexp(t, "No steps", s)
+}
