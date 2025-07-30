@@ -31,7 +31,12 @@ func main() {
 
 func Run(options Options) (int, error) {
 	if options.Version {
-		fmt.Fprintln(options.Godog.Output, Version)
+		_, err := fmt.Fprintln(options.Godog.Output, Version)
+
+		if err != nil {
+			return 1, err
+		}
+
 		return 0, nil
 	}
 
