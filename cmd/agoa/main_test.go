@@ -53,13 +53,11 @@ func TestRunVersion(t *testing.T) {
 	b := bytes.NewBuffer(nil)
 	options := defaultOptions
 	options.Godog.Output = b
+	options.Version = true
 	status, err := main.Run(options)
 
-	assert.Equal(t, 1, status)
+	assert.Equal(t, 0, status)
 	assert.Nil(t, err)
 
-	s := b.String()
-
-	assert.Regexp(t, "No scenarios", s)
-	assert.Regexp(t, "No steps", s)
+	assert.Equal(t, "0.1.5\n", b.String())
 }
