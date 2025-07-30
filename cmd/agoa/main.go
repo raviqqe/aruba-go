@@ -11,15 +11,13 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var DefaultOptions = godog.Options{
-	Concurrency: runtime.NumCPU(),
-	Format:      "pretty",
-	Output:      colors.Colored(os.Stdout),
-	Strict:      true,
+type options struct {
+	godog   godog.Options
+	version bool
 }
 
 func main() {
-	status, err := Run(options())
+	status, err := Run(parseOptions())
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -29,11 +27,11 @@ func main() {
 
 }
 
-func Run(options godog.Options) (int, error) {
+func Run(options options) (int, error) {
 	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
-		Options:             &options,
+		Options:             &options.godog,
 	}
 
 	fs, err := suite.RetrieveFeatures()
@@ -50,10 +48,18 @@ func Run(options godog.Options) (int, error) {
 	return status, nil
 }
 
-func options() godog.Options {
-	options := DefaultOptions
+func parseOptions() options {
+	options := options{
+		godog: godog.Options{
+			Concurrency: runtime.NumCPU(),
+			Format:      "pretty",
+			Output:      colors.Colored(os.Stdout),
+			Strict:      true,
+		},
+	}
 
-	godog.BindCommandLineFlags("", &options)
+	godog.BindCommandLineFlags("", &options.godog)
+	version := pflag.Bool("version", false, "Show version.")
 
 	pflag.Parse()
 	options.Paths = pflag.Args()
