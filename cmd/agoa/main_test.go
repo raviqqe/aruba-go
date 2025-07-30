@@ -4,13 +4,23 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"runtime"
 	"testing"
 
+	"github.com/cucumber/godog"
+	"github.com/cucumber/godog/colors"
 	"github.com/raviqqe/aruba-go/cmd/agoa"
 	"github.com/stretchr/testify/assert"
 )
 
-var defaultOptions = main.Options{}
+var defaultOptions = main.Options{
+	Godog: godog.Options{
+		Concurrency: runtime.NumCPU(),
+		Format:      "pretty",
+		Output:      colors.Colored(os.Stdout),
+		Strict:      true,
+	},
+}
 
 func TestRunNoFeature(t *testing.T) {
 	b := bytes.NewBuffer(nil)
