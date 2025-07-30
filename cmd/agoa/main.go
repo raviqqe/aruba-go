@@ -66,7 +66,7 @@ func parseOptions() Options {
 	}
 
 	godog.BindCommandLineFlags("", &options.Godog)
-	pflag.BoolVar(&options.Version, "version", false, "Show version.")
+	pflag.BoolVar(&options.Version, "version", false, "show version")
 
 	pflag.Parse()
 	options.Godog.Paths = pflag.Args()
