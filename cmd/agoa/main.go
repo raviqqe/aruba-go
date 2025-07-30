@@ -11,15 +11,15 @@ import (
 	"github.com/spf13/pflag"
 )
 
-var DefaultOptions = godog.Options{
-	Concurrency: runtime.NumCPU(),
-	Format:      "pretty",
-	Output:      colors.Colored(os.Stdout),
-	Strict:      true,
+const Version = "0.1.5"
+
+type Options struct {
+	Godog   godog.Options
+	Version bool
 }
 
 func main() {
-	status, err := Run(options())
+	status, err := Run(parseOptions())
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -29,11 +29,21 @@ func main() {
 
 }
 
-func Run(options godog.Options) (int, error) {
+func Run(options Options) (int, error) {
+	if options.Version {
+		_, err := fmt.Fprintln(options.Godog.Output, Version)
+
+		if err != nil {
+			return 1, err
+		}
+
+		return 0, nil
+	}
+
 	suite := godog.TestSuite{
 		Name:                "aruba",
 		ScenarioInitializer: aruba.InitializeScenario,
-		Options:             &options,
+		Options:             &options.Godog,
 	}
 
 	fs, err := suite.RetrieveFeatures()
@@ -50,13 +60,21 @@ func Run(options godog.Options) (int, error) {
 	return status, nil
 }
 
-func options() godog.Options {
-	options := DefaultOptions
+func parseOptions() Options {
+	options := Options{
+		Godog: godog.Options{
+			Concurrency: runtime.NumCPU(),
+			Format:      "pretty",
+			Output:      colors.Colored(os.Stdout),
+			Strict:      true,
+		},
+	}
 
-	godog.BindCommandLineFlags("", &options)
+	godog.BindCommandLineFlags("", &options.Godog)
+	pflag.BoolVar(&options.Version, "version", false, "show version")
 
 	pflag.Parse()
-	options.Paths = pflag.Args()
+	options.Godog.Paths = pflag.Args()
 
 	return options
 }
