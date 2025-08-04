@@ -35,9 +35,7 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 }
 
 func after(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
-	d, err := os.MkdirTemp("", "aruba-*")
-
-	return contextWithWorld(ctx, newWorld(d)), err
+	return ctx, nil
 }
 
 func createFile(ctx context.Context, p, s string) error {
