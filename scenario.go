@@ -35,6 +35,10 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 }
 
 func after(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
+	if err != nil {
+		return ctx, nil
+	}
+
 	return ctx, nil
 }
 
