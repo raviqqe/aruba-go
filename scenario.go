@@ -34,12 +34,17 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return contextWithWorld(ctx, newWorld(d)), err
 }
 
-func after(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
+func after(ctx context.Context, s *godog.Scenario, err error) (context.Context, error) {
+	d := contextWorld(ctx).RootDirectory
+
 	if err != nil {
+		godog.Logf(ctx, "%s: %s", s.Name, d)
 		return ctx, nil
 	}
 
-	return ctx, nil
+	err = os.RemoveAll(d)
+
+	return ctx, err
 }
 
 func createFile(ctx context.Context, p, s string) error {
