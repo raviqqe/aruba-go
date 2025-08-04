@@ -34,15 +34,8 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return contextWithWorld(ctx, newWorld(d)), err
 }
 
-func after(ctx context.Context, s *godog.Scenario, err error) (context.Context, error) {
-	d := contextWorld(ctx).RootDirectory
-
-	if err != nil {
-		godog.Logf(ctx, "%s: %s", s.Name, d)
-		return ctx, nil
-	}
-
-	err = os.RemoveAll(d)
+func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
+	err := os.RemoveAll(contextWorld(ctx).RootDirectory)
 
 	return ctx, err
 }
