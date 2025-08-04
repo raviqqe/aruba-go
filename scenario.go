@@ -34,6 +34,12 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 	return contextWithWorld(ctx, newWorld(d)), err
 }
 
+func after(ctx context.Context, _ *godog.Scenario, err error) (context.Context, error) {
+	d, err := os.MkdirTemp("", "aruba-*")
+
+	return contextWithWorld(ctx, newWorld(d)), err
+}
+
 func createFile(ctx context.Context, p, s string) error {
 	return os.WriteFile(path.Join(contextWorld(ctx).CurrentDirectory, p), []byte(s), 0o600)
 }
@@ -196,6 +202,7 @@ func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 // [InitializeScenario] initializes a scenario.
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Before(before)
+	ctx.After(after)
 
 	ctx.Step(
 		`^a file named "(.+)" with (".*")$`,
