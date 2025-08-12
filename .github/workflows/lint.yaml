@@ -8,24 +8,24 @@ jobs:
   gherkin_format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: go run github.com/raviqqe/gherkin-format@latest --check .
   golangci_lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: golangci/golangci-lint-action@v8
   spell_check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: streetsidesoftware/cspell-action@main
         with:
           files: "**/*.{md,rs,sh,toml}"
   readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: lycheeverse/lychee-action@v2
         with:
           fail: true
