@@ -75,7 +75,7 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.environment }} bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.dependent.environment }} agoa ${{ matrix.tags && format('--tags {}', matrix.tags) || '' }}
+      - run: ${{ matrix.dependent.environment }} agoa ${{ matrix.dependent.tags && format('-t {}', matrix.dependent.tags) || '' }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
