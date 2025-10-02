@@ -72,7 +72,7 @@ jobs:
           go-version: stable
       - uses: ruby/setup-ruby@v1
       - run: |
-          for variable in  ${{ matrix.dependent.environment }}; do
+          for variable in ${{ matrix.dependent.environment }}; do
             echo $variable >> ${{ github.env }}
           done
       - run: go install ./cmd/agoa
