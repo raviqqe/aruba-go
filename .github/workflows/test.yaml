@@ -57,9 +57,9 @@ jobs:
             build: |
               cargo install stak
               cargo build --profile release_test --package stak --package stak-interpret
-            environment: >
-              PATH=$PWD/target/release_test:$PATH
-              STAK_ROOT=$PWD
+            environment:
+              - PATH=$PWD/target/release_test:$PATH
+              - STAK_ROOT=$PWD
           - directory: turtle-build
             build: cargo install --path .
     runs-on: ubuntu-latest
@@ -72,7 +72,7 @@ jobs:
           go-version: stable
       - uses: ruby/setup-ruby@v1
       - run: |
-          for variable in ${{ matrix.dependent.environment }}; do
+          for variable in ${{ join(matrix.dependent.environment, ' ') }}; do
             echo $variable >> ${{ github.env }}
           done
       - run: go install ./cmd/agoa
