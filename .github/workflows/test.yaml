@@ -62,18 +62,15 @@ jobs:
               - STAK_ROOT=$PWD
           - directory: turtle-build
             build: cargo install --path .
-        command:
-          - install: gem install cucumber
-            run: cucumber
-          - install: go install ./cmd/agoa
-            run: agoa
+        run:
+          - bundler && bundler exec cucumber
+          - go install ./cmd/agoa && agoa
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
         with:
           submodules: true
       - uses: ruby/setup-ruby@v1
-      - run: ${{ matrix.command.install }}
       - run: |
           for variable in ${{ join(matrix.dependent.environment, ' ') }}; do
             echo $variable >> ${{ github.env }}
@@ -81,7 +78,7 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.command.run }}
+      - run: ${{ matrix.run }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
