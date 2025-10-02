@@ -26,17 +26,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+      - uses: ./github/actions/setup
       - run: bundler exec cucumber --strict --tags 'not @go'
   integration_failure_test_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: ruby/setup-ruby@v1
-        with:
-          bundler-cache: true
+      - uses: ./github/actions/setup
       - run: >
           bundler exec cucumber --strict --tags 'not @go' failures |
           tee /dev/stderr |
