@@ -63,6 +63,9 @@ jobs:
           - directory: turtle-build
             build: cargo install --path .
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dependents/${{ matrix.dependent.directory }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -77,13 +80,9 @@ jobs:
           done
       - run: go install ./cmd/agoa
       - run: ${{ matrix.dependent.build }}
-        working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
-        working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler exec cucumber
-        working-directory: dependents/${{ matrix.dependent.directory }}
       - run: agoa
-        working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
       - build
