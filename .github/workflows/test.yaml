@@ -54,7 +54,9 @@ jobs:
           - directory: schemat
             build: cargo install --path .
           - directory: stak
-            build: cargo install stak && cargo install --path root
+            build: |
+              cargo install stak
+              cargo build --profile release_test
             environment: >
               PATH=$PWD/target/release_test:$PATH
               STAK_ROOT=$PWD
