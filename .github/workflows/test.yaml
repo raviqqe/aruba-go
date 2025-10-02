@@ -71,14 +71,18 @@ jobs:
         with:
           go-version: stable
       - uses: ruby/setup-ruby@v1
+      - run: |
+          for variable in  ${{ matrix.dependent.environment }}; do
+            echo $variable >> ${{ github.env }}
+          done
       - run: go install ./cmd/agoa
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.dependent.environment }} bundler exec cucumber
+      - run: bundler exec cucumber
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.dependent.environment }} agoa
+      - run: agoa
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
