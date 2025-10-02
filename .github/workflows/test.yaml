@@ -62,6 +62,9 @@ jobs:
               - STAK_ROOT=$PWD
           - directory: turtle-build
             build: cargo install --path .
+        run:
+          - bundler exec cucumber
+          - agoa
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -79,11 +82,7 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: bundler
-        working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: bundler exec cucumber
-        working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: agoa
+      - run: ${{ matrix.run }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
