@@ -63,7 +63,7 @@ jobs:
           - directory: turtle-build
             build: cargo install --path .
         command:
-          - install: gem install --user cucumber
+          - install: gem install cucumber
             run: cucumber
           - install: go install ./cmd/agoa
             run: agoa
