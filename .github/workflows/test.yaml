@@ -56,7 +56,7 @@ jobs:
           - directory: stak
             build: |
               cargo install stak
-              cargo build --profile release_test --package stak --package stak-interpret
+              cargo build --profile release_test --package stak --package stak-compile --package stak-interpret
             environment:
               - PATH=$PWD/target/release_test:$PATH
               - STAK_ROOT=$PWD
