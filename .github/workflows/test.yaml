@@ -80,7 +80,7 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: ${{ matrix.dependent.build }}
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: ${{ matrix.command.install }}
+      - run: ${{ matrix.command.run }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:
