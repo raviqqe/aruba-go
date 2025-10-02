@@ -57,7 +57,9 @@ jobs:
             build: |
               cargo install stak
               cargo build --profile release_test
-            environment: STAK_ROOT=$PWD
+            environment: >
+              PATH=$PWD/target/release_test:$PATH
+              STAK_ROOT=$PWD
           - directory: turtle-build
             build: cargo install --path .
     runs-on: ubuntu-latest
