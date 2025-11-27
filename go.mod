@@ -4,7 +4,7 @@ go 1.24.5
 
 require (
 	github.com/cucumber/godog v0.15.1
-	github.com/gkampitakis/go-snaps v0.5.16
+	github.com/gkampitakis/go-snaps v0.5.17
 	github.com/spf13/pflag v1.0.10
 	github.com/stretchr/testify v1.11.1
 )
