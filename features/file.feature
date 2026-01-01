@@ -21,6 +21,11 @@ Feature: File
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "foo"
 
+  Scenario: Create a file in a directory
+    Given a file named "foo/bar.txt" with "foo"
+    When I successfully run `cat foo/bar.txt`
+    Then the stdout should contain exactly "foo"
+
   Scenario Outline: Check file existence
     Given a file named "foo.txt" with:
       """

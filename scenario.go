@@ -25,7 +25,7 @@ func parseDocString(s string) string {
 }
 
 func matchesExactly(s, t string) bool {
-	return s == t || strings.TrimSpace(s) == t
+	return s == t || strings.TrimSpace(s) == strings.TrimSpace(t)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -41,7 +41,11 @@ func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, er
 }
 
 func createFile(ctx context.Context, p, s string) error {
-	return os.WriteFile(path.Join(contextWorld(ctx).CurrentDirectory, p), []byte(s), 0o600)
+	p = path.Join(contextWorld(ctx).CurrentDirectory, p)
+	if err := os.MkdirAll(path.Dir(p), 0o700); err != nil {
+		return err
+	}
+	return os.WriteFile(p, []byte(s), 0o600)
 }
 
 func createDirectory(ctx context.Context, p string) error {
@@ -55,6 +59,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	}
 
 	ss := strings.Fields(command)
+	println(ss)
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.CurrentDirectory
