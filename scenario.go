@@ -20,12 +20,12 @@ func parseString(s string) (string, error) {
 	return strconv.Unquote(s)
 }
 
-func parseDocString(s string) string {
+func trimTrailingNewlines(s string) string {
 	return strings.TrimRight(s, "\n")
 }
 
 func matchesExactly(s, t string) bool {
-	return s == t || parseDocString(s) == parseDocString(t)
+	return s == t || trimTrailingNewlines(s) == trimTrailingNewlines(t)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -220,7 +220,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^a file named "(.+)" with:$`,
 		func(ctx context.Context, p string, s *godog.DocString) error {
-			return createFile(ctx, p, parseDocString(s.Content)+"\n")
+			return createFile(ctx, p, trimTrailingNewlines(s.Content)+"\n")
 		})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
@@ -239,7 +239,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^the (std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, port, from, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, from, not, exactly, parseDocString(docString.Content))
+			return stdout(ctx, port, from, not, exactly, trimTrailingNewlines(docString.Content))
 		},
 	)
 	ctx.Step(
@@ -255,7 +255,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^a file named "(.+)" should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
-			return fileContains(ctx, p, not, exactly, parseDocString(docString.Content))
+			return fileContains(ctx, p, not, exactly, trimTrailingNewlines(docString.Content))
 		})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
