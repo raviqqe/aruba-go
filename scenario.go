@@ -59,6 +59,7 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	}
 
 	ss := strings.Fields(command)
+	println(ss)
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.CurrentDirectory
