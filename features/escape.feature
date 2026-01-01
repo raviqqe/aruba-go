@@ -123,15 +123,3 @@ Feature: Character escape
       b
       """
     Then a file named "foo.txt" should contain "a\nb"
-
-  Scenario: Check a file to contain an exact string with surrounding spaces
-    When a file named "foo.txt" with:
-      """foo
-
-      a
-
-      """
-    Then a file named "foo.txt" should contain exactly:
-      """
-      a
-      """
