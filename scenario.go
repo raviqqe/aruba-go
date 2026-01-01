@@ -25,7 +25,7 @@ func parseDocString(s string) string {
 }
 
 func matchesExactly(s, t string) bool {
-	return s == t || strings.TrimSpace(s) == strings.TrimSpace(t)
+	return s == t || parseDocString(s) == parseDocString(t)
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
