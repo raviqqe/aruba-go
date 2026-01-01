@@ -41,7 +41,9 @@ func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, er
 }
 
 func createFile(ctx context.Context, p, s string) error {
-	return os.WriteFile(path.Join(contextWorld(ctx).CurrentDirectory, p), []byte(s), 0o600)
+	p = path.Join(contextWorld(ctx).CurrentDirectory, p)
+	os.MkdirAll(path.Dir(p), 0o700)
+	return os.WriteFile(p, []byte(s), 0o600)
 }
 
 func createDirectory(ctx context.Context, p string) error {
