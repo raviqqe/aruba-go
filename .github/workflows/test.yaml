@@ -52,7 +52,7 @@ jobs:
       matrix:
         dependent:
           - directory: schemat
-            build: cargo install --path .
+            build: cargo install --locked --path .
           - directory: stak
             build: |
               cargo install stak
@@ -61,7 +61,7 @@ jobs:
               - PATH=$PWD/target/release_test:$PATH
               - STAK_ROOT=$PWD
           - directory: turtle-build
-            build: cargo install --path .
+            build: cargo install --locked --path .
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
