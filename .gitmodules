@@ -7,3 +7,6 @@
 [submodule "dependents/turtle-build"]
 	path = dependents/turtle-build
 	url = https://github.com/raviqqe/turtle-build
+[submodule "dependents/cloe"]
+	path = dependents/cloe
+	url = https://github.com/cloe-lang/cloe
