@@ -249,24 +249,25 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFile(ctx, p, s)
 		})
 	ctx.Step(
-		`^a file named "(.+)" with:$`,
-		func(ctx context.Context, p string, s *godog.DocString) error {
-			return createFile(ctx, p, trimTrailingNewlines(s.Content)+"\n")
-		})
-	ctx.Step(
-		`^(?:an|the) executable(?: named)? "(.+)" with:$`,
-		func(ctx context.Context, p string, s *godog.DocString) error {
-			return createFileWithMode(ctx, p, trimTrailingNewlines(s.Content)+"\n", 0o755)
-		})
-	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.+)" with mode "(.*)" and with:$`,
+		`^(?:a|the) file(?: named)? "(.+)"(?: with mode "(.*)" and)? with:$`,
 		func(ctx context.Context, p, mode string, s *godog.DocString) error {
+			content := trimTrailingNewlines(s.Content) + "\n"
+
+			if mode == "" {
+				return createFile(ctx, p, content)
+			}
+
 			m, err := parseFileMode(mode)
 			if err != nil {
 				return err
 			}
 
-			return createFileWithMode(ctx, p, trimTrailingNewlines(s.Content)+"\n", m)
+			return createFileWithMode(ctx, p, content, m)
+		})
+	ctx.Step(
+		`^(?:an|the) executable(?: named)? "(.+)" with:$`,
+		func(ctx context.Context, p string, s *godog.DocString) error {
+			return createFileWithMode(ctx, p, trimTrailingNewlines(s.Content)+"\n", 0o755)
 		})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
