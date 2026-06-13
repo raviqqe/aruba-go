@@ -76,6 +76,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	ss, err := shellquote.Split(command)
 	if err != nil {
 		return ctx, err
+	} else if len(ss) == 0 {
+		return ctx, errors.New("empty command")
 	}
 
 	c := exec.Command(ss[0], ss[1:]...)
