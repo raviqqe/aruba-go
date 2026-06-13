@@ -8,10 +8,5 @@ outputs: {}
 runs:
   using: composite
   steps:
-    - run: |
-        if command -v agoa > /dev/null; then
-          agoa --strict
-        else
-          go run github.com/raviqqe/aruba-go/cmd/agoa@latest --strict
-        fi
+    - run: go -C "$GITHUB_ACTION_PATH" run ./cmd/agoa --strict "$GITHUB_WORKSPACE/features"
       shell: bash
