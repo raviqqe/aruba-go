@@ -63,8 +63,10 @@ func (w world) Output() string {
 
 	for _, c := range w.commands {
 		_ = c.Wait()
-		bs = append(bs, c.Stdout.(*bytes.Buffer).Bytes()...)
-		bs = append(bs, c.Stderr.(*bytes.Buffer).Bytes()...)
+
+		for _, b := range []*bytes.Buffer{c.Stdout.(*bytes.Buffer), c.Stderr.(*bytes.Buffer)} {
+			bs = append(bs, b.Bytes()...)
+		}
 	}
 
 	return string(bs)
