@@ -41,3 +41,18 @@ Feature: Command
     And I pipe in the file "foo.txt"
     Then the exit status should be 0
     And the stdout should contain exactly "foo"
+
+  Scenario: Run a command with a single-quoted argument
+    When I successfully run `sh -c 'echo foo bar'`
+    Then the stdout should contain exactly "foo bar"
+
+  Scenario: Run a command with a double-quoted argument
+    When I successfully run `sh -c "echo foo bar"`
+    Then the stdout should contain exactly "foo bar"
+
+  Scenario: Run the following commands
+    When I run the following commands:
+      """sh
+      echo foo
+      """
+    Then the stdout should contain exactly "foo"

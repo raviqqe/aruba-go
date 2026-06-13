@@ -46,6 +46,37 @@ Feature: File
     Then the directory named "foo" should exist
     And the directory named "bar" should not exist
 
+  Scenario: Create an executable
+    Given an executable named "foo.sh" with:
+      """
+      #!/bin/sh
+
+      echo foo
+      """
+    When I successfully run `sh -c ./foo.sh`
+    Then the stdout should contain exactly "foo"
+
+  Scenario: Create a file with a mode
+    Given a file named "foo.sh" with mode "0755" and with:
+      """
+      #!/bin/sh
+
+      echo foo
+      """
+    When I successfully run `sh -c ./foo.sh`
+    Then the stdout should contain exactly "foo"
+
+  Scenario: Check a file with a definite article
+    Given a file named "foo.txt" with:
+      """
+      foo
+      """
+    Then the file "foo.txt" should contain "foo"
+    And the file named "foo.txt" should contain exactly:
+      """
+      foo
+      """
+
   Rule: Contain strings
 
     Scenario: Check a file to contain a string

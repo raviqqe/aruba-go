@@ -30,6 +30,20 @@ Feature: Standard I/O
     And the stdout from "echo foo" should contain exactly "foo"
     And the stdout from "echo bar" should contain exactly "bar"
 
+  Scenario: Check output combining standard output and error
+    When I run the following script:
+      """sh
+      echo foo
+      echo bar >&2
+      """
+    Then the output should contain "foo"
+    And the output should contain "bar"
+
+  Scenario: Check standard error and output from a command
+    When I successfully run `echo foo`
+    Then the stderr from "echo foo" should not contain "foo"
+    And the output from "echo foo" should contain "foo"
+
   Rule: Containing strings
 
     Scenario: Check stdout to contain a string
