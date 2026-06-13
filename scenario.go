@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/cucumber/godog"
+	"github.com/kballard/go-shellquote"
 )
 
 func parseString(s string) (string, error) {
@@ -48,6 +49,20 @@ func createFile(ctx context.Context, p, s string) error {
 	return os.WriteFile(p, []byte(s), 0o600)
 }
 
+func createFileWithMode(ctx context.Context, p, s string, mode os.FileMode) error {
+	if err := createFile(ctx, p, s); err != nil {
+		return err
+	}
+
+	return os.Chmod(path.Join(contextWorld(ctx).CurrentDirectory, p), mode)
+}
+
+func parseFileMode(s string) (os.FileMode, error) {
+	m, err := strconv.ParseUint(s, 8, 32)
+
+	return os.FileMode(m), err
+}
+
 func createDirectory(ctx context.Context, p string) error {
 	return os.Mkdir(path.Join(contextWorld(ctx).CurrentDirectory, p), 0o700)
 }
@@ -58,7 +73,11 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		return ctx, err
 	}
 
-	ss := strings.Fields(command)
+	ss, err := shellquote.Split(command)
+	if err != nil {
+		return ctx, err
+	}
+
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.CurrentDirectory
@@ -128,15 +147,18 @@ func stdin(ctx context.Context, p string) error {
 	return nil
 }
 
-func stdout(ctx context.Context, stdout, from, not, exactly, pattern string) error {
+func output(ctx context.Context, channel, from, not, exactly, pattern string) error {
 	w := contextWorld(ctx)
 	s := ""
 
 	if from == "" {
-		if stdout == "stdout" {
+		switch channel {
+		case "stdout":
 			s = w.Stdout()
-		} else {
+		case "stderr":
 			s = w.Stderr()
+		default:
+			s = w.Output()
 		}
 	} else {
 		from, err := parseString(from)
@@ -144,12 +166,21 @@ func stdout(ctx context.Context, stdout, from, not, exactly, pattern string) err
 			return err
 		}
 
-		s = w.FindCommand(from).Stdout.(*bytes.Buffer).String()
+		c := w.FindCommand(from)
+
+		switch channel {
+		case "stdout":
+			s = c.Stdout.(*bytes.Buffer).String()
+		case "stderr":
+			s = c.Stderr.(*bytes.Buffer).String()
+		default:
+			s = c.Stdout.(*bytes.Buffer).String() + c.Stderr.(*bytes.Buffer).String()
+		}
 	}
 
 	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
 		exactly != "" && matchesExactly(s, pattern) != (not == "") {
-		return fmt.Errorf("expected %s %q%s to contain%s %q", stdout, s, not, exactly, pattern)
+		return fmt.Errorf("expected %s %q%s to contain%s %q", channel, s, not, exactly, pattern)
 	}
 
 	return nil
@@ -218,32 +249,48 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFile(ctx, p, s)
 		})
 	ctx.Step(
-		`^a file named "(.+)" with:$`,
+		`^(?:a|the) file(?: named)? "(.+)"(?: with mode "(.*)" and)? with:$`,
+		func(ctx context.Context, p, mode string, s *godog.DocString) error {
+			content := trimTrailingNewlines(s.Content) + "\n"
+
+			if mode == "" {
+				return createFile(ctx, p, content)
+			}
+
+			m, err := parseFileMode(mode)
+			if err != nil {
+				return err
+			}
+
+			return createFileWithMode(ctx, p, content, m)
+		})
+	ctx.Step(
+		`^(?:an|the) executable(?: named)? "(.+)" with:$`,
 		func(ctx context.Context, p string, s *godog.DocString) error {
-			return createFile(ctx, p, trimTrailingNewlines(s.Content)+"\n")
+			return createFileWithMode(ctx, p, trimTrailingNewlines(s.Content)+"\n", 0o755)
 		})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^the (std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
-		func(ctx context.Context, port, from, not, exactly, pattern string) error {
+		`^the (output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
+		func(ctx context.Context, channel, from, not, exactly, pattern string) error {
 			pattern, err := parseString(pattern)
 			if err != nil {
 				return err
 			}
 
-			return stdout(ctx, port, from, not, exactly, pattern)
+			return output(ctx, channel, from, not, exactly, pattern)
 		},
 	)
 	ctx.Step(
-		`^the (std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
-		func(ctx context.Context, port, from, not, exactly string, docString *godog.DocString) error {
-			return stdout(ctx, port, from, not, exactly, trimTrailingNewlines(docString.Content))
+		`^the (output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
+		func(ctx context.Context, channel, from, not, exactly string, docString *godog.DocString) error {
+			return output(ctx, channel, from, not, exactly, trimTrailingNewlines(docString.Content))
 		},
 	)
 	ctx.Step(
-		`^a file named "(.*)" should( not)? contain (".*")$`,
+		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain (".*")$`,
 		func(ctx context.Context, p, not, pattern string) error {
 			pattern, err := parseString(pattern)
 			if err != nil {
@@ -253,13 +300,13 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return fileContains(ctx, p, not, "", pattern)
 		})
 	ctx.Step(
-		`^a file named "(.+)" should( not)? contain( exactly)?:$`,
+		`^(?:a|the) file(?: named)? "(.+)" should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 			return fileContains(ctx, p, not, exactly, trimTrailingNewlines(docString.Content))
 		})
 	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
 	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
 	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
-	ctx.Step(`^I run the following script:$`, runScript)
+	ctx.Step(`^I run the following (?:commands|script):$`, runScript)
 	ctx.Step(`^I cd to "(.*)"$`, changeDirectory)
 }

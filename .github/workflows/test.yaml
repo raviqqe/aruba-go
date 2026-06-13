@@ -51,6 +51,11 @@ jobs:
       fail-fast: false
       matrix:
         dependent:
+          - directory: cloe
+            build: rake build
+            arguments: examples
+            environment:
+              - PATH=$PWD/bin:$PATH
           - directory: schemat
             build: cargo install --locked --path .
           - directory: stak
@@ -81,9 +86,9 @@ jobs:
         working-directory: dependents/${{ matrix.dependent.directory }}
       - run: bundler
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: bundler exec cucumber
+      - run: bundler exec cucumber ${{ matrix.dependent.arguments }}
         working-directory: dependents/${{ matrix.dependent.directory }}
-      - run: agoa
+      - run: agoa --strict ${{ matrix.dependent.arguments }}
         working-directory: dependents/${{ matrix.dependent.directory }}
   test:
     needs:

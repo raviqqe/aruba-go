@@ -58,6 +58,20 @@ func (w world) Stderr() string {
 	})
 }
 
+func (w world) Output() string {
+	bs := []byte(nil)
+
+	for _, c := range w.commands {
+		_ = c.Wait()
+
+		for _, b := range []*bytes.Buffer{c.Stdout.(*bytes.Buffer), c.Stderr.(*bytes.Buffer)} {
+			bs = append(bs, b.Bytes()...)
+		}
+	}
+
+	return string(bs)
+}
+
 func (w world) stdout(f func(*exec.Cmd) io.Writer) string {
 	bs := []byte(nil)
 
