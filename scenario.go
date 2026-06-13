@@ -12,9 +12,9 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/cucumber/godog"
+	"github.com/kballard/go-shellquote"
 )
 
 func parseString(s string) (string, error) {
@@ -27,41 +27,6 @@ func trimTrailingNewlines(s string) string {
 
 func matchesExactly(s, t string) bool {
 	return s == t || trimTrailingNewlines(s) == trimTrailingNewlines(t)
-}
-
-func splitCommand(command string) []string {
-	fields := []string(nil)
-	field := strings.Builder{}
-	quote := rune(0)
-	quoted := false
-
-	for _, c := range command {
-		switch {
-		case quote != 0:
-			if c == quote {
-				quote = 0
-			} else {
-				field.WriteRune(c)
-			}
-		case c == '\'' || c == '"':
-			quote = c
-			quoted = true
-		case unicode.IsSpace(c):
-			if quoted || field.Len() != 0 {
-				fields = append(fields, field.String())
-				field.Reset()
-				quoted = false
-			}
-		default:
-			field.WriteRune(c)
-		}
-	}
-
-	if quoted || field.Len() != 0 {
-		fields = append(fields, field.String())
-	}
-
-	return fields
 }
 
 func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
@@ -108,7 +73,11 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		return ctx, err
 	}
 
-	ss := splitCommand(command)
+	ss, err := shellquote.Split(command)
+	if err != nil {
+		return ctx, err
+	}
+
 	c := exec.Command(ss[0], ss[1:]...)
 	w := contextWorld(ctx)
 	c.Dir = w.CurrentDirectory

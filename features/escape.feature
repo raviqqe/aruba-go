@@ -26,9 +26,9 @@ Feature: Character escape
     Then the stdout should contain "a\\\"b"
     And the stdout should not contain "a\"b"
 
-  Scenario: Check stdout with many backslashes
+  Scenario: Unescape a backslash in a command
     When I successfully run `echo \\`
-    Then the stdout should contain exactly "\\\\"
+    Then the stdout should contain exactly "\\"
 
   Scenario: Create a file with an escaped newline
     Given a file named "foo.py" with:
