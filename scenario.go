@@ -202,6 +202,7 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 		}
 
 		c := w.FindCommand(from)
+		_ = c.Wait()
 
 		switch channel {
 		case "stdout":
