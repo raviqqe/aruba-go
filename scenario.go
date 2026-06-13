@@ -58,7 +58,7 @@ func createFileWithMode(ctx context.Context, p, s string, mode os.FileMode) erro
 }
 
 func parseFileMode(s string) (os.FileMode, error) {
-	m, err := strconv.ParseUint(strings.TrimPrefix(strings.TrimPrefix(s, "0o"), "0O"), 8, 32)
+	m, err := strconv.ParseUint(s, 8, 32)
 
 	return os.FileMode(m), err
 }
