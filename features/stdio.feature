@@ -44,6 +44,16 @@ Feature: Standard I/O
     Then the stderr from "echo foo" should not contain "foo"
     And the output from "echo foo" should contain "foo"
 
+  Scenario: Check output from an interactive command
+    Given a file named "foo.txt" with:
+      """
+      foo
+      """
+    When I run `cat` interactively
+    And I pipe in the file "foo.txt"
+    Then the stdout from "cat" should contain exactly "foo"
+    And the output from "cat" should contain "foo"
+
   Rule: Containing strings
 
     Scenario: Check stdout to contain a string

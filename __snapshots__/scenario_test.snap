@@ -91,6 +91,29 @@ Feature: File
     Then the directory named "foo" should not exist
     directory "foo" should not exist
 
+  Scenario: Create a file outside the working directory # failures/file.feature:42
+    When a file named "../foo.txt" with "foo"
+    path "../foo.txt" is outside the working directory
+
+  Scenario: Create an executable outside the working directory # failures/file.feature:46
+    When an executable named "../foo.sh" with:
+      """
+      echo foo
+      """
+    path "../foo.sh" is outside the working directory
+
+  Scenario: Create a directory outside the working directory # failures/file.feature:53
+    When a directory named "../foo"
+    path "../foo" is outside the working directory
+
+  Scenario: Check a file outside the working directory  # failures/file.feature:57
+    Then a file named "../foo.txt" should contain "foo"
+    path "../foo.txt" is outside the working directory
+
+  Scenario: Check a file existence outside the working directory # failures/file.feature:61
+    Then the file named "../foo.txt" should exist
+    path "../foo.txt" is outside the working directory
+
 Feature: Standard I/O
 
   Scenario: Check stdout                     # failures/stdio.feature:3
@@ -222,6 +245,26 @@ Feature: Standard I/O
     Then the directory named "foo" should not exist # failures/file.feature:39
       Error: directory "foo" should not exist
 
+  Scenario: Create a file outside the working directory # failures/file.feature:42
+    When a file named "../foo.txt" with "foo" # failures/file.feature:43
+      Error: path "../foo.txt" is outside the working directory
+
+  Scenario: Create an executable outside the working directory # failures/file.feature:46
+    When an executable named "../foo.sh" with: # failures/file.feature:47
+      Error: path "../foo.sh" is outside the working directory
+
+  Scenario: Create a directory outside the working directory # failures/file.feature:53
+    When a directory named "../foo" # failures/file.feature:54
+      Error: path "../foo" is outside the working directory
+
+  Scenario: Check a file outside the working directory # failures/file.feature:57
+    Then a file named "../foo.txt" should contain "foo" # failures/file.feature:58
+      Error: path "../foo.txt" is outside the working directory
+
+  Scenario: Check a file existence outside the working directory # failures/file.feature:61
+    Then the file named "../foo.txt" should exist # failures/file.feature:62
+      Error: path "../foo.txt" is outside the working directory
+
   Scenario: Check stdout # failures/stdio.feature:3
     Then the stdout should not contain "foo" # failures/stdio.feature:5
       Error: expected stdout "foo\n" not to contain "foo"
@@ -267,7 +310,7 @@ Feature: Standard I/O
       Error: expected stdout "foo\n" to contain "bar"
 
 
-26 scenarios (26 failed)
-53 steps (27 passed, 26 failed)
+31 scenarios (31 failed)
+58 steps (27 passed, 31 failed)
 
 ---
