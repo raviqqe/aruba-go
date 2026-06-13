@@ -202,6 +202,10 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 		}
 
 		c := w.FindCommand(from)
+		if c == nil {
+			return fmt.Errorf("no command matching %q", from)
+		}
+
 		_ = c.Wait()
 
 		switch channel {
