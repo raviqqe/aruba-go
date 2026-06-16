@@ -3,9 +3,11 @@ package aruba
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -72,6 +74,22 @@ func (w world) Output() string {
 	}
 
 	return string(bs)
+}
+
+func (w world) path(p string) (string, error) {
+	if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
+		return "", fmt.Errorf("path %q must be relative to the working directory", p)
+	}
+
+	q := filepath.Join(w.CurrentDirectory, p)
+
+	if d, err := filepath.Rel(w.RootDirectory, q); err != nil {
+		return "", err
+	} else if strings.HasPrefix(d, "..") {
+		return "", fmt.Errorf("path %q is outside the working directory", p)
+	}
+
+	return q, nil
 }
 
 func (w world) stdout(f func(*exec.Cmd) io.Writer) string {
