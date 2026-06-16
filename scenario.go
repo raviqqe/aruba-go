@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -59,7 +58,7 @@ func createFile(ctx context.Context, p, s string) error {
 		return err
 	}
 
-	if err := os.MkdirAll(path.Dir(p), 0o700); err != nil {
+	if err := os.MkdirAll(filepath.Dir(p), 0o700); err != nil {
 		return err
 	}
 
