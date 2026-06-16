@@ -9,7 +9,7 @@ import (
 )
 
 func TestStopKillsRunningCommand(t *testing.T) {
-	c := exec.Command("sleep", "60")
+	c := exec.Command("sleep", "10")
 	require.NoError(t, c.Start())
 
 	world{}.AddCommand(c).Stop()
