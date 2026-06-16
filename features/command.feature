@@ -22,6 +22,15 @@ Feature: Command
     When I run `echo` interactively
     Then the exit status should be 0
 
+  Scenario: Run a command in the background
+    When I run `echo foo` in the background
+    Then the stdout should contain exactly "foo"
+
+  Scenario: Wait for a command to start up
+    When I wait 1 second for the command to start up
+    And I run `sh -c 'sleep 0.1; echo foo > foo.txt'` in the background
+    Then the file "foo.txt" should exist
+
   Scenario: Pipe in a file
     Given a file named "foo.txt" with:
       """
