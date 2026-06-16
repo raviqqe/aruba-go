@@ -60,3 +60,7 @@ Feature: File
   @go
   Scenario: Check a file existence outside the working directory
     Then the file named "../foo.txt" should exist
+
+  @go
+  Scenario: Create a file with an absolute path
+    When a file named "/foo.txt" with "foo"

@@ -114,6 +114,10 @@ Feature: File
     Then the file named "../foo.txt" should exist
     path "../foo.txt" is outside the working directory
 
+  Scenario: Create a file with an absolute path # failures/file.feature:65
+    When a file named "/foo.txt" with "foo"
+    path "/foo.txt" must be relative to the working directory
+
 Feature: Standard I/O
 
   Scenario: Check stdout                     # failures/stdio.feature:3
@@ -269,6 +273,10 @@ Feature: Standard I/O
     Then the file named "../foo.txt" should exist # failures/file.feature:62
       Error: path "../foo.txt" is outside the working directory
 
+  Scenario: Create a file with an absolute path # failures/file.feature:65
+    When a file named "/foo.txt" with "foo" # failures/file.feature:66
+      Error: path "/foo.txt" must be relative to the working directory
+
   Scenario: Check stdout # failures/stdio.feature:3
     Then the stdout should not contain "foo" # failures/stdio.feature:5
       Error: expected stdout "foo\n" not to contain "foo"
@@ -318,7 +326,7 @@ Feature: Standard I/O
       Error: expected stdout "foo\n" to contain "bar"
 
 
-32 scenarios (32 failed)
-59 steps (27 passed, 32 failed)
+33 scenarios (33 failed)
+60 steps (27 passed, 33 failed)
 
 ---
