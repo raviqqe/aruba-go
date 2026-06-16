@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"time"
 )
 
 type worldKey struct{}
@@ -17,6 +18,7 @@ type world struct {
 	CurrentDirectory string
 	Stdin            io.WriteCloser
 	Environment      []string
+	StartupWaitTime  time.Duration
 }
 
 func newWorld(d string) world {

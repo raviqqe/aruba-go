@@ -37,7 +37,7 @@ Feature: Command
 
   Scenario: Run a command interactively successfully # failures/command.feature:31
     When I successfully run `echo` interactively
-    cannot check interactive command's success
+    cannot check an asynchronous command's success
 
   Scenario: Run an empty command # failures/command.feature:34
     When I run ``
@@ -215,7 +215,7 @@ Feature: Standard I/O
 
   Scenario: Run a command interactively successfully # failures/command.feature:31
     When I successfully run `echo` interactively # failures/command.feature:32
-      Error: cannot check interactive command's success
+      Error: cannot check an asynchronous command's success
 
   Scenario: Run an empty command # failures/command.feature:34
     When I run `` # failures/command.feature:35

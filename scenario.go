@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cucumber/godog"
 	"github.com/kballard/go-shellquote"
@@ -93,7 +94,7 @@ func createDirectory(ctx context.Context, p string) error {
 	return os.Mkdir(p, 0o700)
 }
 
-func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
+func runCommand(ctx context.Context, successfully, command, asynchronously string) (context.Context, error) {
 	command, err := parseString(command)
 	if err != nil {
 		return ctx, err
@@ -127,12 +128,14 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 		return ctx, err
 	}
 
-	if interactively == "" {
+	time.Sleep(w.StartupWaitTime)
+
+	if asynchronously == "" {
 		if err := c.Wait(); successfully != "" && err != nil {
 			return ctx, fmt.Errorf("%v (stderr: %q)", err, w.Stderr())
 		}
 	} else if successfully != "" {
-		return ctx, errors.New("cannot check interactive command's success")
+		return ctx, errors.New("cannot check an asynchronous command's success")
 	}
 
 	return ctx, nil
@@ -147,6 +150,13 @@ func runScript(ctx context.Context, s *godog.DocString) (context.Context, error)
 	}
 
 	return runCommand(ctx, "", strconv.Quote("sh "+scriptPath), "")
+}
+
+func waitForStartup(ctx context.Context, seconds float64) context.Context {
+	w := contextWorld(ctx)
+	w.StartupWaitTime = time.Duration(seconds * float64(time.Second))
+
+	return contextWithWorld(ctx, w)
 }
 
 func exitStatus(ctx context.Context, not string, code int) error {
@@ -318,7 +328,8 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFileWithMode(ctx, p, trimTrailingNewlines(s.Content)+"\n", 0o755)
 		})
 	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
-	ctx.Step("^I( successfully)? run (`.*`)( interactively)?$", runCommand)
+	ctx.Step("^I( successfully)? run (`.*`)( interactively| in the background)?$", runCommand)
+	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
 		`^the (output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
