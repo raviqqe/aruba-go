@@ -114,7 +114,15 @@ Feature: File
     Then the file named "../foo.txt" should exist
     path "../foo.txt" is outside the working directory
 
-  Scenario: Create a file with an absolute path # failures/file.feature:65
+  Scenario: Pipe in a file outside the working directory # failures/file.feature:65
+    When I pipe in the file "../foo.txt"
+    path "../foo.txt" is outside the working directory
+
+  Scenario: Change to a directory outside the working directory # failures/file.feature:69
+    When I cd to "../foo"
+    path "../foo" is outside the working directory
+
+  Scenario: Create a file with an absolute path # failures/file.feature:73
     When a file named "/foo.txt" with "foo"
     path "/foo.txt" must be relative to the working directory
 
@@ -273,8 +281,16 @@ Feature: Standard I/O
     Then the file named "../foo.txt" should exist # failures/file.feature:62
       Error: path "../foo.txt" is outside the working directory
 
-  Scenario: Create a file with an absolute path # failures/file.feature:65
-    When a file named "/foo.txt" with "foo" # failures/file.feature:66
+  Scenario: Pipe in a file outside the working directory # failures/file.feature:65
+    When I pipe in the file "../foo.txt" # failures/file.feature:66
+      Error: path "../foo.txt" is outside the working directory
+
+  Scenario: Change to a directory outside the working directory # failures/file.feature:69
+    When I cd to "../foo" # failures/file.feature:70
+      Error: path "../foo" is outside the working directory
+
+  Scenario: Create a file with an absolute path # failures/file.feature:73
+    When a file named "/foo.txt" with "foo" # failures/file.feature:74
       Error: path "/foo.txt" must be relative to the working directory
 
   Scenario: Check stdout # failures/stdio.feature:3
@@ -326,7 +342,7 @@ Feature: Standard I/O
       Error: expected stdout "foo\n" to contain "bar"
 
 
-33 scenarios (33 failed)
-60 steps (27 passed, 33 failed)
+35 scenarios (35 failed)
+62 steps (27 passed, 35 failed)
 
 ---

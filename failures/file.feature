@@ -62,5 +62,13 @@ Feature: File
     Then the file named "../foo.txt" should exist
 
   @go
+  Scenario: Pipe in a file outside the working directory
+    When I pipe in the file "../foo.txt"
+
+  @go
+  Scenario: Change to a directory outside the working directory
+    When I cd to "../foo"
+
+  @go
   Scenario: Create a file with an absolute path
     When a file named "/foo.txt" with "foo"
