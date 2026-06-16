@@ -31,6 +31,5 @@ Feature: Command
   Scenario: Run a command interactively successfully
     When I successfully run `echo` interactively
 
-  @go
   Scenario: Run an empty command
     When I run ``

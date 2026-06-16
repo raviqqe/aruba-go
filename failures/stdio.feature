@@ -23,7 +23,6 @@ Feature: Standard I/O
     When I successfully run `echo`
     Then the stdout should not contain exactly ""
 
-  @go
   Scenario: Check output from a command that was not run
     Then the stdout from "echo foo" should contain "foo"
 

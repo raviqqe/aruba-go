@@ -1,6 +1,6 @@
-@go
 Feature: Character escape
 
+  @go
   Scenario: Create a file with a backslash
     Given a file named "foo.txt" with:
       """
@@ -17,6 +17,7 @@ Feature: Character escape
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\"b"
 
+  @go
   Scenario: Create a file with an escaped double quote
     Given a file named "foo.txt" with:
       """
@@ -26,6 +27,7 @@ Feature: Character escape
     Then the stdout should contain "a\\\"b"
     And the stdout should not contain "a\"b"
 
+  @go
   Scenario: Unescape a backslash in a command
     When I successfully run `echo \\`
     Then the stdout should contain exactly "\\"
@@ -51,6 +53,7 @@ Feature: Character escape
       | value     |
       | foo\\nbar |
 
+  @go
   Scenario: Create a file with many backslashes
     Given a file named "foo.py" with:
       """python
@@ -59,6 +62,7 @@ Feature: Character escape
     When I successfully run `python3 foo.py`
     Then the stdout should contain "\\\\\\\\"
 
+  @go
   Scenario Outline: Compare special characters in examples
     Given a file named "foo.py" with:
       """python
@@ -75,6 +79,7 @@ Feature: Character escape
       | \\r   |
       | \\"   |
 
+  @go
   Scenario Outline: Escape special characters in examples
     Given a file named "foo.py" with:
       """python
