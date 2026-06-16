@@ -50,6 +50,15 @@ func (w world) LastCommand() *exec.Cmd {
 	return w.commands[len(w.commands)-1]
 }
 
+func (w world) Stop() {
+	for _, c := range w.commands {
+		if c.Process != nil && c.ProcessState == nil {
+			_ = c.Process.Kill()
+			_ = c.Wait()
+		}
+	}
+}
+
 func (w world) Stdout() string {
 	return w.stdout(func(c *exec.Cmd) io.Writer {
 		return c.Stdout
