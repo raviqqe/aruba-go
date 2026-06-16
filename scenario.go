@@ -41,24 +41,8 @@ func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, er
 	return ctx, err
 }
 
-func worldPath(w world, p string) (string, error) {
-	if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
-		return "", fmt.Errorf("path %q must be relative to the working directory", p)
-	}
-
-	q := filepath.Join(w.CurrentDirectory, p)
-
-	if d, err := filepath.Rel(w.RootDirectory, q); err != nil {
-		return "", err
-	} else if strings.HasPrefix(d, "..") {
-		return "", fmt.Errorf("path %q is outside the working directory", p)
-	}
-
-	return q, nil
-}
-
 func createFile(ctx context.Context, p, s string) error {
-	p, err := worldPath(contextWorld(ctx), p)
+	p, err := contextWorld(ctx).path(p)
 	if err != nil {
 		return err
 	}
@@ -75,7 +59,7 @@ func createFileWithMode(ctx context.Context, p, s string, mode os.FileMode) erro
 		return err
 	}
 
-	q, err := worldPath(contextWorld(ctx), p)
+	q, err := contextWorld(ctx).path(p)
 	if err != nil {
 		return err
 	}
@@ -90,7 +74,7 @@ func parseFileMode(s string) (os.FileMode, error) {
 }
 
 func createDirectory(ctx context.Context, p string) error {
-	p, err := worldPath(contextWorld(ctx), p)
+	p, err := contextWorld(ctx).path(p)
 	if err != nil {
 		return err
 	}
@@ -178,7 +162,7 @@ func exitStatus(ctx context.Context, not string, code int) error {
 func stdin(ctx context.Context, p string) error {
 	w := contextWorld(ctx)
 
-	q, err := worldPath(w, p)
+	q, err := w.path(p)
 	if err != nil {
 		return err
 	}
@@ -240,7 +224,7 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 }
 
 func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
-	q, err := worldPath(contextWorld(ctx), p)
+	q, err := contextWorld(ctx).path(p)
 	if err != nil {
 		return err
 	}
@@ -265,7 +249,7 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 }
 
 func fileExists(ctx context.Context, ty, p, not string) error {
-	q, err := worldPath(contextWorld(ctx), p)
+	q, err := contextWorld(ctx).path(p)
 	if err != nil {
 		return err
 	}
@@ -286,7 +270,7 @@ func setEnvVar(ctx context.Context, k, v string) context.Context {
 func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 	w := contextWorld(ctx)
 
-	d, err := worldPath(w, p)
+	d, err := w.path(p)
 	if err != nil {
 		return ctx, err
 	}
