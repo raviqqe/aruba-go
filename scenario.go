@@ -36,9 +36,10 @@ func before(ctx context.Context, _ *godog.Scenario) (context.Context, error) {
 }
 
 func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, error) {
-	err := os.RemoveAll(contextWorld(ctx).RootDirectory)
+	w := contextWorld(ctx)
+	w.Stop()
 
-	return ctx, err
+	return ctx, os.RemoveAll(w.RootDirectory)
 }
 
 func worldPath(w world, p string) (string, error) {
