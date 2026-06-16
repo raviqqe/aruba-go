@@ -50,7 +50,7 @@ func (w world) LastCommand() *exec.Cmd {
 
 func (w world) Stop() {
 	for _, c := range w.commands {
-		if c.Process != nil {
+		if c.Process != nil && c.ProcessState == nil {
 			_ = c.Process.Kill()
 			_ = c.Wait()
 		}
