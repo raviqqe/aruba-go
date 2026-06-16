@@ -37,3 +37,26 @@ Feature: File
   Scenario: Create a directory
     Given a directory named "foo"
     Then the directory named "foo" should not exist
+
+  @go
+  Scenario: Create a file outside the working directory
+    When a file named "../foo.txt" with "foo"
+
+  @go
+  Scenario: Create an executable outside the working directory
+    When an executable named "../foo.sh" with:
+      """
+      echo foo
+      """
+
+  @go
+  Scenario: Create a directory outside the working directory
+    When a directory named "../foo"
+
+  @go
+  Scenario: Check a file outside the working directory
+    Then a file named "../foo.txt" should contain "foo"
+
+  @go
+  Scenario: Check a file existence outside the working directory
+    Then the file named "../foo.txt" should exist

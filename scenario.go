@@ -8,7 +8,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -41,11 +40,28 @@ func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, er
 	return ctx, err
 }
 
+func worldPath(w world, p string) (string, error) {
+	q := filepath.Join(w.CurrentDirectory, p)
+
+	if d, err := filepath.Rel(w.RootDirectory, q); err != nil {
+		return "", err
+	} else if strings.HasPrefix(d, "..") {
+		return "", fmt.Errorf("path %q is outside the working directory", p)
+	}
+
+	return q, nil
+}
+
 func createFile(ctx context.Context, p, s string) error {
-	p = path.Join(contextWorld(ctx).CurrentDirectory, p)
-	if err := os.MkdirAll(path.Dir(p), 0o700); err != nil {
+	p, err := worldPath(contextWorld(ctx), p)
+	if err != nil {
 		return err
 	}
+
+	if err := os.MkdirAll(filepath.Dir(p), 0o700); err != nil {
+		return err
+	}
+
 	return os.WriteFile(p, []byte(s), 0o600)
 }
 
@@ -54,7 +70,12 @@ func createFileWithMode(ctx context.Context, p, s string, mode os.FileMode) erro
 		return err
 	}
 
-	return os.Chmod(path.Join(contextWorld(ctx).CurrentDirectory, p), mode)
+	q, err := worldPath(contextWorld(ctx), p)
+	if err != nil {
+		return err
+	}
+
+	return os.Chmod(q, mode)
 }
 
 func parseFileMode(s string) (os.FileMode, error) {
@@ -64,7 +85,12 @@ func parseFileMode(s string) (os.FileMode, error) {
 }
 
 func createDirectory(ctx context.Context, p string) error {
-	return os.Mkdir(path.Join(contextWorld(ctx).CurrentDirectory, p), 0o700)
+	p, err := worldPath(contextWorld(ctx), p)
+	if err != nil {
+		return err
+	}
+
+	return os.Mkdir(p, 0o700)
 }
 
 func runCommand(ctx context.Context, successfully, command, interactively string) (context.Context, error) {
@@ -76,6 +102,8 @@ func runCommand(ctx context.Context, successfully, command, interactively string
 	ss, err := shellquote.Split(command)
 	if err != nil {
 		return ctx, err
+	} else if len(ss) == 0 {
+		return ctx, errors.New("empty command")
 	}
 
 	c := exec.Command(ss[0], ss[1:]...)
@@ -135,7 +163,13 @@ func exitStatus(ctx context.Context, not string, code int) error {
 
 func stdin(ctx context.Context, p string) error {
 	w := contextWorld(ctx)
-	f, err := os.Open(path.Join(w.CurrentDirectory, p))
+
+	q, err := worldPath(w, p)
+	if err != nil {
+		return err
+	}
+
+	f, err := os.Open(q)
 	if err != nil {
 		return err
 	}
@@ -167,6 +201,11 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 		}
 
 		c := w.FindCommand(from)
+		if c == nil {
+			return fmt.Errorf("no command matching %q", from)
+		}
+
+		_ = c.Wait()
 
 		switch channel {
 		case "stdout":
@@ -187,7 +226,12 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 }
 
 func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
-	bs, err := os.ReadFile(path.Join(contextWorld(ctx).CurrentDirectory, p))
+	q, err := worldPath(contextWorld(ctx), p)
+	if err != nil {
+		return err
+	}
+
+	bs, err := os.ReadFile(q)
 	if err != nil {
 		return err
 	}
@@ -207,7 +251,12 @@ func fileContains(ctx context.Context, p, not, exactly, pattern string) error {
 }
 
 func fileExists(ctx context.Context, ty, p, not string) error {
-	if i, err := os.Stat(path.Join(contextWorld(ctx).CurrentDirectory, p)); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
+	q, err := worldPath(contextWorld(ctx), p)
+	if err != nil {
+		return err
+	}
+
+	if i, err := os.Stat(q); (err == nil && i.IsDir() == (ty == "directory")) != (not == "") {
 		return fmt.Errorf("%s %q should%s exist", ty, p, not)
 	}
 
@@ -223,13 +272,12 @@ func setEnvVar(ctx context.Context, k, v string) context.Context {
 func changeDirectory(ctx context.Context, p string) (context.Context, error) {
 	w := contextWorld(ctx)
 
-	w.CurrentDirectory = filepath.Clean(filepath.Join(w.CurrentDirectory, p))
-	d, err := filepath.Rel(w.RootDirectory, w.CurrentDirectory)
+	d, err := worldPath(w, p)
 	if err != nil {
 		return ctx, err
-	} else if strings.HasPrefix(d, "..") {
-		return ctx, fmt.Errorf("cannot change directory to %q", p)
 	}
+
+	w.CurrentDirectory = d
 
 	return contextWithWorld(ctx, w), nil
 }

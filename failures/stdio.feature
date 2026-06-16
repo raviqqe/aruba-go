@@ -23,6 +23,9 @@ Feature: Standard I/O
     When I successfully run `echo`
     Then the stdout should not contain exactly ""
 
+  Scenario: Check output from a command that was not run
+    Then the stdout from "echo foo" should contain "foo"
+
   Rule: Containing strings
 
     Scenario: Check stdout to contain a string
