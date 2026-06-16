@@ -42,6 +42,10 @@ func after(ctx context.Context, _ *godog.Scenario, _ error) (context.Context, er
 }
 
 func worldPath(w world, p string) (string, error) {
+	if filepath.IsAbs(p) || filepath.VolumeName(p) != "" {
+		return "", fmt.Errorf("path %q must be relative to the working directory", p)
+	}
+
 	q := filepath.Join(w.CurrentDirectory, p)
 
 	if d, err := filepath.Rel(w.RootDirectory, q); err != nil {
