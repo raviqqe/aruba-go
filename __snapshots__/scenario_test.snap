@@ -161,39 +161,48 @@ Feature: Standard I/O
 
   Scenario: Check stdout with a blank character # failures/stdio.feature:14
     When I successfully run `echo foo`
-    Then the stdout should not contain "\n"
-    expected stdout "foo\n" not to contain "\n"
+    Then the stdout should not contain:
+      """
+      foo
+      
+      """
+    expected stdout "foo\n" not to contain "foo\n"
 
-  Scenario: Check stdout to contain nothing # failures/stdio.feature:18
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:22
     When I successfully run `echo foo`
     Then the stdout should not contain ""
     expected stdout "foo\n" not to contain ""
 
-  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:22
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:26
     When I successfully run `echo`
     Then the stdout should not contain exactly ""
     expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check output from a command that was not run # failures/stdio.feature:26
+  Scenario: Check output from a command that was not run # failures/stdio.feature:30
     Then the stdout from "echo foo" should contain "foo"
     no command matching "echo foo"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:31
+  Scenario: Check output from a command with a trailing newline  # failures/stdio.feature:33
+    When I successfully run `echo foo`
+    Then the stdout from "echo foo" should contain exactly "foo"
+    expected stdout "foo\n" to contain exactly "foo"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:39
     When I successfully run `echo foo`
     Then the stdout should not contain "foo"
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:35
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:43
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly "foo"
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:39
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:47
     When I successfully run `echo foo`
     Then the stdout should contain "bar"
     expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:45
+  Scenario: Check stdout to contain a string # failures/stdio.feature:53
     When I successfully run `echo foo`
     Then the stdout should not contain:
       """
@@ -201,7 +210,7 @@ Feature: Standard I/O
       """
     expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:52
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:60
     When I successfully run `echo foo bar`
     Then the stdout should contain exactly:
       """
@@ -209,7 +218,7 @@ Feature: Standard I/O
       """
     expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:59
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:67
     When I successfully run `echo foo`
     Then the stdout should contain:
       """
@@ -336,47 +345,51 @@ Feature: Standard I/O
       Error: expected stderr "foo\n" not to contain "foo"
 
   Scenario: Check stdout with a blank character # failures/stdio.feature:14
-    Then the stdout should not contain "\n" # failures/stdio.feature:16
-      Error: expected stdout "foo\n" not to contain "\n"
+    Then the stdout should not contain: # failures/stdio.feature:16
+      Error: expected stdout "foo\n" not to contain "foo\n"
 
-  Scenario: Check stdout to contain nothing # failures/stdio.feature:18
-    Then the stdout should not contain "" # failures/stdio.feature:20
+  Scenario: Check stdout to contain nothing # failures/stdio.feature:22
+    Then the stdout should not contain "" # failures/stdio.feature:24
       Error: expected stdout "foo\n" not to contain ""
 
-  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:22
-    Then the stdout should not contain exactly "" # failures/stdio.feature:24
+  Scenario: Check stdout to contain exactly nothing # failures/stdio.feature:26
+    Then the stdout should not contain exactly "" # failures/stdio.feature:28
       Error: expected stdout "\n" not to contain exactly ""
 
-  Scenario: Check output from a command that was not run # failures/stdio.feature:26
-    Then the stdout from "echo foo" should contain "foo" # failures/stdio.feature:27
+  Scenario: Check output from a command that was not run # failures/stdio.feature:30
+    Then the stdout from "echo foo" should contain "foo" # failures/stdio.feature:31
       Error: no command matching "echo foo"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:31
-    Then the stdout should not contain "foo" # failures/stdio.feature:33
+  Scenario: Check output from a command with a trailing newline # failures/stdio.feature:33
+    Then the stdout from "echo foo" should contain exactly "foo" # failures/stdio.feature:35
+      Error: expected stdout "foo\n" to contain exactly "foo"
+
+  Scenario: Check stdout to contain a string # failures/stdio.feature:39
+    Then the stdout should not contain "foo" # failures/stdio.feature:41
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:35
-    Then the stdout should contain exactly "foo" # failures/stdio.feature:37
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:43
+    Then the stdout should contain exactly "foo" # failures/stdio.feature:45
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:39
-    Then the stdout should contain "bar" # failures/stdio.feature:41
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:47
+    Then the stdout should contain "bar" # failures/stdio.feature:49
       Error: expected stdout "foo\n" to contain "bar"
 
-  Scenario: Check stdout to contain a string # failures/stdio.feature:45
-    Then the stdout should not contain: # failures/stdio.feature:47
+  Scenario: Check stdout to contain a string # failures/stdio.feature:53
+    Then the stdout should not contain: # failures/stdio.feature:55
       Error: expected stdout "foo\n" not to contain "foo"
 
-  Scenario: Check stdout to contain an exact string # failures/stdio.feature:52
-    Then the stdout should contain exactly: # failures/stdio.feature:54
+  Scenario: Check stdout to contain an exact string # failures/stdio.feature:60
+    Then the stdout should contain exactly: # failures/stdio.feature:62
       Error: expected stdout "foo bar\n" to contain exactly "foo"
 
-  Scenario: Check stdout not to contain a string # failures/stdio.feature:59
-    Then the stdout should contain: # failures/stdio.feature:61
+  Scenario: Check stdout not to contain a string # failures/stdio.feature:67
+    Then the stdout should contain: # failures/stdio.feature:69
       Error: expected stdout "foo\n" to contain "bar"
 
 
-39 scenarios (39 failed)
-66 steps (27 passed, 39 failed)
+40 scenarios (40 failed)
+68 steps (28 passed, 40 failed)
 
 ---

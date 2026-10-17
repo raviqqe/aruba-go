@@ -218,7 +218,7 @@ Feature: File
 
 
         """
-      Then a file named "foo.txt" should contain "a\n"
+      Then a file named "foo.txt" should contain "a"
       And I successfully run `wc -c foo.txt`
       And the stdout should contain "3 foo.txt"
 

@@ -14,8 +14,11 @@ import (
 	"github.com/cucumber/godog"
 )
 
-func parseString(s string) (string, error) {
-	return strconv.Unquote(s)
+var stringUnescaper = strings.NewReplacer(`\"`, `"`, `\'`, `'`)
+
+// Quoted strings unescape only quotes like the string parameter type of Cucumber expressions.
+func parseString(s string) string {
+	return stringUnescaper.Replace(s[1 : len(s)-1])
 }
 
 func trimTrailingNewlines(s string) string {
@@ -92,7 +95,7 @@ func removeFile(ctx context.Context, ty, p string, force bool) error {
 }
 
 func runCommand(ctx context.Context, successfully, line, asynchronously string) (context.Context, error) {
-	line, err := parseString(line)
+	line, err := strconv.Unquote(line)
 	if err != nil {
 		return ctx, err
 	}
@@ -197,10 +200,7 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 			s = w.Output()
 		}
 	} else {
-		from, err := parseString(from)
-		if err != nil {
-			return err
-		}
+		from := parseString(from)
 
 		c := w.FindCommand(from)
 		if c == nil {
@@ -219,8 +219,16 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 		}
 	}
 
-	if exactly == "" && strings.Contains(s, pattern) != (not == "") ||
-		exactly != "" && matchesExactly(s, pattern) != (not == "") {
+	ok := strings.Contains(s, pattern)
+
+	// Output from a specific command keeps its trailing newlines on exact matches like Aruba's.
+	if exactly != "" && from != "" {
+		ok = s == pattern
+	} else if exactly != "" {
+		ok = matchesExactly(s, pattern)
+	}
+
+	if ok != (not == "") {
 		return fmt.Errorf("expected %s %q%s to contain%s %q", channel, s, not, exactly, pattern)
 	}
 
@@ -296,7 +304,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^a file named "(.+)" with (".*")$`,
 		func(ctx context.Context, p, s string) error {
-			s, err := parseString(s)
+			s, err := strconv.Unquote(s)
 			if err != nil {
 				return err
 			}
@@ -332,35 +340,25 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		func(ctx context.Context, ty, p, force string) error {
 			return removeFile(ctx, ty, p, force != "")
 		})
-	ctx.Step("^I( successfully)? run (`.*`)( interactively| in (?:the )?background)?$", runCommand)
+	ctx.Step("^I( successfully)? run (`.*`)( interactively| in the background)?$", runCommand)
 	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
 		`^(?:the )?(output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
 		func(ctx context.Context, channel, from, not, exactly, pattern string) error {
-			pattern, err := parseString(pattern)
-			if err != nil {
-				return err
-			}
-
-			return output(ctx, channel, from, not, exactly, pattern)
+			return output(ctx, channel, from, not, exactly, parseString(pattern))
 		},
 	)
 	ctx.Step(
 		`^(?:the )?(output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, channel, from, not, exactly string, docString *godog.DocString) error {
-			return output(ctx, channel, from, not, exactly, trimTrailingNewlines(docString.Content))
+			return output(ctx, channel, from, not, exactly, docString.Content)
 		},
 	)
 	ctx.Step(
 		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain (".*")$`,
 		func(ctx context.Context, p, not, pattern string) error {
-			pattern, err := parseString(pattern)
-			if err != nil {
-				return err
-			}
-
-			return fileContains(ctx, p, not, "", pattern)
+			return fileContains(ctx, p, not, "", parseString(pattern))
 		})
 	ctx.Step(
 		`^(?:a|the) file(?: named)? "(.+)" should( not)? contain( exactly)?:$`,

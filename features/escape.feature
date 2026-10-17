@@ -1,13 +1,12 @@
 Feature: Character escape
 
-  @go
   Scenario: Create a file with a backslash
     Given a file named "foo.txt" with:
       """
       a\b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "a\\b"
+    Then the stdout should contain exactly "a\b"
 
   Scenario: Create a file with a double quote
     Given a file named "foo.txt" with:
@@ -17,20 +16,32 @@ Feature: Character escape
     When I successfully run `cat foo.txt`
     Then the stdout should contain exactly "a\"b"
 
-  @go
+  Scenario: Create a file with a single quote
+    Given a file named "foo.txt" with:
+      """
+      a'b
+      """
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly "a\'b"
+
   Scenario: Create a file with an escaped double quote
     Given a file named "foo.txt" with:
       """
       a\"b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should contain "a\\\"b"
+    Then the stdout should contain:
+      """
+      a\"b
+      """
     And the stdout should not contain "a\"b"
 
-  @go
   Scenario: Unescape a backslash in a command
     When I successfully run `echo \\`
-    Then the stdout should contain exactly "\\"
+    Then the stdout should contain exactly:
+      """
+      \
+      """
 
   Scenario: Create a file with an escaped newline
     Given a file named "foo.py" with:
@@ -38,7 +49,11 @@ Feature: Character escape
       print("foo\nbar")
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain exactly "foo\nbar"
+    Then the stdout should contain exactly:
+      """
+      foo
+      bar
+      """
 
   Scenario Outline: Create a file with an escaped example value
     Given a file named "foo.py" with:
@@ -46,27 +61,29 @@ Feature: Character escape
       print("<value>")
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain exactly "<value>"
-    And the stdout should contain exactly "foo\nbar"
+    Then the stdout should contain exactly:
+      """
+      foo
+      bar
+      """
 
     Examples:
       | value     |
       | foo\\nbar |
 
-  @go
   Scenario: Create a file with many backslashes
     Given a file named "foo.py" with:
       """python
       print("\\\\\\\\")
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain "\\\\\\\\"
+    Then the stdout should contain "\\\\"
 
   @go
-  Scenario Outline: Compare special characters in examples
+  Scenario Outline: Compare escape sequences in examples
     Given a file named "foo.py" with:
       """python
-      print("<value>", end="")
+      print(r"<value>", end="")
       """
     When I successfully run `python3 foo.py`
     Then the stdout should contain exactly "<value>"
@@ -77,7 +94,6 @@ Feature: Character escape
       | \\n   |
       | \\t   |
       | \\r   |
-      | \\"   |
 
   @go
   Scenario Outline: Escape special characters in examples
@@ -86,7 +102,7 @@ Feature: Character escape
       print("{!r}".format("<value>"))
       """
     When I successfully run `python3 foo.py`
-    Then the stdout should contain exactly "'\<value>'"
+    Then the stdout should contain exactly "'<value>'"
 
     Examples:
       | value |
@@ -113,8 +129,7 @@ Feature: Character escape
       b
       """
     When I successfully run `cat foo.txt`
-    Then the stdout should contain exactly "a\nb"
-    And the stdout should not contain exactly "a\\nb"
+    Then the stdout should not contain exactly "a\nb"
     And the stdout should contain exactly:
       """
       a
@@ -127,4 +142,9 @@ Feature: Character escape
       a
       b
       """
-    Then a file named "foo.txt" should contain "a\nb"
+    Then a file named "foo.txt" should contain:
+      """
+      a
+      b
+      """
+    And a file named "foo.txt" should not contain "a\nb"

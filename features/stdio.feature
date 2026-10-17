@@ -13,7 +13,11 @@ Feature: Standard I/O
 
   Scenario: Check stdout with a blank character
     When I successfully run `echo foo`
-    Then the stdout should contain "\n"
+    Then the stdout should contain:
+      """
+      foo
+
+      """
 
   Scenario: Check stdout to contain nothing
     When I successfully run `echo foo`
@@ -26,9 +30,21 @@ Feature: Standard I/O
   Scenario: Concatenate stdout
     When I successfully run `echo foo`
     And I successfully run `echo bar`
-    Then the stdout should contain exactly "foo\nbar"
-    And the stdout from "echo foo" should contain exactly "foo"
-    And the stdout from "echo bar" should contain exactly "bar"
+    Then the stdout should contain exactly:
+      """
+      foo
+      bar
+      """
+    And the stdout from "echo foo" should contain exactly:
+      """
+      foo
+
+      """
+    And the stdout from "echo bar" should contain exactly:
+      """
+      bar
+
+      """
 
   Scenario: Check output combining standard output and error
     When I run the following script:
@@ -44,15 +60,19 @@ Feature: Standard I/O
     Then the stderr from "echo foo" should not contain "foo"
     And the output from "echo foo" should contain "foo"
 
+  Scenario: Check output from a command with a trailing newline
+    When I successfully run `echo foo`
+    Then the stdout from "echo foo" should not contain exactly "foo"
+
   Scenario: Check output from a command with a quoted argument
     When I successfully run `sh -c 'echo foo'`
-    Then the stdout from "sh -c 'echo foo'" should contain exactly "foo"
+    Then the stdout from "sh -c 'echo foo'" should contain "foo"
 
   Scenario: Check output without a definite article
     When I successfully run `echo foo`
     Then stdout should contain "foo"
     And output should contain "foo"
-    And stdout from "echo foo" should contain exactly "foo"
+    And stdout from "echo foo" should contain "foo"
 
   Scenario: Check output from an interactive command
     Given a file named "foo.txt" with:

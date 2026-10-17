@@ -13,7 +13,11 @@ Feature: Standard I/O
 
   Scenario: Check stdout with a blank character
     When I successfully run `echo foo`
-    Then the stdout should not contain "\n"
+    Then the stdout should not contain:
+      """
+      foo
+
+      """
 
   Scenario: Check stdout to contain nothing
     When I successfully run `echo foo`
@@ -25,6 +29,10 @@ Feature: Standard I/O
 
   Scenario: Check output from a command that was not run
     Then the stdout from "echo foo" should contain "foo"
+
+  Scenario: Check output from a command with a trailing newline
+    When I successfully run `echo foo`
+    Then the stdout from "echo foo" should contain exactly "foo"
 
   Rule: Containing strings
 
