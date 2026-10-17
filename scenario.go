@@ -293,7 +293,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.After(after)
 
 	ctx.Step(
-		`^a file named "([^"]*)" with "([^"]*)"$`,
+		`^a file named "(.*)" with "(.*)"$`,
 		func(ctx context.Context, p, s string) error {
 			s, err := strconv.Unquote(`"` + s + `"`)
 			if err != nil {
@@ -302,7 +302,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFile(ctx, p, s)
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "([^"]*)"(?: with mode "([^"]*)" and)? with:$`,
+		`^(?:a|the) file(?: named)? "(.*)"(?: with mode "(.*)" and)? with:$`,
 		func(ctx context.Context, p, mode string, s *godog.DocString) error {
 			if mode == "" {
 				return createFile(ctx, p, s.Content)
@@ -316,18 +316,18 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFileWithMode(ctx, p, s.Content, m)
 		})
 	ctx.Step(
-		`^(?:an|the) executable(?: named)? "([^"]*)" with:$`,
+		`^(?:an|the) executable(?: named)? "(.*)" with:$`,
 		func(ctx context.Context, p string, s *godog.DocString) error {
 			return createFileWithMode(ctx, p, s.Content, 0o755)
 		})
-	ctx.Step(`^a directory named "([^"]*)"$`, createDirectory)
+	ctx.Step(`^a directory named "(.*)"$`, createDirectory)
 	ctx.Step(
-		`^(?:a|the) (directory|file)(?: named)? "([^"]*)" does not exist$`,
+		`^(?:a|the) (directory|file)(?: named)? "(.*)" does not exist$`,
 		func(ctx context.Context, ty, p string) error {
 			return removeFile(ctx, ty, p, true)
 		})
 	ctx.Step(
-		`^I remove (?:a|the) (directory|file)(?: named)? "([^"]*)"( with full force)?$`,
+		`^I remove (?:a|the) (directory|file)(?: named)? "(.*)"( with full force)?$`,
 		func(ctx context.Context, ty, p, force string) error {
 			return removeFile(ctx, ty, p, force != "")
 		})
@@ -335,29 +335,29 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^(?:the )?(output|std(?:out|err))(?: from "([^"]*)")? should( not)? contain( exactly)? "([^"]*)"$`,
+		`^(?:the )?(output|std(?:out|err))(?: from "(.*)")? should( not)? contain( exactly)? "(.*)"$`,
 		output,
 	)
 	ctx.Step(
-		`^(?:the )?(output|std(?:out|err))(?: from "([^"]*)")? should( not)? contain( exactly)?:$`,
+		`^(?:the )?(output|std(?:out|err))(?: from "(.*)")? should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, channel, from, not, exactly string, docString *godog.DocString) error {
 			return output(ctx, channel, from, not, exactly, docString.Content)
 		},
 	)
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "([^"]*)" should( not)? contain "([^"]*)"$`,
+		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain "(.*)"$`,
 		func(ctx context.Context, p, not, pattern string) error {
 			return fileContains(ctx, p, not, "", pattern)
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "([^"]*)" should( not)? contain( exactly)?:$`,
+		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 			return fileContains(ctx, p, not, exactly, trimTrailingNewlines(docString.Content))
 		})
-	ctx.Step(`^I pipe in the file(?: named)? "([^"]*)"$`, stdin)
-	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "([^"]*)" should( not)? exist$`, fileExists)
-	ctx.Step(`^I set the environment variable "([^"]*)" to "([^"]*)"$`, setEnvVar)
-	ctx.Step(`^I append "([^"]*)" to the environment variable "([^"]*)"$`, appendEnvVar)
+	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
+	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
+	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
+	ctx.Step(`^I append "(.*)" to the environment variable "(.*)"$`, appendEnvVar)
 	ctx.Step(`^I run the following (?:commands|script):$`, runScript)
-	ctx.Step(`^I cd to "([^"]*)"$`, changeDirectory)
+	ctx.Step(`^I cd to "(.*)"$`, changeDirectory)
 }
