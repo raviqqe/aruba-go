@@ -14,13 +14,6 @@ import (
 	"github.com/cucumber/godog"
 )
 
-var stringUnescaper = strings.NewReplacer(`\"`, `"`, `\'`, `'`)
-
-// Quoted strings unescape only quotes like the string parameter type of Cucumber expressions.
-func parseString(s string) string {
-	return stringUnescaper.Replace(s[1 : len(s)-1])
-}
-
 func trimTrailingNewlines(s string) string {
 	return strings.TrimRight(s, "\n")
 }
@@ -200,8 +193,6 @@ func output(ctx context.Context, channel, from, not, exactly, pattern string) er
 			s = w.Output()
 		}
 	} else {
-		from := parseString(from)
-
 		c := w.FindCommand(from)
 		if c == nil {
 			return fmt.Errorf("no command matching %q", from)
@@ -302,16 +293,16 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.After(after)
 
 	ctx.Step(
-		`^a file named "(.+)" with (".*")$`,
+		`^a file named "(.*)" with "(.*)"$`,
 		func(ctx context.Context, p, s string) error {
-			s, err := strconv.Unquote(s)
+			s, err := strconv.Unquote(`"` + s + `"`)
 			if err != nil {
 				return err
 			}
 			return createFile(ctx, p, s)
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.+)"(?: with mode "(.*)" and)? with:$`,
+		`^(?:a|the) file(?: named)? "(.*)"(?: with mode "(.*)" and)? with:$`,
 		func(ctx context.Context, p, mode string, s *godog.DocString) error {
 			if mode == "" {
 				return createFile(ctx, p, s.Content)
@@ -325,11 +316,11 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 			return createFileWithMode(ctx, p, s.Content, m)
 		})
 	ctx.Step(
-		`^(?:an|the) executable(?: named)? "(.+)" with:$`,
+		`^(?:an|the) executable(?: named)? "(.*)" with:$`,
 		func(ctx context.Context, p string, s *godog.DocString) error {
 			return createFileWithMode(ctx, p, s.Content, 0o755)
 		})
-	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
+	ctx.Step(`^a directory named "(.*)"$`, createDirectory)
 	ctx.Step(
 		`^(?:a|the) (directory|file)(?: named)? "(.*)" does not exist$`,
 		func(ctx context.Context, ty, p string) error {
@@ -344,24 +335,22 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
-		`^(?:the )?(output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)? (".*")$`,
-		func(ctx context.Context, channel, from, not, exactly, pattern string) error {
-			return output(ctx, channel, from, not, exactly, parseString(pattern))
-		},
+		`^(?:the )?(output|std(?:out|err))(?: from "(.*)")? should( not)? contain( exactly)? "(.*)"$`,
+		output,
 	)
 	ctx.Step(
-		`^(?:the )?(output|std(?:out|err))(?: from (".*"))? should( not)? contain( exactly)?:$`,
+		`^(?:the )?(output|std(?:out|err))(?: from "(.*)")? should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, channel, from, not, exactly string, docString *godog.DocString) error {
 			return output(ctx, channel, from, not, exactly, docString.Content)
 		},
 	)
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain (".*")$`,
+		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain "(.*)"$`,
 		func(ctx context.Context, p, not, pattern string) error {
-			return fileContains(ctx, p, not, "", parseString(pattern))
+			return fileContains(ctx, p, not, "", pattern)
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.+)" should( not)? contain( exactly)?:$`,
+		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
 			return fileContains(ctx, p, not, exactly, trimTrailingNewlines(docString.Content))
 		})
