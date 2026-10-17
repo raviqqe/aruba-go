@@ -302,43 +302,47 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.After(after)
 
 	ctx.Step(
-		`^a file named "(.+)" with (".*")$`,
+		`^a file named (".+") with (".*")$`,
 		func(ctx context.Context, p, s string) error {
 			s, err := strconv.Unquote(s)
 			if err != nil {
 				return err
 			}
-			return createFile(ctx, p, s)
+			return createFile(ctx, parseString(p), s)
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.+)"(?: with mode "(.*)" and)? with:$`,
+		`^(?:a|the) file(?: named)? (".+")(?: with mode (".*") and)? with:$`,
 		func(ctx context.Context, p, mode string, s *godog.DocString) error {
 			if mode == "" {
-				return createFile(ctx, p, s.Content)
+				return createFile(ctx, parseString(p), s.Content)
 			}
 
-			m, err := parseFileMode(mode)
+			m, err := parseFileMode(parseString(mode))
 			if err != nil {
 				return err
 			}
 
-			return createFileWithMode(ctx, p, s.Content, m)
+			return createFileWithMode(ctx, parseString(p), s.Content, m)
 		})
 	ctx.Step(
-		`^(?:an|the) executable(?: named)? "(.+)" with:$`,
+		`^(?:an|the) executable(?: named)? (".+") with:$`,
 		func(ctx context.Context, p string, s *godog.DocString) error {
-			return createFileWithMode(ctx, p, s.Content, 0o755)
+			return createFileWithMode(ctx, parseString(p), s.Content, 0o755)
 		})
-	ctx.Step(`^a directory named "(.+)"$`, createDirectory)
 	ctx.Step(
-		`^(?:a|the) (directory|file)(?: named)? "(.*)" does not exist$`,
+		`^a directory named (".+")$`,
+		func(ctx context.Context, p string) error {
+			return createDirectory(ctx, parseString(p))
+		})
+	ctx.Step(
+		`^(?:a|the) (directory|file)(?: named)? (".*") does not exist$`,
 		func(ctx context.Context, ty, p string) error {
-			return removeFile(ctx, ty, p, true)
+			return removeFile(ctx, ty, parseString(p), true)
 		})
 	ctx.Step(
-		`^I remove (?:a|the) (directory|file)(?: named)? "(.*)"( with full force)?$`,
+		`^I remove (?:a|the) (directory|file)(?: named)? (".*")( with full force)?$`,
 		func(ctx context.Context, ty, p, force string) error {
-			return removeFile(ctx, ty, p, force != "")
+			return removeFile(ctx, ty, parseString(p), force != "")
 		})
 	ctx.Step("^I( successfully)? run (`.*`)( interactively| in the background)?$", runCommand)
 	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
@@ -356,19 +360,39 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		},
 	)
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.*)" should( not)? contain (".*")$`,
+		`^(?:a|the) file(?: named)? (".*") should( not)? contain (".*")$`,
 		func(ctx context.Context, p, not, pattern string) error {
-			return fileContains(ctx, p, not, "", parseString(pattern))
+			return fileContains(ctx, parseString(p), not, "", parseString(pattern))
 		})
 	ctx.Step(
-		`^(?:a|the) file(?: named)? "(.+)" should( not)? contain( exactly)?:$`,
+		`^(?:a|the) file(?: named)? (".+") should( not)? contain( exactly)?:$`,
 		func(ctx context.Context, p, not, exactly string, docString *godog.DocString) error {
-			return fileContains(ctx, p, not, exactly, trimTrailingNewlines(docString.Content))
+			return fileContains(ctx, parseString(p), not, exactly, trimTrailingNewlines(docString.Content))
 		})
-	ctx.Step(`^I pipe in the file(?: named)? "(.*)"$`, stdin)
-	ctx.Step(`^(?:a|the) (directory|file)(?: named)? "(.*)" should( not)? exist$`, fileExists)
-	ctx.Step(`^I set the environment variable "(.*)" to "(.*)"$`, setEnvVar)
-	ctx.Step(`^I append "(.*)" to the environment variable "(.*)"$`, appendEnvVar)
+	ctx.Step(
+		`^I pipe in the file(?: named)? (".*")$`,
+		func(ctx context.Context, p string) error {
+			return stdin(ctx, parseString(p))
+		})
+	ctx.Step(
+		`^(?:a|the) (directory|file)(?: named)? (".*") should( not)? exist$`,
+		func(ctx context.Context, ty, p, not string) error {
+			return fileExists(ctx, ty, parseString(p), not)
+		})
+	ctx.Step(
+		`^I set the environment variable (".*") to (".*")$`,
+		func(ctx context.Context, k, v string) context.Context {
+			return setEnvVar(ctx, parseString(k), parseString(v))
+		})
+	ctx.Step(
+		`^I append (".*") to the environment variable (".*")$`,
+		func(ctx context.Context, v, k string) context.Context {
+			return appendEnvVar(ctx, parseString(v), parseString(k))
+		})
 	ctx.Step(`^I run the following (?:commands|script):$`, runScript)
-	ctx.Step(`^I cd to "(.*)"$`, changeDirectory)
+	ctx.Step(
+		`^I cd to (".*")$`,
+		func(ctx context.Context, p string) (context.Context, error) {
+			return changeDirectory(ctx, parseString(p))
+		})
 }
