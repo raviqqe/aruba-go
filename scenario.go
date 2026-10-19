@@ -95,11 +95,6 @@ func removeFile(ctx context.Context, ty, p string, force bool) error {
 }
 
 func runCommand(ctx context.Context, successfully, line, asynchronously string) (context.Context, error) {
-	line, err := strconv.Unquote(line)
-	if err != nil {
-		return ctx, err
-	}
-
 	c, err := newCommand(line)
 	if err != nil {
 		return ctx, err
@@ -144,7 +139,7 @@ func runScript(ctx context.Context, s *godog.DocString) (context.Context, error)
 		return ctx, err
 	}
 
-	return runCommand(ctx, "", strconv.Quote("sh "+scriptPath), "")
+	return runCommand(ctx, "", "sh "+scriptPath, "")
 }
 
 func waitForStartup(ctx context.Context, seconds float64) context.Context {
@@ -340,7 +335,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 		func(ctx context.Context, ty, p, force string) error {
 			return removeFile(ctx, ty, unescapeString(p), force != "")
 		})
-	ctx.Step("^I( successfully)? run (`.*`)( interactively| in the background)?$", runCommand)
+	ctx.Step("^I( successfully)? run `(.*)`( interactively| in the background)?$", runCommand)
 	ctx.Step(`^I wait ([\d.]+) seconds? for (?:a|the) command to start up$`, waitForStartup)
 	ctx.Step(`^the exit status should( not)? be (\d+)$`, exitStatus)
 	ctx.Step(
