@@ -59,6 +59,11 @@ Feature: Command
     When I successfully run `sh -c "echo foo bar"`
     Then the stdout should contain exactly "foo bar"
 
+  @go
+  Scenario: Run a command with a backtick
+    When I successfully run `printf %s 'a`b'`
+    Then the stdout should contain exactly "a`b"
+
   Scenario: Run the following commands
     When I run the following commands:
       """sh
