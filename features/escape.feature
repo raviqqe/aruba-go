@@ -36,6 +36,23 @@ Feature: Character escape
       """
     And the stdout should not contain "a\"b"
 
+  Scenario: Create a file with a backslash in a string
+    Given a file named "foo.txt" with "a\b"
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly:
+      """
+      a\b
+      """
+
+  @go
+  Scenario: Create a file with escape sequences in a string
+    Given a file named "foo.txt" with "a\nb\"c\'d"
+    When I successfully run `cat foo.txt`
+    Then the stdout should contain exactly:
+      """
+      a\nb"c'd
+      """
+
   Scenario: Unescape a backslash in a command
     When I successfully run `echo \\`
     Then the stdout should contain exactly:

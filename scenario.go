@@ -304,11 +304,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^a file named "(.*)" with "(.*)"$`,
 		func(ctx context.Context, p, s string) error {
-			s, err := strconv.Unquote(`"` + s + `"`)
-			if err != nil {
-				return err
-			}
-			return createFile(ctx, unescapeString(p), s)
+			return createFile(ctx, unescapeString(p), unescapeString(s))
 		})
 	ctx.Step(
 		`^(?:a|the) file(?: named)? "(.*)"(?: with mode "(.*)" and)? with:$`,
