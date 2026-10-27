@@ -63,7 +63,7 @@ jobs:
           - directory: stak
             build: |
               cargo install stak
-              cargo build --profile release_test --package stak --package stak-compile --package stak-interpret
+              cargo build --profile release_test --package stak --package stak-compile --package stak-interpret --package stak-repl
             environment:
               - PATH=$PWD/target/release_test:$PATH
               - STAK_ROOT=$PWD
