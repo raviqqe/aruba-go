@@ -3,4 +3,4 @@
 source 'https://rubygems.org'
 
 gem 'aruba', '~> 3.0.1'
-gem 'cucumber', '~> 12.0.0'
+gem 'cucumber', '~> 12.0.1'
