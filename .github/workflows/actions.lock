@@ -15,7 +15,7 @@ workflows:
     '.github/workflows/test.yaml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-go@v7.1.0'
-        - 'ruby/setup-ruby@v1.339.0'
+        - 'ruby/setup-ruby@v1.343.0'
 dependencies:
     'actions/checkout@v7.0.1':
         ref: 'v7.0.1'
@@ -49,9 +49,9 @@ dependencies:
         repo_id: 918199623
         uses:
             - 'goreleaser/goreleaser-action@e24998b8b67b290c2fa8b7c14fcfa7de2c5c9b8c'
-    'ruby/setup-ruby@v1.339.0':
-        ref: 'v1.339.0'
-        commit: 'sha1-4e97ecde5048e1e0816923020652678063ffbf65'
+    'ruby/setup-ruby@v1.343.0':
+        ref: 'v1.343.0'
+        commit: 'sha1-be3c7df29b3349ec6bcfc6b4792f1cf9f5237d18'
         owner_id: 210414
         repo_id: 231208785
     'streetsidesoftware/cspell-action@v9.2.0':
