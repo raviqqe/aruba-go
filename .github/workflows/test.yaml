@@ -62,7 +62,7 @@ jobs:
             build: cargo install --locked --path .
           - directory: stak
             build: |
-              cargo install stak
+              cargo install --locked stak@$(cargo metadata --format-version 1 --no-deps | jq -r '.packages[] | select(.name == "stak") | .version')
               cargo build --profile release_test --package stak --package stak-compile --package stak-interpret --package stak-repl
             environment:
               - PATH=$PWD/target/release_test:$PATH
